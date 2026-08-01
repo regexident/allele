@@ -54,14 +54,10 @@ where
         // breed one child for each partner in parents
         let mut offspring: Vec<Vec<V>> = Vec::with_capacity(num_parents);
         while num_parents > offspring.len() {
-            let mut genome = Vec::with_capacity(genome_length);
-            // for each value in the genotype
-            for locus in 0..genome_length {
-                // pick the value of a randomly chosen parent
-                let random = rng.gen_range(0..num_parents);
-                let value = parents[random][locus].clone();
-                genome.push(value);
-            }
+            // for each value in the genotype pick the value of a randomly chosen parent
+            let genome: Vec<V> = (0..genome_length)
+                .map(|locus| parents[rng.gen_range(0..num_parents)][locus].clone())
+                .collect();
             offspring.push(genome);
         }
         offspring
@@ -88,14 +84,10 @@ mod fixedbitset_uniform_cross_breeder {
             // breed one child for each partner in parents
             let mut offspring: Vec<FixedBitSet> = Vec::with_capacity(num_parents);
             while num_parents > offspring.len() {
-                let mut genome = FixedBitSet::with_capacity(genome_length);
-                // for each value in the genotype
-                for locus in 0..genome_length {
-                    // pick the value of a randomly chosen parent
-                    let random = rng.gen_range(0..num_parents);
-                    let value = parents[random][locus];
-                    genome.set(locus, value);
-                }
+                // for each bit in the genotype pick the bit of a randomly chosen parent
+                let genome: FixedBitSet = (0..genome_length)
+                    .filter(|&locus| parents[rng.gen_range(0..num_parents)][locus])
+                    .collect();
                 offspring.push(genome);
             }
             offspring
@@ -125,14 +117,10 @@ mod smallvec_uniform_cross_breeder {
             // breed one child for each partner in parents
             let mut offspring: Vec<SmallVec<A>> = Vec::with_capacity(num_parents);
             while num_parents > offspring.len() {
-                let mut genome = SmallVec::with_capacity(genome_length);
-                // for each value in the genotype
-                for locus in 0..genome_length {
-                    // pick the value of a randomly chosen parent
-                    let random = rng.gen_range(0..num_parents);
-                    let value = parents[random][locus].clone();
-                    genome.push(value);
-                }
+                // for each value in the genotype pick the value of a randomly chosen parent
+                let genome: SmallVec<A> = (0..genome_length)
+                    .map(|locus| parents[rng.gen_range(0..num_parents)][locus].clone())
+                    .collect();
                 offspring.push(genome);
             }
             offspring

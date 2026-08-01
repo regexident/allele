@@ -10,7 +10,7 @@ fn duration_fmt_zero() {
 #[test]
 fn duration_fmt_max() {
     assert_that!(
-        &Duration::max_value().fmt(),
+        &Duration::MAX.fmt(),
         eq("15250284452w 3d 7h 12m 55s".to_string())
     );
 }
@@ -18,7 +18,7 @@ fn duration_fmt_max() {
 #[test]
 fn duration_fmt_min() {
     assert_that!(
-        &Duration::min_value().fmt(),
+        &Duration::MIN.fmt(),
         eq("-15250284452w 3d 7h 12m 55s".to_string())
     );
 }
@@ -209,7 +209,7 @@ fn duration_fmt_1000w_6d_23h_59m_59s_999ms_999999ns() {
 #[test]
 fn duration_fmt_1w_999ms() {
     assert_that!(
-        &Duration::milliseconds(1 * 7 * 24 * 3600 * 1_000 + 999).fmt(),
+        &Duration::milliseconds(7 * 24 * 3600 * 1_000 + 999).fmt(),
         eq("1w 0d 0h 0m 0s 999ms".to_string())
     );
 }

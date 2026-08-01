@@ -89,7 +89,7 @@ impl Problem {
 }
 
 /// The fitness function for `Selection`
-impl<'a> FitnessFunction<Selection, i64> for &'a Problem {
+impl FitnessFunction<Selection, i64> for &Problem {
     fn fitness_of(&self, selection: &Selection) -> i64 {
         let (total_weight, total_value) = selection
             .iter()

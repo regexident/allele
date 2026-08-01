@@ -108,7 +108,7 @@ where
             StopFlag::StopNow(format!(
                 "Simulation stopped after the limit of {} generations have \
                  been processed.",
-                &state.iteration
+                state.iteration
             ))
         } else {
             StopFlag::Continue
@@ -149,7 +149,7 @@ where
             StopFlag::StopNow(format!(
                 "Simulation stopped after running for {} which exceeds the \
                  maximal runtime of {}.",
-                &duration, &self.max_time
+                duration, self.max_time
             ))
         } else {
             StopFlag::Continue
