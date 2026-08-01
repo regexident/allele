@@ -128,10 +128,11 @@ genevo = "0.7"
 
 * `fixedbitset`: provides `Fixedbitset` to be used as genotype
 * `Smallvec`: provides `Smallvec` to be used as genotype
+* `parallel`: enables multithreading (implemented using `rayon`)
 
 since version 0.7.0 `genevo` supports wasm targets. To use `genevo` for target
 `wasm32-unknown-unknown` enable the crate feature `wasm-bindgen`. Note: on wasm32 targets
-multithreading (implemented using `rayon`) is disabled!
+multithreading is not available!
 
 ```toml
 [dependencies]
