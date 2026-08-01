@@ -151,7 +151,20 @@ pub struct PopulationBuilder;
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
 impl PopulationBuilder {
-    fn build_population<B, G>(genome_builder: &B, size: usize, mut rng: Prng) -> Population<G>
+    fn build_population<B, G>(genome_builder: &B, size: usize, rng: Prng) -> Population<G>
+    where
+        B: GenomeBuilder<G>,
+        G: Genotype,
+    {
+        Self::build_population_from_index(genome_builder, size, 0, rng)
+    }
+
+    fn build_population_from_index<B, G>(
+        genome_builder: &B,
+        size: usize,
+        base_index: usize,
+        mut rng: Prng,
+    ) -> Population<G>
     where
         B: GenomeBuilder<G>,
         G: Genotype,
@@ -159,7 +172,7 @@ impl PopulationBuilder {
         if size < 50 {
             Population {
                 individuals: (0..size)
-                    .map(|index| genome_builder.build_genome(index, &mut rng))
+                    .map(|i| genome_builder.build_genome(base_index + i, &mut rng))
                     .collect(),
             }
         } else {
@@ -170,8 +183,15 @@ impl PopulationBuilder {
             let left_size = size / 2;
             let right_size = size - left_size;
             let (left_population, right_population) = rayon::join(
-                || Self::build_population(genome_builder, left_size, rng1),
-                || Self::build_population(genome_builder, right_size, rng2),
+                || Self::build_population_from_index(genome_builder, left_size, base_index, rng1),
+                || {
+                    Self::build_population_from_index(
+                        genome_builder,
+                        right_size,
+                        base_index + left_size,
+                        rng2,
+                    )
+                },
             );
             let mut right_individuals = right_population.individuals;
             let mut individuals = left_population.individuals;
@@ -183,14 +203,27 @@ impl PopulationBuilder {
 
 #[cfg(any(target_arch = "wasm32", not(feature = "parallel")))]
 impl PopulationBuilder {
-    fn build_population<B, G>(genome_builder: &B, size: usize, mut rng: Prng) -> Population<G>
+    fn build_population<B, G>(genome_builder: &B, size: usize, rng: Prng) -> Population<G>
+    where
+        B: GenomeBuilder<G>,
+        G: Genotype,
+    {
+        Self::build_population_from_index(genome_builder, size, 0, rng)
+    }
+
+    fn build_population_from_index<B, G>(
+        genome_builder: &B,
+        size: usize,
+        base_index: usize,
+        mut rng: Prng,
+    ) -> Population<G>
     where
         B: GenomeBuilder<G>,
         G: Genotype,
     {
         Population {
             individuals: (0..size)
-                .map(|index| genome_builder.build_genome(index, &mut rng))
+                .map(|i| genome_builder.build_genome(base_index + i, &mut rng))
                 .collect(),
         }
     }
