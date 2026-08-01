@@ -1,6 +1,7 @@
 use super::*;
 use galvanic_assert::matchers::*;
 use proptest::prelude::*;
+use rand::Rng;
 
 mod random_cut_points_from_range {
 
@@ -142,7 +143,7 @@ mod weighted_distribution {
 
         let weighted_distribution = WeightedDistribution::from_scalar_values(&weights);
 
-        let mut counter = vec![0, 0, 0, 0];
+        let mut counter = [0, 0, 0, 0];
         for _ in 0..n_sum {
             let random = rng.gen::<f64>() * weighted_distribution.sum();
             let index = weighted_distribution.select(random);

@@ -7,16 +7,16 @@
 //! 2. **Fitness**: Evaluate the fitness of each genotype in the population
 //! 3. **New Population**: Create a new population by repeating following steps
 //!    until the new population is complete:
-//! 3.1. **Selection**: Select a tuple of parent genotypes from a population
-//!      according to their fitness and the selection strategy of the
-//!      configured `operator::SelectionOp`
-//! 3.2. **Crossover**: With a crossover probability cross over the parents to
-//!      form a new offspring (child) by means of the configured
-//!      `operator::CrossoverOp`.
-//! 3.3. **Mutation**: With a mutation probability mutate new offspring at each
-//!      locus (position in genotype) by means of the configured
-//!      `operator::MutationOp`.
-//! 3.4. **Accepting**: Place new offspring in the new population.
+//!    1. **Selection**: Select a tuple of parent genotypes from a population
+//!       according to their fitness and the selection strategy of the
+//!       configured `operator::SelectionOp`
+//!    2. **Crossover**: With a crossover probability cross over the parents to
+//!       form a new offspring (child) by means of the configured
+//!       `operator::CrossoverOp`.
+//!    3. **Mutation**: With a mutation probability mutate new offspring at each
+//!       locus (position in genotype) by means of the configured
+//!       `operator::MutationOp`.
+//!    4. **Accepting**: Place new offspring in the new population.
 //! 4. **Replace**: Use new generated population for a further run of the
 //!    algorithm.
 //! 5. **Termination**: If the end condition is satisfied, stop, and return the
@@ -346,11 +346,11 @@ where
 {
     timed(|| {
         let evaluated = score_board
-            .evaluated_individual_with_fitness(&score_board.highest_fitness())
+            .evaluated_individual_with_fitness(score_board.highest_fitness())
             .unwrap_or_else(|| {
                 panic!(
                     "No fitness value of {:?} found in this EvaluatedPopulation",
-                    &score_board.highest_fitness()
+                    score_board.highest_fitness()
                 )
             });
         BestSolution {
