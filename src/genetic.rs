@@ -77,13 +77,17 @@ pub type Offspring<G> = Vec<G>;
 /// of the multi-objective `Fitness` value additionally implements the
 /// `AsScalar` trait. Using single-objective optimization for multi-objective
 /// problems has some drawbacks though.
+///
+/// All fitness values used with proportionate selectors
+/// (`RouletteWheelSelector`, `UniversalSamplingSelector`) must be
+/// non-negative.
 pub trait Fitness: Eq + Ord + Clone + Debug + Sized {
     /// Returns the zero value of this `Fitness` value.
     /// The internal value should be 0.
     fn zero() -> Self;
 
     /// Returns the absolute difference between this `Fitness` value and the
-    /// other one, i.e. result = |self| - |other|
+    /// other one, i.e. result = |self - other|
     fn abs_diff(&self, other: &Self) -> Self;
 }
 

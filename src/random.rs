@@ -172,7 +172,12 @@ where
     /// The pointer must be a float between 0 und the sum of the weights of all
     /// values. Usually the pointer is chosen uniformly at random.
     pub fn select(&self, pointer: f64) -> usize {
-        assert!(pointer >= 0. && pointer <= self.sum);
+        assert!(
+            pointer >= 0. && pointer <= self.sum,
+            "pointer {} must be in [0, {}]",
+            pointer,
+            self.sum
+        );
         weighted_select(pointer, &self.weights)
     }
 

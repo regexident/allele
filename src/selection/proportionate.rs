@@ -188,13 +188,16 @@ where
             WeightedDistribution::from_scalar_values(evaluated.fitness_values());
         let distance = weighted_distribution.sum()
             / (num_parents_to_select * self.num_individuals_per_parents) as f64;
-        let mut pointer = random_probability(rng) * weighted_distribution.sum();
+        let mut pointer = random_probability(rng) * distance;
         for _ in 0..num_parents_to_select {
             let mut tuple = Vec::with_capacity(self.num_individuals_per_parents);
             for _ in 0..self.num_individuals_per_parents {
                 let selected = weighted_distribution.select(pointer);
                 tuple.push(individuals[selected].clone());
                 pointer += distance;
+                if pointer >= weighted_distribution.sum() {
+                    pointer -= weighted_distribution.sum();
+                }
             }
             parents.push(tuple);
         }
