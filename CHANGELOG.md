@@ -42,6 +42,7 @@ Please make sure to add your changes to the appropriate categories:
 - Fixed `UniversalSamplingSelector` pointer exceeding the roulette wheel sum and documented the non-negative fitness requirement
 - Fixed `MultiPointCrossBreeder` hanging indefinitely when breeding single-parent tuples
 - Fixed parallel `PopulationBuilder` passing local indices to `build_genome` instead of global ones
+- Fixed `GeneticAlgorithm` panicking on empty parents and missing best fitness values; `determine_best_solution` now returns a `Result`
 
 ### Performance
 
