@@ -69,6 +69,9 @@ pub enum GeneticAlgorithmError {
     /// The algorithm is run with an population size that is smaller than the
     /// required minimum.
     PopulationTooSmall(String),
+    /// The algorithm could not determine a best solution from the evaluated
+    /// population.
+    NoFitnessFound(String),
 }
 
 impl Display for GeneticAlgorithmError {
@@ -76,6 +79,7 @@ impl Display for GeneticAlgorithmError {
         match self {
             GeneticAlgorithmError::EmptyPopulation(details) => write!(f, "{}", details),
             GeneticAlgorithmError::PopulationTooSmall(details) => write!(f, "{}", details),
+            GeneticAlgorithmError::NoFitnessFound(details) => write!(f, "{}", details),
         }
     }
 }
@@ -198,7 +202,7 @@ where
 
         // Stage 2: The fitness check:
         let evaluation = evaluate_fitness(self.population.clone(), &self.evaluator);
-        let best_solution = determine_best_solution(iteration, &evaluation.result);
+        let best_solution = determine_best_solution(iteration, &evaluation.result)?;
 
         // Stage 3: The making of a new population:
         let selection = timed(|| self.selector.select_from(&evaluation.result, rng)).run();
@@ -266,10 +270,12 @@ where
 {
     if population.len() < 50 {
         timed(|| {
+            let score = evaluator.fitness_of(&population[0]);
+            let mut highest = score.clone();
+            let mut lowest = score.clone();
             let mut fitness = Vec::with_capacity(population.len());
-            let mut highest = evaluator.lowest_possible_fitness();
-            let mut lowest = evaluator.highest_possible_fitness();
-            for genome in population.iter() {
+            fitness.push(score);
+            for genome in population.iter().skip(1) {
                 let score = evaluator.fitness_of(genome);
                 if score > highest {
                     highest = score.clone();
@@ -317,10 +323,12 @@ where
     E: FitnessFunction<G, F> + Sync,
 {
     timed(|| {
+        let score = evaluator.fitness_of(&population[0]);
+        let mut highest = score.clone();
+        let mut lowest = score.clone();
         let mut fitness = Vec::with_capacity(population.len());
-        let mut highest = evaluator.lowest_possible_fitness();
-        let mut lowest = evaluator.highest_possible_fitness();
-        for genome in population.iter() {
+        fitness.push(score);
+        for genome in population.iter().skip(1) {
             let score = evaluator.fitness_of(genome);
             if score > highest {
                 highest = score.clone();
@@ -339,27 +347,25 @@ where
 fn determine_best_solution<G, F>(
     generation: u64,
     score_board: &EvaluatedPopulation<G, F>,
-) -> TimedResult<BestSolution<G, F>>
+) -> Result<TimedResult<BestSolution<G, F>>, GeneticAlgorithmError>
 where
     G: Genotype,
     F: Fitness,
 {
-    timed(|| {
-        let evaluated = score_board
-            .evaluated_individual_with_fitness(score_board.highest_fitness())
-            .unwrap_or_else(|| {
-                panic!(
-                    "No fitness value of {:?} found in this EvaluatedPopulation",
-                    score_board.highest_fitness()
-                )
-            });
-        BestSolution {
-            found_at: Local::now(),
-            generation,
-            solution: evaluated,
-        }
+    let evaluated = score_board
+        .evaluated_individual_with_fitness(score_board.highest_fitness())
+        .ok_or_else(|| {
+            GeneticAlgorithmError::NoFitnessFound(format!(
+                "No fitness value of {:?} found in this EvaluatedPopulation",
+                score_board.highest_fitness()
+            ))
+        })?;
+    Ok(timed(|| BestSolution {
+        found_at: Local::now(),
+        generation,
+        solution: evaluated,
     })
-    .run()
+    .run())
 }
 
 /// Lets the parents breed their offspring and mutate its children. And
@@ -376,6 +382,9 @@ where
     C: CrossoverOp<G> + Sync,
     M: MutationOp<G> + Sync,
 {
+    if parents.is_empty() {
+        return timed(|| Vec::new()).run();
+    }
     if parents.len() < 50 {
         timed(|| {
             let mut offspring: Offspring<G> = Vec::with_capacity(parents.len() * parents[0].len());
@@ -395,7 +404,7 @@ where
         rng.jump();
         let mut rng2 = rng.clone();
         let mid_point = parents.len() / 2;
-        let mut offspring = Vec::with_capacity(parents.len() * 2);
+        let mut offspring = Vec::with_capacity(parents.len() * parents[0].len());
         let mut parents = parents;
         let r_slice = parents.drain(mid_point..).collect();
         let l_slice = parents;
@@ -424,6 +433,9 @@ where
     C: CrossoverOp<G> + Sync,
     M: MutationOp<G> + Sync,
 {
+    if parents.is_empty() {
+        return timed(|| Vec::new()).run();
+    }
     timed(|| {
         let mut offspring: Offspring<G> = Vec::with_capacity(parents.len() * parents[0].len());
         for parents in parents {
