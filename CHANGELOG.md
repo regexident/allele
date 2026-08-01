@@ -37,7 +37,7 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Fixed
 
-- n/a
+- Fixed `UniformReinserter` silently dropping every other offspring when combining the new population
 
 ### Performance
 

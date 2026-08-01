@@ -93,11 +93,7 @@ where
             }
         } else {
             // insert all individuals from offspring
-            let mut i = 0;
-            while i < offspring.len() {
-                new_population.push(offspring.remove(i));
-                i += 1;
-            }
+            new_population.append(offspring);
         }
         // finally fill up new population with individuals from old population
         // (as many as needed).
