@@ -59,6 +59,11 @@ impl TournamentSelector {
         probability: f64,
         remove_selected_individuals: bool,
     ) -> Self {
+        assert!(
+            probability > 0.0 && probability <= 1.0,
+            "probability must be in (0.0, 1.0], got {}",
+            probability
+        );
         TournamentSelector {
             selection_ratio,
             num_individuals_per_parents,
@@ -121,6 +126,11 @@ impl TournamentSelector {
     /// A probability of 1.0 means the tournament is deterministic. The best
     /// and only the best individual of each tournament is selected.
     pub fn set_probability(&mut self, value: f64) {
+        assert!(
+            value > 0.0 && value <= 1.0,
+            "probability must be in (0.0, 1.0], got {}",
+            value
+        );
         self.probability = value;
     }
 
@@ -188,7 +198,7 @@ where
             // pick candidates with probability
             let mut prob = self.probability;
             let mut prob_redux = 1.;
-            while prob > 0. {
+            while prob > 0. && !tournament.is_empty() {
                 if random_probability(rng) <= prob {
                     let picked = tournament.remove(0);
                     if self.remove_selected_individuals {
@@ -204,6 +214,9 @@ where
             }
         }
         // convert selected candidate indices to parents of individuals
+        let usable = (picked_candidates.len() / self.num_individuals_per_parents)
+            * self.num_individuals_per_parents;
+        picked_candidates.truncate(usable);
         let mut selected: Vec<Parents<G>> = Vec::with_capacity(num_parents_to_select);
         while !picked_candidates.is_empty() {
             let mut tuple = Vec::with_capacity(self.num_individuals_per_parents);
