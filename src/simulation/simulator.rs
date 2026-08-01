@@ -239,16 +239,15 @@ where
                 self.started_at = Local::now();
             }
         }
-        self.process_one_iteration().map(|state| match self.termination.evaluate(&state) {
-                StopFlag::Continue => {
-                    SimResult::Intermediate(state)
-                },
+        self.process_one_iteration()
+            .map(|state| match self.termination.evaluate(&state) {
+                StopFlag::Continue => SimResult::Intermediate(state),
                 StopFlag::StopNow(reason) => {
                     let processing_time = self.processing_time;
                     let duration = Local::now().signed_duration_since(self.started_at);
                     self.run_mode = RunMode::NotRunning;
                     SimResult::Final(state, processing_time, duration, reason)
-                },
+                }
             })
     }
 
