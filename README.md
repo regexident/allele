@@ -2,16 +2,14 @@
 
 [![Crates.io][crb]][crl]
 [![Docs.rs][dcb]][dcl]
-[![Linux Build Status][tcb]][tcl]
-[![Windows Build Status][avb]][avl]
+[![CI][ghb]][ghl]
 [![codevoc.io][cvb]][cvl]
 [![MIT/Apache][lib]][lil]
 [![Join the chat][gcb]][gcl]
 
 [crb]: https://img.shields.io/crates/v/genevo.svg
 [dcb]: https://docs.rs/genevo/badge.svg
-[tcb]: https://travis-ci.org/innoave/genevo.svg?branch=master
-[avb]: https://ci.appveyor.com/api/projects/status/github/innoave/genevo?branch=master&svg=true
+[ghb]: https://github.com/regexident/allele/actions/workflows/rust.yml/badge.svg
 [cvb]: https://codecov.io/gh/innoave/genevo/branch/master/graph/badge.svg
 [lib]: https://img.shields.io/badge/license-MIT%2FApache-blue.svg
 [l1b]: https://img.shields.io/badge/license-MIT-blue.svg
@@ -20,8 +18,7 @@
 
 [crl]: https://crates.io/crates/genevo/
 [dcl]: https://docs.rs/genevo
-[tcl]: https://travis-ci.org/innoave/genevo/
-[avl]: https://ci.appveyor.com/project/innoave/genevo
+[ghl]: https://github.com/regexident/allele/actions/workflows/rust.yml
 [cvl]: https://codecov.io/github/innoave/genevo?branch=master
 [lil]: COPYRIGHT.txt
 [l1l]: https://opensource.org/licenses/MIT

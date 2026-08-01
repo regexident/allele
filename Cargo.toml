@@ -16,6 +16,7 @@ documentation = "https://docs.rs/genevo"
 readme = "README.md"
 
 edition = "2021"
+rust-version = "1.80"
 
 [package.metadata.docs.rs]
 all-features = true
