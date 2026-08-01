@@ -39,7 +39,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
-      - run: cargo test --workspace
+      - name: Run tests without parallelism
+        run: cargo test --workspace
+      - name: Run tests with parallelism
+        run: cargo test --workspace --features "parallel"
 
   fmt:
     name: Rustfmt
