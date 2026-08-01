@@ -234,6 +234,12 @@ where
         // breed one child for each partner in parents
         let mut offspring: Vec<Vec<V>> = Vec::with_capacity(num_parents);
         while num_parents > offspring.len() {
+            if num_parents <= 1 {
+                for _ in 0..num_parents {
+                    offspring.push(parents[0].clone());
+                }
+                continue;
+            }
             let mut genome = Vec::with_capacity(genome_length);
             let mut cutpoints = random_n_cut_points(rng, num_cut_points, genome_length);
             cutpoints.push(genome_length);
@@ -292,6 +298,12 @@ mod smallvec_multipoint_crossover {
             // breed one child for each partner in parents
             let mut offspring: Vec<SmallVec<A>> = Vec::with_capacity(num_parents);
             while num_parents > offspring.len() {
+                if num_parents <= 1 {
+                    for _ in 0..num_parents {
+                        offspring.push(parents[0].clone());
+                    }
+                    continue;
+                }
                 let mut genome = SmallVec::with_capacity(genome_length);
                 let mut cutpoints = random_n_cut_points(rng, num_cut_points, genome_length);
                 cutpoints.push(genome_length);
@@ -346,6 +358,12 @@ mod fixedbitset_multipoint_crossover {
             // breed one child for each partner in parents
             let mut offspring: Vec<FixedBitSet> = Vec::with_capacity(num_parents);
             while num_parents > offspring.len() {
+                if num_parents <= 1 {
+                    for _ in 0..num_parents {
+                        offspring.push(parents[0].clone());
+                    }
+                    continue;
+                }
                 let mut genome = FixedBitSet::with_capacity(genome_length);
                 let mut cutpoints = random_n_cut_points(rng, num_cut_points, genome_length);
                 cutpoints.push(genome_length);

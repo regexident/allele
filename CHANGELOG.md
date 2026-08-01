@@ -40,6 +40,7 @@ Please make sure to add your changes to the appropriate categories:
 - Fixed `UniformReinserter` silently dropping every other offspring when combining the new population
 - Fixed `TournamentSelector` panicking on invalid probabilities and looping indefinitely on some configurations
 - Fixed `UniversalSamplingSelector` pointer exceeding the roulette wheel sum and documented the non-negative fitness requirement
+- Fixed `MultiPointCrossBreeder` hanging indefinitely when breeding single-parent tuples
 
 ### Performance
 
