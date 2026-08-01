@@ -16,6 +16,40 @@ Please make sure to add your changes to the appropriate categories:
 - `Security`: for security-relevant changes
 - `Other`: for everything else
 
+## [Unreleased]
+
+### Added
+
+- n/a
+
+### Changed
+
+- Made `rayon` dependency optional behind "parallel" feature
+
+### Deprecated
+
+- n/a
+
+### Removed
+
+- n/a
+
+### Fixed
+
+- n/a
+
+### Performance
+
+- n/a
+
+### Security
+
+- n/a
+
+### Other
+
+- n/a
+
 ## [0.7.1] - 2022-03-13
 
 ### Fixed
