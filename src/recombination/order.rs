@@ -191,7 +191,6 @@ fn partial_mapped_crossover(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use galvanic_assert::matchers::*;
 
     #[test]
     fn order_one_crossover_cutpoints_3_6() {
@@ -199,10 +198,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = order_one_crossover(&p1, &p2, 3, 6);
-        expect_that!(&children, eq(vec![3, 8, 2, 4, 5, 6, 7, 1, 9]));
+        assert_eq!(children, vec![3, 8, 2, 4, 5, 6, 7, 1, 9]);
 
         let children = order_one_crossover(&p2, &p1, 3, 6);
-        expect_that!(&children, eq(vec![3, 4, 7, 8, 2, 6, 5, 9, 1]));
+        assert_eq!(children, vec![3, 4, 7, 8, 2, 6, 5, 9, 1]);
     }
 
     #[test]
@@ -211,10 +210,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = order_one_crossover(&p1, &p2, 0, 0);
-        expect_that!(&children, eq(vec![1, 3, 7, 8, 2, 6, 5, 4, 9]));
+        assert_eq!(children, vec![1, 3, 7, 8, 2, 6, 5, 4, 9]);
 
         let children = order_one_crossover(&p2, &p1, 0, 0);
-        expect_that!(&children, eq(vec![9, 2, 3, 4, 5, 6, 7, 8, 1]));
+        assert_eq!(children, vec![9, 2, 3, 4, 5, 6, 7, 8, 1]);
     }
 
     #[test]
@@ -223,10 +222,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = order_one_crossover(&p1, &p2, 0, 8);
-        expect_that!(&children, eq(vec![1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        assert_eq!(children, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
         let children = order_one_crossover(&p2, &p1, 0, 8);
-        expect_that!(&children, eq(vec![9, 3, 7, 8, 2, 6, 5, 1, 4]));
+        assert_eq!(children, vec![9, 3, 7, 8, 2, 6, 5, 1, 4]);
     }
 
     #[test]
@@ -235,10 +234,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = order_one_crossover(&p1, &p2, 1, 8);
-        expect_that!(&children, eq(vec![1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        assert_eq!(children, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
         let children = order_one_crossover(&p2, &p1, 1, 8);
-        expect_that!(&children, eq(vec![9, 3, 7, 8, 2, 6, 5, 1, 4]));
+        assert_eq!(children, vec![9, 3, 7, 8, 2, 6, 5, 1, 4]);
     }
 
     #[test]
@@ -247,10 +246,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = order_one_crossover(&p1, &p2, 0, 7);
-        expect_that!(&children, eq(vec![1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        assert_eq!(children, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
         let children = order_one_crossover(&p2, &p1, 0, 7);
-        expect_that!(&children, eq(vec![9, 3, 7, 8, 2, 6, 5, 1, 4]));
+        assert_eq!(children, vec![9, 3, 7, 8, 2, 6, 5, 1, 4]);
     }
 
     #[test]
@@ -259,10 +258,10 @@ mod tests {
         let p2 = vec![1, 3, 7, 8, 2, 6, 5, 9, 4];
 
         let children = order_one_crossover(&p1, &p2, 1, 7);
-        expect_that!(&children, eq(vec![9, 2, 3, 4, 5, 6, 7, 8, 1]));
+        assert_eq!(children, vec![9, 2, 3, 4, 5, 6, 7, 8, 1]);
 
         let children = order_one_crossover(&p2, &p1, 1, 7);
-        expect_that!(&children, eq(vec![4, 3, 7, 8, 2, 6, 5, 9, 1]));
+        assert_eq!(children, vec![4, 3, 7, 8, 2, 6, 5, 9, 1]);
     }
 
     #[test]
@@ -271,10 +270,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = partial_mapped_crossover(&p1, &p2, 3, 6);
-        expect_that!(&children, eq(vec![9, 3, 2, 4, 5, 6, 7, 1, 8]));
+        assert_eq!(children, vec![9, 3, 2, 4, 5, 6, 7, 1, 8]);
 
         let children = partial_mapped_crossover(&p2, &p1, 3, 6);
-        expect_that!(&children, eq(vec![1, 7, 3, 8, 2, 6, 5, 4, 9]));
+        assert_eq!(children, vec![1, 7, 3, 8, 2, 6, 5, 4, 9]);
     }
 
     #[test]
@@ -283,10 +282,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = partial_mapped_crossover(&p1, &p2, 0, 0);
-        expect_that!(&children, eq(vec![1, 3, 7, 8, 2, 6, 5, 9, 4]));
+        assert_eq!(children, vec![1, 3, 7, 8, 2, 6, 5, 9, 4]);
 
         let children = partial_mapped_crossover(&p2, &p1, 0, 0);
-        expect_that!(&children, eq(vec![9, 2, 3, 4, 5, 6, 7, 8, 1]));
+        assert_eq!(children, vec![9, 2, 3, 4, 5, 6, 7, 8, 1]);
     }
 
     #[test]
@@ -295,10 +294,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = partial_mapped_crossover(&p1, &p2, 0, 8);
-        expect_that!(&children, eq(vec![1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        assert_eq!(children, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
         let children = partial_mapped_crossover(&p2, &p1, 0, 8);
-        expect_that!(&children, eq(vec![9, 3, 7, 8, 2, 6, 5, 1, 4]));
+        assert_eq!(children, vec![9, 3, 7, 8, 2, 6, 5, 1, 4]);
     }
 
     #[test]
@@ -307,10 +306,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = partial_mapped_crossover(&p1, &p2, 1, 8);
-        expect_that!(&children, eq(vec![1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        assert_eq!(children, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
         let children = partial_mapped_crossover(&p2, &p1, 1, 8);
-        expect_that!(&children, eq(vec![9, 3, 7, 8, 2, 6, 5, 1, 4]));
+        assert_eq!(children, vec![9, 3, 7, 8, 2, 6, 5, 1, 4]);
     }
 
     #[test]
@@ -319,10 +318,10 @@ mod tests {
         let p2 = vec![9, 3, 7, 8, 2, 6, 5, 1, 4];
 
         let children = partial_mapped_crossover(&p1, &p2, 0, 7);
-        expect_that!(&children, eq(vec![1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        assert_eq!(children, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
         let children = partial_mapped_crossover(&p2, &p1, 0, 7);
-        expect_that!(&children, eq(vec![9, 3, 7, 8, 2, 6, 5, 1, 4]));
+        assert_eq!(children, vec![9, 3, 7, 8, 2, 6, 5, 1, 4]);
     }
 
     #[test]
@@ -331,9 +330,9 @@ mod tests {
         let p2 = vec![1, 3, 7, 8, 2, 6, 5, 9, 4];
 
         let children = partial_mapped_crossover(&p1, &p2, 1, 7);
-        expect_that!(&children, eq(vec![1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        assert_eq!(children, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
         let children = partial_mapped_crossover(&p2, &p1, 1, 7);
-        expect_that!(&children, eq(vec![1, 3, 7, 8, 2, 6, 5, 9, 4]));
+        assert_eq!(children, vec![1, 3, 7, 8, 2, 6, 5, 9, 4]);
     }
 }
