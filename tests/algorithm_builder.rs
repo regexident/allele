@@ -4,7 +4,7 @@ extern crate galvanic_assert;
 
 use galvanic_assert::matchers::*;
 
-use genevo::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
+use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
 
 #[test]
 fn create_new_genetic_algorithm_application() {
