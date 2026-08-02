@@ -25,6 +25,7 @@ Please make sure to add your changes to the appropriate categories:
 ### Changed
 
 - Made `rayon` dependency optional behind "parallel" feature
+- Renamed crate from `genevo` to `allele`
 
 ### Deprecated
 
