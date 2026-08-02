@@ -7,7 +7,7 @@ use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{Fitness, Genotype, Parents},
     operator::{GeneticOperator, MultiObjective, SelectionOp, SingleObjective},
-    random::{random_index, random_probability, Rng},
+    random::{Rng, random_index, random_probability},
 };
 
 /// The `TournamentSelector` implements the tournament selection method.

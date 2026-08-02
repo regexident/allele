@@ -12,7 +12,7 @@ use std::collections::HashMap;
 use crate::{
     genetic::{Children, Parents, ParentsSlice},
     operator::{CrossoverOp, GeneticOperator},
-    random::{random_cut_points, Rng},
+    random::{Rng, random_cut_points},
 };
 
 /// The `OrderOneCrossover` operator combines permutation encoded

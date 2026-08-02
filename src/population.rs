@@ -99,7 +99,7 @@
 
 use crate::{
     genetic::Genotype,
-    random::{get_rng, random_seed, Prng, Rng, Seed},
+    random::{Prng, Rng, Seed, get_rng, random_seed},
 };
 use rand::distributions::uniform::SampleUniform;
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
@@ -356,7 +356,7 @@ impl GenomeBuilder<Vec<bool>> for BinaryEncodedGenomeBuilder {
     where
         R: Rng + Sized,
     {
-        (0..self.genome_length).map(|_| rng.gen()).collect()
+        (0..self.genome_length).map(|_| rng.r#gen()).collect()
     }
 }
 
@@ -414,7 +414,7 @@ mod fixedbitset_genome_builder {
         {
             let mut genome = FixedBitSet::with_capacity(self.genome_length);
             for bit in 0..self.genome_length {
-                genome.set(bit, rng.gen());
+                genome.set(bit, rng.r#gen());
             }
             genome
         }
@@ -424,7 +424,7 @@ mod fixedbitset_genome_builder {
 #[cfg(feature = "smallvec")]
 mod smallvec_genome_builder {
     use super::{BinaryEncodedGenomeBuilder, GenomeBuilder, ValueEncodedGenomeBuilder};
-    use rand::{distributions::uniform::SampleUniform, Rng};
+    use rand::{Rng, distributions::uniform::SampleUniform};
     use smallvec::{Array, SmallVec};
     use std::fmt::Debug;
 
@@ -436,7 +436,7 @@ mod smallvec_genome_builder {
         where
             R: Rng + Sized,
         {
-            (0..self.genome_length).map(|_| rng.gen()).collect()
+            (0..self.genome_length).map(|_| rng.r#gen()).collect()
         }
     }
 

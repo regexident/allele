@@ -3,7 +3,7 @@
 
 use crate::{
     operator::{GeneticOperator, MutationOp},
-    random::{number_of_mutations, random_cut_points, Rng},
+    random::{Rng, number_of_mutations, random_cut_points},
 };
 use std::fmt::Debug;
 

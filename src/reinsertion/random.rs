@@ -6,7 +6,7 @@ use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{Fitness, Genotype, Offspring},
     operator::{GeneticOperator, MultiObjective, ReinsertionOp, SingleObjective},
-    random::{random_index, Rng},
+    random::{Rng, random_index},
 };
 
 /// The `UniformReinserter` takes n individuals from the offspring and

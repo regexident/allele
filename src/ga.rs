@@ -32,7 +32,7 @@ use crate::{
     operator::{CrossoverOp, MutationOp, ReinsertionOp, SelectionOp},
     population::Population,
     random::Prng,
-    statistic::{timed, ProcessingTime, TimedResult, TrackProcessingTime},
+    statistic::{ProcessingTime, TimedResult, TrackProcessingTime, timed},
 };
 use chrono::Local;
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]

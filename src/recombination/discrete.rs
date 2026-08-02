@@ -14,7 +14,7 @@
 use crate::{
     genetic::{Children, Genotype, Parents},
     operator::{CrossoverOp, GeneticOperator},
-    random::{random_n_cut_points, Rng},
+    random::{Rng, random_n_cut_points},
 };
 use std::fmt::Debug;
 
@@ -272,7 +272,7 @@ where
 
 #[cfg(feature = "smallvec")]
 mod smallvec_multipoint_crossover {
-    use super::{random_n_cut_points, MultiPointCrossover};
+    use super::{MultiPointCrossover, random_n_cut_points};
     use crate::genetic::{Children, Parents};
     use rand::Rng;
     use smallvec::{Array, SmallVec};
@@ -337,7 +337,7 @@ mod smallvec_multipoint_crossover {
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_multipoint_crossover {
-    use super::{random_n_cut_points, MultiPointCrossover};
+    use super::{MultiPointCrossover, random_n_cut_points};
     use crate::genetic::{Children, Parents};
     use fixedbitset::FixedBitSet;
     use rand::Rng;
