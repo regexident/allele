@@ -1,5 +1,3 @@
-use galvanic_assert::matchers::*;
-
 mod timed_fn {
 
     use super::*;
@@ -13,10 +11,7 @@ mod timed_fn {
         })
         .run();
 
-        expect_that!(
-            &result.time.duration(),
-            greater_than_or_equal(Duration::from_millis(141))
-        );
+        assert!(result.time.duration() >= Duration::from_millis(141));
     }
 
     #[test]
@@ -26,10 +21,7 @@ mod timed_fn {
         })
         .run();
 
-        expect_that!(
-            &result.time.duration(),
-            greater_than_or_equal(Duration::from_nanos(141))
-        );
+        assert!(result.time.duration() >= Duration::from_nanos(141));
     }
 }
 

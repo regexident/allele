@@ -1,5 +1,3 @@
-use super::*;
-use galvanic_assert::matchers::*;
 use proptest::prelude::*;
 use rand::Rng;
 
@@ -150,14 +148,14 @@ mod weighted_distribution {
             counter[index] += 1;
         }
 
-        expect_that!(&counter[0], is(greater_than(180)));
-        expect_that!(&counter[0], is(less_than(220)));
-        expect_that!(&counter[1], is(greater_than(130)));
-        expect_that!(&counter[1], is(less_than(175)));
-        expect_that!(&counter[2], is(greater_than(540)));
-        expect_that!(&counter[2], is(less_than(660)));
-        expect_that!(&counter[3], is(greater_than(40)));
-        expect_that!(&counter[3], is(less_than(60)));
+        assert!(counter[0] > 180);
+        assert!(counter[0] < 220);
+        assert!(counter[1] > 130);
+        assert!(counter[1] < 175);
+        assert!(counter[2] > 540);
+        assert!(counter[2] < 660);
+        assert!(counter[3] > 40);
+        assert!(counter[3] < 60);
     }
 }
 
