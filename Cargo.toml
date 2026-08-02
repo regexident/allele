@@ -5,7 +5,7 @@ repository = "https://github.com/regexident/allele"
 keywords = ["genetic", "evolutionary", "algorithm"]
 license = "MIT/Apache-2.0"
 edition = "2021"
-rust-version = "1.80"
+rust-version = "1.85.1"
 version = "0.8.0"
 
 [package.metadata.docs.rs]
