@@ -34,7 +34,7 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Removed
 
-- n/a
+- Removed the empty `selection::ranking` module
 
 ### Fixed
 
