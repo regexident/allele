@@ -34,13 +34,13 @@ use crate::{
     random::Prng,
     statistic::{ProcessingTime, TimedResult, TrackProcessingTime, timed},
 };
-use chrono::Local;
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
 use rayon;
 use std::{
     fmt::{self, Display},
     marker::PhantomData,
     rc::Rc,
+    time::Instant,
 };
 
 /// The `State` struct holds the results of one pass of the genetic algorithm
@@ -361,7 +361,7 @@ where
             ))
         })?;
     Ok(timed(|| BestSolution {
-        found_at: Local::now(),
+        found_at: Instant::now(),
         generation,
         solution: evaluated,
     })

@@ -4,7 +4,6 @@ mod timed_fn {
 
     use super::*;
     use crate::statistic::timed;
-    use chrono;
     use std::{thread, time::Duration};
 
     #[test]
@@ -16,7 +15,7 @@ mod timed_fn {
 
         expect_that!(
             &result.time.duration(),
-            greater_than_or_equal(chrono::Duration::milliseconds(141))
+            greater_than_or_equal(Duration::from_millis(141))
         );
     }
 
@@ -29,7 +28,7 @@ mod timed_fn {
 
         expect_that!(
             &result.time.duration(),
-            greater_than_or_equal(chrono::Duration::nanoseconds(141))
+            greater_than_or_equal(Duration::from_nanos(141))
         );
     }
 }
@@ -37,7 +36,7 @@ mod timed_fn {
 mod processing_time_display {
 
     use crate::statistic::ProcessingTime;
-    use chrono;
+    use std::time::Duration;
 
     #[test]
     fn zero_is_formatted_as_0s() {
@@ -46,18 +45,18 @@ mod processing_time_display {
 
     #[test]
     fn sub_second_durations_are_formatted_human_readably() {
-        let time = ProcessingTime::from(chrono::Duration::milliseconds(1_001));
+        let time = ProcessingTime::from(Duration::from_millis(1_001));
         assert_eq!(time.to_string(), "1s 1ms");
     }
 
     #[test]
     fn minute_and_hour_durations_are_formatted_human_readably() {
         assert_eq!(
-            ProcessingTime::from(chrono::Duration::seconds(61)).to_string(),
+            ProcessingTime::from(Duration::from_secs(61)).to_string(),
             "1m 1s"
         );
         assert_eq!(
-            ProcessingTime::from(chrono::Duration::seconds(3_601)).to_string(),
+            ProcessingTime::from(Duration::from_secs(3_601)).to_string(),
             "1h 1s"
         );
     }
@@ -65,7 +64,7 @@ mod processing_time_display {
     #[test]
     fn multi_day_durations_are_formatted_human_readably() {
         assert_eq!(
-            ProcessingTime::from(chrono::Duration::days(7)).to_string(),
+            ProcessingTime::from(Duration::from_secs(7 * 24 * 60 * 60)).to_string(),
             "7days"
         );
     }

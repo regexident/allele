@@ -129,7 +129,7 @@ fn main() {
                     step.iteration,
                     evaluated_population.average_fitness(),
                     best_solution.solution.fitness,
-                    format_duration(step.duration.to_std().unwrap_or_default()),
+                    format_duration(step.duration),
                     step.processing_time
                 );
                 println!("      {}", best_solution.solution.genome.as_text());
@@ -142,7 +142,7 @@ fn main() {
                 println!(
                     "Final result after {}: generation: {}, \
                      best solution with fitness {} found in generation {}, processing_time: {}",
-                    format_duration(duration.to_std().unwrap_or_default()),
+                    format_duration(duration),
                     step.iteration,
                     best_solution.solution.fitness,
                     best_solution.generation,
