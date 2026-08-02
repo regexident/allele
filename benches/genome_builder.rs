@@ -2,7 +2,7 @@
 extern crate criterion;
 
 use criterion::{BenchmarkId, Criterion};
-use genevo::random::{get_rng, random_seed};
+use allele::random::{get_rng, random_seed};
 use rand::{
     distributions::{Bernoulli, Distribution},
     Rng,
