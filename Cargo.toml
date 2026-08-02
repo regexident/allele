@@ -25,6 +25,7 @@ parallel = ["rayon"]
 
 [dependencies]
 chrono = "0.4"
+humantime = "2"
 rand = { version = "0.8", default-features = false, features = ["getrandom"] }
 rand_xoshiro = "0.6"
 fixedbitset = { version = "0.4", optional = true }
