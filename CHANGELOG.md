@@ -24,14 +24,40 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Changed
 
-- Made `rayon` dependency optional behind "parallel" feature
-- Renamed crate from `genevo` to `allele`
-- Added validation that `replace_ratio`, `selection_ratio`, and `mutation_rate` are within `[0.0, 1.0]` and added the public `number_of_mutations` helper
-- `ProcessingTime` now formats durations human-readably through `std::fmt::Display` via `humantime`
+- n/a
 
 ### Deprecated
 
 - n/a
+
+### Removed
+
+- n/a
+
+### Fixed
+
+- n/a
+
+### Performance
+
+- n/a
+
+### Security
+
+- n/a
+
+### Other
+
+- n/a
+
+## [0.8.0] - 2026-08-02 (https://crates.io/crates/allele/0.8.0)
+
+### Changed
+
+- Made `rayon` dependency optional behind "parallel" feature
+- Renamed crate from `genevo` to `allele`
+- Added validation that `replace_ratio`, `selection_ratio`, and `mutation_rate` are within `[0.0, 1.0]` and added the public `number_of_mutations` helper
+- `ProcessingTime` now formats durations human-readably through `std::fmt::Display` via `humantime`
 
 ### Removed
 
@@ -48,31 +74,19 @@ Please make sure to add your changes to the appropriate categories:
 - Fixed `GeneticAlgorithm` panicking on empty parents and missing best fitness values; `determine_best_solution` now returns a `Result`
 - Fixed signed `Fitness::abs_diff` overflow and restricted the blanket encoding marker implementations
 
-### Performance
-
-- n/a
-
-### Security
-
-- n/a
-
-### Other
-
-- n/a
-
-## [0.7.1] - 2022-03-13
+## [0.7.1] - 2022-03-13 (https://crates.io/crates/genevo/0.7.1)
 
 ### Fixed
 
 - Fix issue #23 Future compile error on Rust beta 1.60 in types/tests.rs
 
-## [0.7.0] - 2021-11-07
+## [0.7.0] - 2021-11-07 (https://crates.io/crates/genevo/0.7.0)
 
 ### Added
 
 - Add support for wasm32 targets
 
-## [0.6.0] - 2021-11-07
+## [0.6.0] - 2021-11-07 (https://crates.io/crates/genevo/0.6.0)
 
 ### Changed
 
@@ -87,14 +101,14 @@ Please make sure to add your changes to the appropriate categories:
 - Fix index out of bounds exception in `OrderOneCrossover` and `PartiallyMappedCrossover` operations.
 - Fix typos in docs.
 
-## [0.5.0] - 2019-11-10
+## [0.5.0] - 2019-11-10 (https://crates.io/crates/genevo/0.5.0)
 
 ### Changed
 
 - Bump `rand` crate dependency to version 0.7
 - Bump `rand_xoshiro` crate dependency to version 0.3
 
-## [0.4.0] - 2019-06-25
+## [0.4.0] - 2019-06-25 (https://crates.io/crates/genevo/0.4.0)
 
 ### Removed
 
@@ -112,7 +126,7 @@ Please make sure to add your changes to the appropriate categories:
 
 - Accumulate processing time for final simulation result
 
-## [0.3.0] - 2019-06-25
+## [0.3.0] - 2019-06-25 (https://crates.io/crates/genevo/0.3.0)
 
 ### Added
 
@@ -134,7 +148,7 @@ Please make sure to add your changes to the appropriate categories:
 
 - Minor internal changes to ease development
 
-## [0.2.0] - 2019-06-24
+## [0.2.0] - 2019-06-24 (https://crates.io/crates/genevo/0.2.0)
 
 ### Added
 
@@ -148,20 +162,20 @@ Please make sure to add your changes to the appropriate categories:
 - Migrate to Rust 2018 edition
 - Use `criterion` for benchmarking on stable Rust
 
-## [0.1.2] - 2017-11-07
+## [0.1.2] - 2017-11-07 (https://crates.io/crates/genevo/0.1.2)
 
 ### Fixed
 
 - Fix some mistakes in the documentation
 
-## [0.1.1] - 2017-11-06 : First words
+## [0.1.1] - 2017-11-06 (https://crates.io/crates/genevo/0.1.1)
 
 ### Added
 
 - Describe the basic building blocks (traits) defined in this crate.<br/>
   (documentation only, no code changes)
 
-## [0.1.0] - 2017-10-26 : Newborn
+## [0.1.0] - 2017-10-26 (https://crates.io/crates/genevo/0.1.0)
 
 ### Added
 
