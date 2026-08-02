@@ -2,7 +2,7 @@
 extern crate criterion;
 
 use criterion::{BenchmarkId, Criterion};
-use genevo::population::{build_population, BinaryEncodedGenomeBuilder};
+use allele::population::{build_population, BinaryEncodedGenomeBuilder};
 
 fn bench_build_population(c: &mut Criterion) {
     let seed = [42; 32];
