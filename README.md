@@ -1,99 +1,104 @@
 # allele
 
-[![Crates.io][crb]][crl]
-[![Docs.rs][dcb]][dcl]
-[![CI][ghb]][ghl]
-[![MIT/Apache][lib]][lil]
+[![Crates.io](https://img.shields.io/crates/v/allele)](https://crates.io/crates/allele)
+[![Crates.io](https://img.shields.io/crates/d/allele)](https://crates.io/crates/allele)
+[![Crates.io](https://img.shields.io/crates/l/allele)](https://crates.io/crates/allele)
+[![docs.rs](https://docs.rs/allele/badge.svg)](https://docs.rs/allele/)
 
-[crb]: https://img.shields.io/crates/v/allele.svg
-[dcb]: https://docs.rs/allele/badge.svg
-[ghb]: https://github.com/regexident/allele/actions/workflows/rust.yml/badge.svg
-[lib]: https://img.shields.io/badge/license-MIT%2FApache-blue.svg
+A modular framework for implementing and running genetic algorithm simulations.
 
-[crl]: https://crates.io/crates/allele/
-[dcl]: https://docs.rs/allele
-[ghl]: https://github.com/regexident/allele/actions/workflows/rust.yml
-[lil]: COPYRIGHT.txt
+---
 
-_allele_ provides building blocks to run simulations of optimization and search
-problems using [genetic algorithms][GA] ([GA]).
+## Usage
 
-The vision for _allele_ is to be a flexible and greatly extensible framework
-for implementing genetic algorithm applications.
+```rust
+use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
 
-_allele_ is written in [Rust]. The library's API utilizes lots of traits and
-types for modelling the domain of genetic algorithms.
+const TARGET: &str = "Hello, world!";
 
-[Documentation](https://docs.rs/allele)
+// A candidate solution is encoded as a `Vec<u8>` (the genotype).
+type Genome = Vec<u8>;
 
-## Features
+// The fitness function scores a genome against the target.
+#[derive(Clone, Debug)]
+struct FitnessCalc;
 
-This crate provides a default implementation of the genetic algorithm to be used
-to find solutions for a wide variety of search and optimization problems.
+impl FitnessFunction<Genome, usize> for FitnessCalc {
+    fn fitness_of(&self, genome: &Genome) -> usize {
+        genome.iter().zip(TARGET.bytes()).filter(|(g, t)| *g == t).count()
+    }
 
-The implementation is split into building blocks which are all represented by
-traits. This crate provides most common implementation for all building blocks.
-So it can be used for many problems out of the box.
+    fn average(&self, fitness_values: &[usize]) -> usize {
+        fitness_values.iter().sum::<usize>() / fitness_values.len()
+    }
 
-Anyway if one wants to use different implementations for one or the other
-building block it can be extended by implementing any of the traits in a more
-sophisticated and customized way.
+    fn highest_possible_fitness(&self) -> usize {
+        TARGET.len()
+    }
 
-The building blocks (defined as traits) are:
+    fn lowest_possible_fitness(&self) -> usize {
+        0
+    }
+}
 
-* Simulation
-* Algorithm
-* Termination
-* Operator
-* Population
-* Phenotype and Genotype
-* FitnessFunction
+fn main() {
+    let population = build_population()
+        .with_genome_builder(ValueEncodedGenomeBuilder::new(TARGET.len(), 32, 126))
+        .of_size(200)
+        .uniform_at_random();
 
-The simulation can run an algorithm that is executed in a loop. An algorithm
-implements the steps to be done for each iteration of the loop. The provided
-implementation of the genetic algorithm implements the `Algorithm` trait and
-can therefore be executed by the `Simulator` which is the provided
-implementation of the `Simulation` trait.
+    let mut sim = simulate(
+        genetic_algorithm()
+            .with_evaluation(FitnessCalc)
+            .with_selection(MaximizeSelector::new(0.7, 2))
+            .with_crossover(MultiPointCrossBreeder::new(2))
+            .with_mutation(RandomValueMutator::new(0.1, 32, 126))
+            .with_reinsertion(ElitistReinserter::new(FitnessCalc, true, 0.7))
+            .with_initial_population(population)
+            .build(),
+    )
+    .until(or(
+        FitnessLimit::new(FitnessCalc.highest_possible_fitness()),
+        GenerationLimit::new(1000),
+    ))
+    .build();
 
-The `Simulator` holds state about the simulation and tracks statistics about
-the execution of the algorithm, such as number of iterations and processing
-time.
+    loop {
+        match sim.step() {
+            Ok(SimResult::Final(step, _, _, stop_reason)) => {
+                let genome = step.result.best_solution.solution.genome;
+                println!("{stop_reason}: {}", String::from_utf8(genome).unwrap());
+                break;
+            }
+            Ok(SimResult::Intermediate(_)) => {}
+            Err(error) => {
+                eprintln!("{error}");
+                break;
+            }
+        }
+    }
+}
+```
 
-The simulation runs until the termination criteria are met. The termination
-criteria can be a single one such as max number of iterations or a logical
-combination of multiple termination criteria, e.g. max number of iterations
-OR a minimum fitness value has been reached. Of coarse `Termination` is a 
-trait as well and one can implement any termination criteria he/she can think
-of.
+## Overview
 
-The algorithm can make use of operators that perform different stages of the
-algorithm. E.g. the basic genetic algorithm defines the stages: selection,
-crossover, mutation and accepting. These stages are performed by the appropriate
-operators: `SelectionOp`, `CrossoverOp`, `MutationOp`, `RecombinationOp` and
-`ReinsertionOp`.
+`allele` splits the genetic algorithm into building blocks, each modeled as a trait:
 
-This crate provides multiple implementations for each one of those operators.
-So one can experiment with combining the different implementations to compose
-the best algorithm for a specific search or optimization problem. Now you may
-have guessed that the defined operators are traits as well and you are free
-to implement any of these operators in a way that suits best for your problem
-and plug them into the provided implementation of the genetic algorithm.
+| Building block    | Responsibility                                                     |
+| ----------------- | ------------------------------------------------------------------ |
+| `Simulation`      | Runs an `Algorithm` in a loop, tracking iterations and time         |
+| `Algorithm`       | Performs the steps of one evolution cycle (`GeneticAlgorithm`)      |
+| `Termination`     | Decides when the simulation stops (limits, combinable via `or`/`and`) |
+| `Operator`        | Stages of the algorithm: `SelectionOp`, `CrossoverOp`, `MutationOp`, `ReinsertionOp` |
+| `Population`      | A set of individuals, built via `PopulationBuilder` / `GenomeBuilder` |
+| `Genotype`/`Phenotype` | The candidate solution's encoding and its problem-domain form |
+| `FitnessFunction` | Scores how good a candidate solution is                             |
 
-The genetic algorithm needs a population that it evolves with each iteration.
-A population contains a number of individuals. Each individual represents a
-possible candidate solution for an optimization problem for which the best 
-solution is searched for. This crate provides a `PopulationBuilder` to build 
-population of genomes. To run the population builder it needs an implementation
-of the `GenomeBuilder` trait. A `GenomeBuilder` defines how to create one 
-individual (or genome) within the population.
+Ready-made implementations are provided for every building block, so most problems
+work out of the box. For problems that need something different, implement the
+trait and plug it into the provided `GeneticAlgorithm`.
 
-Last but maybe most important are the traits `Phenotype`, `Genotype` and
-`FitnessFunction`. These are the traits which define the domain of the
-optimization problem. They must be implemented individually for each application
-of the genetic algorithm.
-
-Enough words about the building blocks. Show me some concrete examples. Have
-a look at the examples in the examples folder to find out how to use this crate:
+## Examples
 
 * [knapsack](./examples/knapsack/main.rs): tries to solve the
   [0-1 knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem)
@@ -102,81 +107,50 @@ a look at the examples in the examples folder to find out how to use this crate:
 * [queens](./examples/queens/main.rs): searches for solutions of the
   [N Queens Problem](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
 
+## Crate features
 
-## Usage
+| Feature        | Default | Description                                            |
+| -------------- | ------- | ------------------------------------------------------ |
+| `fixedbitset`  | no      | Provides `Fixedbitset` as a `Genotype`                 |
+| `smallvec`     | no      | Provides `Smallvec` as a `Genotype`                    |
+| `parallel`     | no      | Enables multithreading (via `rayon`)                   |
+| `wasm-bindgen` | no      | Enables support for `wasm32-unknown-unknown` targets   |
 
-Add this to your `Cargo.toml`:
+Since version 0.7.0 `allele` supports wasm targets. To use `allele` for target
+`wasm32-unknown-unknown` enable the `wasm-bindgen` feature. Note: multithreading
+is not available on wasm32 targets!
 
-```toml
-[dependencies]
-allele = "0.7"
-```
+## Documentation
 
-## Crate Features
-
-`allele` provides additional data types to be used as genotypes through optional crate features:
-
-* `fixedbitset`: provides `Fixedbitset` to be used as genotype
-* `Smallvec`: provides `Smallvec` to be used as genotype
-* `parallel`: enables multithreading (implemented using `rayon`)
-
-since version 0.7.0 `allele` supports wasm targets. To use `allele` for target
-`wasm32-unknown-unknown` enable the crate feature `wasm-bindgen`. Note: on wasm32 targets
-multithreading is not available!
-
-```toml
-[dependencies]
-allele = { version = "0.7", features = ["wasm-bindgen"] }
-```
+Please refer to the documentation on [docs.rs](https://docs.rs/allele).
 
 ## Acknowledgments
 
-allele is a renamed continuation of [genevo][genevo], a genetic algorithm
-framework originally created by Harald Maida and the contributors at
-Innoave.com. The project is dual-licensed under MIT/Apache-2.0; see
-[NOTICE](NOTICE) and [COPYRIGHT.txt](COPYRIGHT.txt) for attribution details.
+`allele` is a renamed continuation of [genevo], a genetic algorithm framework
+originally created by Harald Maida and the contributors at Innoave.com. The
+project is dual-licensed under MIT/Apache-2.0; see [NOTICE](NOTICE) and
+[COPYRIGHT.txt](COPYRIGHT.txt) for attribution details.
 
-## References
+## Contributing
 
-I started this project mainly to learn about genetic algorithms (GAs). During
-this journey I searched a lot for information about GA. Here are the links to
-sources of information about GA that I found most useful for me. 
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our
+[code of conduct](https://www.rust-lang.org/conduct.html), and the process for
+submitting pull requests to us.
 
-[[JFGA]]: Jeremy Fisher: Genetic Algorithms
+## Versioning
 
-[JFGA]: https://www.youtube.com/watch?v=7J-DfS52bnI&t=302s
+We use [SemVer](http://semver.org/) for versioning. For the versions available,
+see the [tags on this repository](https://github.com/regexident/allele/tags).
 
-[[OBI98]]: Marek Obitko: Genetic Algorithms Tutorial
+## License
 
-[OBI98]: http://www.obitko.com/tutorials/genetic-algorithms/
+This project is dual-licensed under the [**MIT**][mit-license] and
+[**Apache-2.0**][apache-license] licenses – see the
+[LICENSE_MIT.txt](LICENSE_MIT.txt)/[LICENSE_APACHE.txt](LICENSE_APACHE.txt) files
+for details.
 
-[[GEAT]]: GEATbx: Evolutionary Algorithms
- 
-[GEAT]: http://www.geatbx.com/docu/algindex.html
-
-[[IGAYT]]: Noureddin Sadawi: A Practical Introduction to Genetic Algorithms
- 
-[IGAYT]: https://www.youtube.com/playlist?list=PLea0WJq13cnARQILcbHUPINYLy1lOSmjH 
-
-[[CT9YT]]: The Coding Train: 9: Genetic Algorithms - The Nature of Code
-
-[CT9YT]: https://www.youtube.com/playlist?list=PLRqwX-V7Uu6bJM3VgzjNV5YxVxUwzALHV
-
-[[BT95]]: Tobias Blickle, Lothar Thiele, 1995: A Comparison of Selection Schemes used in Genetic Algorithms.
-
-[BT95]: http://www.tik.ee.ethz.ch/file/6c0e384dceb283cd4301339a895b72b8/TIK-Report11.pdf
-
-[[RRCGH]]: StefanoD: Rust_Random_Choice Rust library.
-
-[RRCGH]: https://github.com/StefanoD/Rust_Random_Choice
-
-[[TSP95]]: TSPLIB95: library of sample instances for the TSP (and related problems)
-
-[TSP95]: http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/index.html
-
---------------------------------------------------------------------------------
-[GA]: https://en.wikipedia.org/wiki/Genetic_algorithm
-[Rust]: https://www.rust-lang.org/
+[mit-license]: https://www.tldrlegal.com/license/mit-license
+[apache-license]: https://www.tldrlegal.com/l/apache-license-2-0-apache-2-0
 [genevo]: https://github.com/innoave/genevo
 
 Copyright &copy; 2017-2022, Innoave.com and contributors
