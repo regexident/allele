@@ -1,12 +1,13 @@
 #[macro_use]
 extern crate criterion;
 
-use allele::random::{get_rng, random_seed};
 use criterion::{BenchmarkId, Criterion};
 use rand::{
     RngExt,
     distr::{Bernoulli, Distribution},
 };
+
+use allele::random::{get_rng, random_seed};
 
 fn generate_vec_of_random_bool_the_functional_way(c: &mut Criterion) {
     let mut rng = get_rng(random_seed());

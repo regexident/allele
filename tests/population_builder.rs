@@ -61,8 +61,9 @@ fn create_population_of_custom_genotype_uniform_at_random() {
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_population_builder {
 
-    use super::*;
     use fixedbitset::FixedBitSet;
+
+    use super::*;
 
     #[test]
     fn create_population_of_fixedbitset_uniform_at_random() {

@@ -1,10 +1,12 @@
+use std::fmt::Debug;
+
+use rand::seq::IndexedRandom;
+
 use crate::{
     genetic::Genotype,
     operator::{GeneticOperator, MutationOp},
     random::{Rng, RngExt, number_of_mutations, random_index},
 };
-use rand::seq::IndexedRandom;
-use std::fmt::Debug;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct RandomValueMutator<G>
@@ -113,10 +115,12 @@ where
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_random_genome_mutation {
-    use super::{RandomGenomeMutation, number_of_mutations, random_index};
-    use crate::genetic::Genotype;
     use fixedbitset::FixedBitSet;
     use rand::{Rng, RngExt};
+
+    use crate::genetic::Genotype;
+
+    use super::{RandomGenomeMutation, number_of_mutations, random_index};
 
     impl RandomGenomeMutation for FixedBitSet {
         type Dna = bool;
@@ -146,10 +150,12 @@ mod fixedbitset_random_genome_mutation {
 
 #[cfg(feature = "smallvec")]
 mod smallvec_random_genome_mutation {
-    use super::{RandomGenomeMutation, RandomValueMutation, number_of_mutations, random_index};
+    use std::fmt::Debug;
+
     use rand::Rng;
     use smallvec::{Array, SmallVec};
-    use std::fmt::Debug;
+
+    use super::{RandomGenomeMutation, RandomValueMutation, number_of_mutations, random_index};
 
     impl<V, A> RandomGenomeMutation for SmallVec<A>
     where

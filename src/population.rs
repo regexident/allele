@@ -98,14 +98,16 @@
 //! }
 //! ```
 
+use std::{fmt::Debug, marker::PhantomData};
+
+use rand::distr::uniform::SampleUniform;
+#[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
+use rayon;
+
 use crate::{
     genetic::Genotype,
     random::{Prng, Rng, RngExt, Seed, get_rng, random_seed},
 };
-use rand::distr::uniform::SampleUniform;
-#[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
-use rayon;
-use std::{fmt::Debug, marker::PhantomData};
 
 /// The `Population` defines a set of possible solutions to the optimization
 /// or search problem.
@@ -404,9 +406,10 @@ where
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_genome_builder {
-    use super::{BinaryEncodedGenomeBuilder, GenomeBuilder};
     use fixedbitset::FixedBitSet;
     use rand::{Rng, RngExt};
+
+    use super::{BinaryEncodedGenomeBuilder, GenomeBuilder};
 
     impl GenomeBuilder<FixedBitSet> for BinaryEncodedGenomeBuilder {
         fn build_genome<R>(&self, _index: usize, rng: &mut R) -> FixedBitSet
@@ -424,10 +427,12 @@ mod fixedbitset_genome_builder {
 
 #[cfg(feature = "smallvec")]
 mod smallvec_genome_builder {
-    use super::{BinaryEncodedGenomeBuilder, GenomeBuilder, ValueEncodedGenomeBuilder};
+    use std::fmt::Debug;
+
     use rand::{Rng, RngExt, distr::uniform::SampleUniform};
     use smallvec::{Array, SmallVec};
-    use std::fmt::Debug;
+
+    use super::{BinaryEncodedGenomeBuilder, GenomeBuilder, ValueEncodedGenomeBuilder};
 
     impl<A> GenomeBuilder<SmallVec<A>> for BinaryEncodedGenomeBuilder
     where

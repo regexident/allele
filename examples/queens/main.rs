@@ -1,12 +1,13 @@
 //! The `queens` example searches for solutions of the
 //! [N Queens Problem](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
 
+use humantime::format_duration;
+
 use allele::{
     operator::prelude::*,
     prelude::*,
     random::{Rng, RngExt},
 };
-use humantime::format_duration;
 
 const NUMBER_OF_QUEENS: i16 = 16;
 const NUM_ROWS: i16 = NUMBER_OF_QUEENS;

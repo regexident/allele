@@ -2,8 +2,9 @@
 //! known as the
 //! [infinite monkey theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem).
 
-use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
 use humantime::format_duration;
+
+use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
 
 // const TARGET_TEXT: &str = "See how a genius creates a legend";
 const TARGET_TEXT: &str = "Be not afraid of greatness! Some are great, some achieve greatness, \

@@ -1,15 +1,16 @@
+use std::{
+    error::Error,
+    fmt::{self, Debug, Display},
+    hash::Hash,
+    time::Instant,
+};
+
 use crate::{
     algorithm::Algorithm,
     random::{Prng, Seed, get_rng, random_seed},
     simulation::{SimResult, Simulation, SimulationBuilder, State},
     statistic::{ProcessingTime, TrackProcessingTime},
     termination::{StopFlag, Termination},
-};
-use std::{
-    error::Error,
-    fmt::{self, Debug, Display},
-    hash::Hash,
-    time::Instant,
 };
 
 /// The `simulate` function creates a new `Simulator` for the given

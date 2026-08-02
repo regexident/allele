@@ -7,8 +7,9 @@ pub use rand::{
     seq::{IndexedRandom, SliceRandom},
 };
 
-use crate::genetic::AsScalar;
 use rand_xoshiro::Xoshiro256Plus;
+
+use crate::genetic::AsScalar;
 
 /// The `Prng` is the pseudo random number generator used through out this
 /// library.

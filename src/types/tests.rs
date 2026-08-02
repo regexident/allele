@@ -219,9 +219,10 @@ fn abs_diff_of_unsigned_1_and_max() {
 }
 
 mod fitness_properties {
-    use super::*;
     use proptest::prelude::ProptestConfig;
     use test_strategy::proptest;
+
+    use super::*;
 
     #[proptest(ProptestConfig { cases: 500, failure_persistence: None, ..ProptestConfig::default() })]
     fn unsigned_abs_diff_is_symmetric(a: u32, b: u32) {

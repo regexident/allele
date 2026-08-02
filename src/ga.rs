@@ -25,7 +25,16 @@
 
 pub mod builder;
 
-use self::builder::EmptyGeneticAlgorithmBuilder;
+use std::{
+    fmt::{self, Display},
+    marker::PhantomData,
+    rc::Rc,
+    time::Instant,
+};
+
+#[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
+use rayon;
+
 use crate::{
     algorithm::{Algorithm, BestSolution, EvaluatedPopulation},
     genetic::{Fitness, FitnessFunction, Genotype, Offspring, Parents},
@@ -34,14 +43,8 @@ use crate::{
     random::Prng,
     statistic::{ProcessingTime, TimedResult, TrackProcessingTime, timed},
 };
-#[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
-use rayon;
-use std::{
-    fmt::{self, Display},
-    marker::PhantomData,
-    rc::Rc,
-    time::Instant,
-};
+
+use self::builder::EmptyGeneticAlgorithmBuilder;
 
 /// The `State` struct holds the results of one pass of the genetic algorithm
 /// loop, i.e. the processing of the evolution from one generation to the next

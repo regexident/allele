@@ -4,9 +4,10 @@
 //!
 //! [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem)
 
-use allele::{operator::prelude::*, population::*, prelude::*};
 use humantime::format_duration;
 use smallvec::SmallVec;
+
+use allele::{operator::prelude::*, population::*, prelude::*};
 
 #[derive(Debug, Clone)]
 struct Item {
