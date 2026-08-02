@@ -4,7 +4,7 @@ extern crate galvanic_assert;
 
 use galvanic_assert::matchers::*;
 
-use genevo::{
+use allele::{
     population::{BinaryEncodedGenomeBuilder, ValueEncodedGenomeBuilder},
     prelude::*,
     random::Rng,
