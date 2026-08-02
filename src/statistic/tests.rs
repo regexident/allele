@@ -1,8 +1,7 @@
 mod timed_fn {
-
-    use super::*;
-    use crate::statistic::timed;
     use std::{thread, time::Duration};
+
+    use crate::statistic::timed;
 
     #[test]
     fn timed_function_calls_return_a_time_greater_0() {
@@ -26,9 +25,9 @@ mod timed_fn {
 }
 
 mod processing_time_display {
+    use std::time::Duration;
 
     use crate::statistic::ProcessingTime;
-    use std::time::Duration;
 
     #[test]
     fn zero_is_formatted_as_0s() {

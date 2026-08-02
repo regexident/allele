@@ -1,14 +1,15 @@
 use super::*;
 
 mod population_builder {
-
-    use super::*;
-    use crate::random::{get_rng, random_seed};
     #[cfg(feature = "fixedbitset")]
     use fixedbitset::FixedBitSet;
     use proptest::prelude::*;
     #[cfg(feature = "smallvec")]
     use smallvec::SmallVec;
+
+    use crate::random::{get_rng, random_seed};
+
+    use super::*;
 
     proptest! {
 

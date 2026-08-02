@@ -1,8 +1,9 @@
 use proptest::prelude::*;
 use rand::Rng;
 
-mod random_cut_points_from_range {
+use super::*;
 
+mod random_cut_points_from_range {
     use super::*;
 
     #[test]
@@ -129,7 +130,6 @@ mod random_n_cut_points {
 }
 
 mod weighted_distribution {
-
     use super::*;
 
     #[test]
