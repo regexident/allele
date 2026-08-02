@@ -1,0 +1,18 @@
+allele
+
+Copyright (c) 2017-2022, The genevo developers.
+Copyright (c) 2026, The allele developers.
+
+allele is a renamed continuation of the "genevo" project, originally created
+by Harald Maida (Innoave.com). It is dual-licensed under the MIT License and
+the Apache License, Version 2.0.
+
+Contributors to the original "genevo" project:
+  Harald Maida
+  Dario Götz
+  Wenping Guo
+
+Contributors to "allele":
+  Vincent Esche
+
+See COPYRIGHT.txt, LICENSE_MIT.txt and LICENSE_APACHE.txt for the full terms.
