@@ -1,9 +1,3 @@
-#[cfg(test)]
-#[macro_use]
-extern crate galvanic_assert;
-
-use galvanic_assert::matchers::*;
-
 use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
 
 #[test]
@@ -46,7 +40,7 @@ fn create_new_genetic_algorithm_application() {
         .with_initial_population(initial_population)
         .build();
 
-    assert_that!(&algorithm.selector().selection_ratio(), eq(0.7));
-    assert_that!(&algorithm.selector().num_individuals_per_parents(), eq(2));
-    assert_that!(&algorithm.breeder().num_cut_points(), eq(3));
+    assert_eq!(algorithm.selector().selection_ratio(), 0.7);
+    assert_eq!(algorithm.selector().num_individuals_per_parents(), 2);
+    assert_eq!(algorithm.breeder().num_cut_points(), 3);
 }
