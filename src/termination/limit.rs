@@ -1,10 +1,10 @@
-//! The `limiter` package provides `Termination` functions that stop the
+//! The `limit` module provides `Termination` functions that stop the
 //! simulation when a certain limit is reached.
 //!
 //! Provided limiters are:
 //! * `FitnessLimit` - stops the simulation after a solution with a certain
 //!   fitness has been found.
-//! * `IterationLimit` - stops the simulation after a maximum number of
+//! * `GenerationLimit` - stops the simulation after a maximum number of
 //!   iterations has been processed.
 //! * `TimeLimit` - stops the simulation after a the specified time limit
 //!   has been reached.

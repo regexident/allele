@@ -37,15 +37,14 @@
 //! The simulation runs until the termination criteria are met. The termination
 //! criteria can be a single one such as max number of iterations or a logical
 //! combination of multiple termination criteria, e.g. max number of iterations
-//! OR a minimum fitness value has been reached. Of coarse `Termination` is a
+//! OR a minimum fitness value has been reached. Of course `Termination` is a
 //! trait as well and one can implement any termination criteria he/she can think
 //! of.
 //!
 //! The algorithm can make use of operators that perform different stages of the
 //! algorithm. E.g. the basic genetic algorithm defines the stages: selection,
 //! crossover, mutation and accepting. These stages are performed by the appropriate
-//! operators: `SelectionOp`, `CrossoverOp`, `MutationOp`, `RecombinationOp` and
-//! `ReinsertionOp`.
+//! operators: `SelectionOp`, `CrossoverOp`, `MutationOp` and `ReinsertionOp`.
 //!
 //! This crate provides multiple implementations for each one of those operators.
 //! So one can experiment with combining the different implementations to compose
