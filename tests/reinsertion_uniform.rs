@@ -6,7 +6,7 @@ use test_strategy::proptest;
 use allele::{
     algorithm::EvaluatedPopulation,
     operator::{ReinsertionOp, prelude::*},
-    random::{Prng, Rng, SeedableRng},
+    random::{Prng, RngExt, SeedableRng},
 };
 
 #[proptest(ProptestConfig {
@@ -23,7 +23,7 @@ fn combine_returns_population_of_original_size(
 
     let individuals: Vec<Vec<i8>> = (0..population_size).map(|i| vec![i as i8; 4]).collect();
     let fitness_values: Vec<i32> = (0..population_size)
-        .map(|_| rng.gen_range(-100i32..100i32))
+        .map(|_| rng.random_range(-100i32..100i32))
         .collect();
     let highest = *fitness_values.iter().max().unwrap();
     let lowest = *fitness_values.iter().min().unwrap();
@@ -37,7 +37,7 @@ fn combine_returns_population_of_original_size(
     );
 
     let mut offspring_to_combine: Vec<Vec<i8>> = (0..population_size)
-        .map(|_| (0..4).map(|_| rng.gen_range(-10i8..=10i8)).collect())
+        .map(|_| (0..4).map(|_| rng.random_range(-10i8..=10i8)).collect())
         .collect();
     let original_offspring = offspring_to_combine.clone();
 

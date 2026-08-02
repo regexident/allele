@@ -1,4 +1,4 @@
-use allele::{operator::prelude::*, prelude::*};
+use allele::{operator::prelude::*, prelude::*, random::RngExt};
 
 #[derive(Clone, Debug, PartialEq)]
 struct TrivialGenomeBuilder;
@@ -8,7 +8,7 @@ impl GenomeBuilder<Vec<i8>> for TrivialGenomeBuilder {
     where
         R: Rng + Sized,
     {
-        (0..4).map(|_| rng.gen_range(-10i8..=10i8)).collect()
+        (0..4).map(|_| rng.random_range(-10i8..=10i8)).collect()
     }
 }
 

@@ -14,7 +14,7 @@
 use crate::{
     genetic::{Children, Genotype, Parents},
     operator::{CrossoverOp, GeneticOperator},
-    random::{Rng, random_n_cut_points},
+    random::{Rng, RngExt, random_n_cut_points},
 };
 use std::fmt::Debug;
 
@@ -56,7 +56,7 @@ where
         while num_parents > offspring.len() {
             // for each value in the genotype pick the value of a randomly chosen parent
             let genome: Vec<V> = (0..genome_length)
-                .map(|locus| parents[rng.gen_range(0..num_parents)][locus].clone())
+                .map(|locus| parents[rng.random_range(0..num_parents)][locus].clone())
                 .collect();
             offspring.push(genome);
         }
@@ -72,7 +72,7 @@ mod fixedbitset_uniform_cross_breeder {
         operator::CrossoverOp,
     };
     use fixedbitset::FixedBitSet;
-    use rand::Rng;
+    use rand::{Rng, RngExt};
 
     impl CrossoverOp<FixedBitSet> for UniformCrossBreeder {
         fn crossover<R>(&self, parents: Parents<FixedBitSet>, rng: &mut R) -> Children<FixedBitSet>
@@ -86,7 +86,7 @@ mod fixedbitset_uniform_cross_breeder {
             while num_parents > offspring.len() {
                 // for each bit in the genotype pick the bit of a randomly chosen parent
                 let genome: FixedBitSet = (0..genome_length)
-                    .filter(|&locus| parents[rng.gen_range(0..num_parents)][locus])
+                    .filter(|&locus| parents[rng.random_range(0..num_parents)][locus])
                     .collect();
                 offspring.push(genome);
             }
@@ -99,7 +99,7 @@ mod fixedbitset_uniform_cross_breeder {
 mod smallvec_uniform_cross_breeder {
     use super::UniformCrossBreeder;
     use crate::operator::CrossoverOp;
-    use rand::Rng;
+    use rand::{Rng, RngExt};
     use smallvec::{Array, SmallVec};
     use std::fmt::Debug;
 
@@ -119,7 +119,7 @@ mod smallvec_uniform_cross_breeder {
             while num_parents > offspring.len() {
                 // for each value in the genotype pick the value of a randomly chosen parent
                 let genome: SmallVec<A> = (0..genome_length)
-                    .map(|locus| parents[rng.gen_range(0..num_parents)][locus].clone())
+                    .map(|locus| parents[rng.random_range(0..num_parents)][locus].clone())
                     .collect();
                 offspring.push(genome);
             }
@@ -248,7 +248,7 @@ where
             let mut p_index = num_parents;
             loop {
                 loop {
-                    let index = rng.gen_range(0..num_parents);
+                    let index = rng.random_range(0..num_parents);
                     if index != p_index {
                         p_index = index;
                         break;
@@ -274,7 +274,7 @@ where
 mod smallvec_multipoint_crossover {
     use super::{MultiPointCrossover, random_n_cut_points};
     use crate::genetic::{Children, Parents};
-    use rand::Rng;
+    use rand::{Rng, RngExt};
     use smallvec::{Array, SmallVec};
     use std::fmt::Debug;
 
@@ -312,7 +312,7 @@ mod smallvec_multipoint_crossover {
                 let mut p_index = num_parents;
                 loop {
                     loop {
-                        let index = rng.gen_range(0..num_parents);
+                        let index = rng.random_range(0..num_parents);
                         if index != p_index {
                             p_index = index;
                             break;
@@ -340,7 +340,7 @@ mod fixedbitset_multipoint_crossover {
     use super::{MultiPointCrossover, random_n_cut_points};
     use crate::genetic::{Children, Parents};
     use fixedbitset::FixedBitSet;
-    use rand::Rng;
+    use rand::{Rng, RngExt};
 
     impl MultiPointCrossover for FixedBitSet {
         type Dna = bool;
@@ -372,7 +372,7 @@ mod fixedbitset_multipoint_crossover {
                 let mut p_index = num_parents;
                 loop {
                     loop {
-                        let index = rng.gen_range(0..num_parents);
+                        let index = rng.random_range(0..num_parents);
                         if index != p_index {
                             p_index = index;
                             break;
