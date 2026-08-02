@@ -88,6 +88,11 @@ impl TournamentSelector {
     /// selected on every call of the `select_from` function and the number
     /// of individuals in the population.
     pub fn set_selection_ratio(&mut self, value: f64) {
+        assert!(
+            (0.0..=1.0).contains(&value),
+            "selection_ratio must be in [0.0, 1.0], got {}",
+            value
+        );
         self.selection_ratio = value;
     }
 

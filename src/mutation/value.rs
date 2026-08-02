@@ -1,7 +1,7 @@
 use crate::{
     genetic::Genotype,
     operator::{GeneticOperator, MutationOp},
-    random::{random_index, Rng},
+    random::{number_of_mutations, random_index, Rng},
 };
 use rand::seq::SliceRandom;
 use std::fmt::Debug;
@@ -25,6 +25,11 @@ where
         min_value: <G as Genotype>::Dna,
         max_value: <G as Genotype>::Dna,
     ) -> Self {
+        assert!(
+            (0.0..=1.0).contains(&mutation_rate),
+            "mutation_rate must be in [0.0, 1.0], got {}",
+            mutation_rate
+        );
         RandomValueMutator {
             mutation_rate,
             min_value,
@@ -91,8 +96,7 @@ where
         R: Rng + Sized,
     {
         let genome_length = genome.len();
-        let num_mutations =
-            ((genome_length as f64 * mutation_rate) + rng.gen::<f64>()).floor() as usize;
+        let num_mutations = number_of_mutations(genome_length, mutation_rate, rng);
         let mut mutated = genome;
         for _ in 0..num_mutations {
             let index = random_index(rng, genome_length);
@@ -109,7 +113,7 @@ where
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_random_genome_mutation {
-    use super::{random_index, RandomGenomeMutation};
+    use super::{number_of_mutations, random_index, RandomGenomeMutation};
     use crate::genetic::Genotype;
     use fixedbitset::FixedBitSet;
     use rand::Rng;
@@ -128,8 +132,7 @@ mod fixedbitset_random_genome_mutation {
             R: Rng + Sized,
         {
             let genome_length = genome.len();
-            let num_mutations =
-                ((genome_length as f64 * mutation_rate) + rng.gen::<f64>()).floor() as usize;
+            let num_mutations = number_of_mutations(genome_length, mutation_rate, rng);
             let mut mutated = genome;
             for _ in 0..num_mutations {
                 let bit = random_index(rng, genome_length);
@@ -143,7 +146,7 @@ mod fixedbitset_random_genome_mutation {
 
 #[cfg(feature = "smallvec")]
 mod smallvec_random_genome_mutation {
-    use super::{random_index, RandomGenomeMutation, RandomValueMutation};
+    use super::{number_of_mutations, random_index, RandomGenomeMutation, RandomValueMutation};
     use rand::Rng;
     use smallvec::{Array, SmallVec};
     use std::fmt::Debug;
@@ -166,8 +169,7 @@ mod smallvec_random_genome_mutation {
             R: Rng + Sized,
         {
             let genome_length = genome.len();
-            let num_mutations =
-                ((genome_length as f64 * mutation_rate) + rng.gen::<f64>()).floor() as usize;
+            let num_mutations = number_of_mutations(genome_length, mutation_rate, rng);
             let mut mutated = genome;
             for _ in 0..num_mutations {
                 let index = random_index(rng, genome_length);
@@ -239,6 +241,11 @@ where
         min_value: <G as Genotype>::Dna,
         max_value: <G as Genotype>::Dna,
     ) -> Self {
+        assert!(
+            (0.0..=1.0).contains(&mutation_rate),
+            "mutation_rate must be in [0.0, 1.0], got {}",
+            mutation_rate
+        );
         BreederValueMutator {
             mutation_rate,
             mutation_range,
@@ -320,8 +327,7 @@ where
         R: Rng + Sized,
     {
         let genome_length = genome.len();
-        let num_mutations =
-            ((genome_length as f64 * mutation_rate) + rng.gen::<f64>()).floor() as usize;
+        let num_mutations = number_of_mutations(genome_length, mutation_rate, rng);
         let mut mutated = genome;
         for _ in 0..num_mutations {
             let index = random_index(rng, genome_length);

@@ -56,6 +56,11 @@ where
 {
     /// Constructs a new instance of the `ElitistReinserter`.
     pub fn new(fitness_evaluator: E, offspring_has_precedence: bool, replace_ratio: f64) -> Self {
+        assert!(
+            (0.0..=1.0).contains(&replace_ratio),
+            "replace_ratio must be in [0.0, 1.0], got {}",
+            replace_ratio
+        );
         ElitistReinserter {
             fitness_evaluator: Box::new(fitness_evaluator),
             offspring_has_precedence,
@@ -85,6 +90,11 @@ where
     /// Set the `replace_ratio` of this `ElitistReinserter` to the given
     /// value. The value must be between 0 and 1.0 (inclusive).
     pub fn set_replace_ratio(&mut self, value: f64) {
+        assert!(
+            (0.0..=1.0).contains(&value),
+            "replace_ratio must be in [0.0, 1.0], got {}",
+            value
+        );
         self.replace_ratio = value;
     }
 }
@@ -96,7 +106,7 @@ where
     E: FitnessFunction<G, F>,
 {
     fn name() -> String {
-        "Uniform-Reinserter".to_string()
+        "Elitist-Reinserter".to_string()
     }
 }
 

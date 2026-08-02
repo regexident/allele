@@ -3,7 +3,7 @@
 
 use crate::{
     operator::{GeneticOperator, MutationOp},
-    random::{random_cut_points, Rng},
+    random::{number_of_mutations, random_cut_points, Rng},
 };
 use std::fmt::Debug;
 
@@ -15,6 +15,11 @@ pub struct InsertOrderMutator {
 
 impl InsertOrderMutator {
     pub fn new(mutation_rate: f64) -> Self {
+        assert!(
+            (0.0..=1.0).contains(&mutation_rate),
+            "mutation_rate must be in [0.0, 1.0], got {}",
+            mutation_rate
+        );
         InsertOrderMutator { mutation_rate }
     }
 
@@ -23,6 +28,11 @@ impl InsertOrderMutator {
     }
 
     pub fn set_mutation_rate(&mut self, value: f64) {
+        assert!(
+            (0.0..=1.0).contains(&value),
+            "mutation_rate must be in [0.0, 1.0], got {}",
+            value
+        );
         self.mutation_rate = value;
     }
 }
@@ -42,8 +52,7 @@ where
         R: Rng + Sized,
     {
         let genome_length = genome.len();
-        let num_mutations =
-            ((genome_length as f64 * self.mutation_rate) + rng.gen::<f64>()).floor() as usize;
+        let num_mutations = number_of_mutations(genome_length, self.mutation_rate, rng);
         let mut mutated = genome;
         for _ in 0..num_mutations {
             let (locus1, locus2) = random_cut_points(rng, genome_length);
@@ -62,6 +71,11 @@ pub struct SwapOrderMutator {
 
 impl SwapOrderMutator {
     pub fn new(mutation_rate: f64) -> Self {
+        assert!(
+            (0.0..=1.0).contains(&mutation_rate),
+            "mutation_rate must be in [0.0, 1.0], got {}",
+            mutation_rate
+        );
         SwapOrderMutator { mutation_rate }
     }
 
@@ -70,6 +84,11 @@ impl SwapOrderMutator {
     }
 
     pub fn set_mutation_rate(&mut self, value: f64) {
+        assert!(
+            (0.0..=1.0).contains(&value),
+            "mutation_rate must be in [0.0, 1.0], got {}",
+            value
+        );
         self.mutation_rate = value;
     }
 }
@@ -89,8 +108,7 @@ where
         R: Rng + Sized,
     {
         let genome_length = genome.len();
-        let num_mutations =
-            ((genome_length as f64 * self.mutation_rate) + rng.gen::<f64>()).floor() as usize;
+        let num_mutations = number_of_mutations(genome_length, self.mutation_rate, rng);
         let mut mutated = genome;
         for _ in 0..num_mutations {
             let (locus1, locus2) = random_cut_points(rng, genome_length);

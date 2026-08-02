@@ -136,6 +136,16 @@ where
     rng.sample(Open01)
 }
 
+/// Returns the number of mutations to be performed on a genome of the given
+/// length for the given mutation rate.
+#[inline]
+pub fn number_of_mutations<R>(genome_length: usize, mutation_rate: f64, rng: &mut R) -> usize
+where
+    R: Rng + Sized,
+{
+    ((genome_length as f64 * mutation_rate) + rng.gen::<f64>()).floor() as usize
+}
+
 /// The `WeightedDistribution` is used to select values proportional to their
 /// weighted values.
 ///
