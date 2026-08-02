@@ -4,7 +4,7 @@ use test_strategy::proptest;
 use allele::{
     mutation::value::RandomValueMutator,
     operator::MutationOp,
-    random::{Prng, Rng, SeedableRng},
+    random::{Prng, RngExt, SeedableRng},
 };
 
 #[proptest(ProptestConfig { cases: 100, failure_persistence: None, ..ProptestConfig::default() })]
@@ -15,7 +15,7 @@ fn random_value_mutator_preserves_genome_length(
 ) {
     let mut rng = Prng::seed_from_u64(seed);
     let genome: Vec<i32> = (0..genome_length)
-        .map(|_| rng.gen_range(-1000i32..1000i32))
+        .map(|_| rng.random_range(-1000i32..1000i32))
         .collect();
     let mutator = RandomValueMutator::new(mutation_rate, -1000i32, 1000i32);
     let mutated = mutator.mutate(genome, &mut rng);
@@ -29,7 +29,7 @@ fn random_value_mutator_with_zero_rate_is_identity(
 ) {
     let mut rng = Prng::seed_from_u64(seed);
     let genome: Vec<i32> = (0..genome_length)
-        .map(|_| rng.gen_range(-1000i32..1000i32))
+        .map(|_| rng.random_range(-1000i32..1000i32))
         .collect();
     let mutator = RandomValueMutator::new(0.0, -1000i32, 1000i32);
     let mutated = mutator.mutate(genome.clone(), &mut rng);
@@ -46,7 +46,7 @@ fn random_value_mutator_genes_stay_within_bounds(
 ) {
     let mut rng = Prng::seed_from_u64(seed);
     let genome: Vec<i32> = (0..genome_length)
-        .map(|_| rng.gen_range(min_value..max_value))
+        .map(|_| rng.random_range(min_value..max_value))
         .collect();
     let mutator = RandomValueMutator::new(mutation_rate, min_value, max_value);
     let mutated = mutator.mutate(genome, &mut rng);

@@ -63,6 +63,7 @@
 //!
 //! ```rust
 //! use allele::prelude::*;
+//! use allele::random::RngExt;
 //!
 //! #[derive(Clone,Debug,PartialEq)]
 //! struct Pos {
@@ -80,7 +81,7 @@
 //!         (0..8).map(|row|
 //!             Pos {
 //!                 x: row,
-//!                 y: rng.gen_range(0..8)
+//!                 y: rng.random_range(0..8)
 //!             }
 //!         ).collect()
 //!     }
@@ -99,9 +100,9 @@
 
 use crate::{
     genetic::Genotype,
-    random::{Prng, Rng, Seed, get_rng, random_seed},
+    random::{Prng, Rng, RngExt, Seed, get_rng, random_seed},
 };
-use rand::distributions::uniform::SampleUniform;
+use rand::distr::uniform::SampleUniform;
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
 use rayon;
 use std::{fmt::Debug, marker::PhantomData};
@@ -356,7 +357,7 @@ impl GenomeBuilder<Vec<bool>> for BinaryEncodedGenomeBuilder {
     where
         R: Rng + Sized,
     {
-        (0..self.genome_length).map(|_| rng.r#gen()).collect()
+        (0..self.genome_length).map(|_| rng.random()).collect()
     }
 }
 
@@ -396,7 +397,7 @@ where
         R: Rng + Sized,
     {
         (0..self.genome_length)
-            .map(|_| rng.gen_range(self.min_value.clone()..self.max_value.clone()))
+            .map(|_| rng.random_range(self.min_value.clone()..self.max_value.clone()))
             .collect()
     }
 }
@@ -405,7 +406,7 @@ where
 mod fixedbitset_genome_builder {
     use super::{BinaryEncodedGenomeBuilder, GenomeBuilder};
     use fixedbitset::FixedBitSet;
-    use rand::Rng;
+    use rand::{Rng, RngExt};
 
     impl GenomeBuilder<FixedBitSet> for BinaryEncodedGenomeBuilder {
         fn build_genome<R>(&self, _index: usize, rng: &mut R) -> FixedBitSet
@@ -414,7 +415,7 @@ mod fixedbitset_genome_builder {
         {
             let mut genome = FixedBitSet::with_capacity(self.genome_length);
             for bit in 0..self.genome_length {
-                genome.set(bit, rng.r#gen());
+                genome.set(bit, rng.random());
             }
             genome
         }
@@ -424,7 +425,7 @@ mod fixedbitset_genome_builder {
 #[cfg(feature = "smallvec")]
 mod smallvec_genome_builder {
     use super::{BinaryEncodedGenomeBuilder, GenomeBuilder, ValueEncodedGenomeBuilder};
-    use rand::{Rng, distributions::uniform::SampleUniform};
+    use rand::{Rng, RngExt, distr::uniform::SampleUniform};
     use smallvec::{Array, SmallVec};
     use std::fmt::Debug;
 
@@ -436,7 +437,7 @@ mod smallvec_genome_builder {
         where
             R: Rng + Sized,
         {
-            (0..self.genome_length).map(|_| rng.r#gen()).collect()
+            (0..self.genome_length).map(|_| rng.random()).collect()
         }
     }
 
@@ -450,7 +451,7 @@ mod smallvec_genome_builder {
             R: Rng + Sized,
         {
             (0..self.genome_length)
-                .map(|_| rng.gen_range(self.min_value.clone()..self.max_value.clone()))
+                .map(|_| rng.random_range(self.min_value.clone()..self.max_value.clone()))
                 .collect()
         }
     }

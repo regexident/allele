@@ -1,9 +1,9 @@
 use crate::{
     genetic::Genotype,
     operator::{GeneticOperator, MutationOp},
-    random::{Rng, number_of_mutations, random_index},
+    random::{Rng, RngExt, number_of_mutations, random_index},
 };
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use std::fmt::Debug;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -116,7 +116,7 @@ mod fixedbitset_random_genome_mutation {
     use super::{RandomGenomeMutation, number_of_mutations, random_index};
     use crate::genetic::Genotype;
     use fixedbitset::FixedBitSet;
-    use rand::Rng;
+    use rand::{Rng, RngExt};
 
     impl RandomGenomeMutation for FixedBitSet {
         type Dna = bool;
@@ -136,7 +136,7 @@ mod fixedbitset_random_genome_mutation {
             let mut mutated = genome;
             for _ in 0..num_mutations {
                 let bit = random_index(rng, genome_length);
-                let value = rng.r#gen();
+                let value = rng.random();
                 mutated.set(bit, value);
             }
             mutated
@@ -199,14 +199,34 @@ macro_rules! impl_random_value_mutation {
                 fn random_mutated<R>(_: $t, min_value: &$t, max_value: &$t, rng: &mut R) -> $t
                     where R: Rng + Sized
                 {
-                    rng.gen_range(*min_value..*max_value)
+                    rng.random_range(*min_value..*max_value)
                 }
             }
         )*
     }
 }
 
-impl_random_value_mutation!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
+impl_random_value_mutation!(u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
+
+impl RandomValueMutation for usize {
+    #[inline]
+    fn random_mutated<R>(_: usize, min_value: &usize, max_value: &usize, rng: &mut R) -> usize
+    where
+        R: Rng + Sized,
+    {
+        rng.random_range(*min_value as u64..*max_value as u64) as usize
+    }
+}
+
+impl RandomValueMutation for isize {
+    #[inline]
+    fn random_mutated<R>(_: isize, min_value: &isize, max_value: &isize, rng: &mut R) -> isize
+    where
+        R: Rng + Sized,
+    {
+        rng.random_range(*min_value as i64..*max_value as i64) as isize
+    }
+}
 
 impl RandomValueMutation for bool {
     #[inline]
@@ -214,7 +234,7 @@ impl RandomValueMutation for bool {
     where
         R: Rng + Sized,
     {
-        rng.gen_bool(0.5)
+        rng.random_bool(0.5)
     }
 }
 

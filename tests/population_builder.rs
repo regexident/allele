@@ -1,7 +1,7 @@
 use allele::{
     population::{BinaryEncodedGenomeBuilder, ValueEncodedGenomeBuilder},
     prelude::*,
-    random::Rng,
+    random::{Rng, RngExt},
 };
 
 #[test]
@@ -43,7 +43,7 @@ fn create_population_of_custom_genotype_uniform_at_random() {
             (0..8)
                 .map(|row| Pos {
                     x: row,
-                    y: rng.gen_range(0..8),
+                    y: rng.random_range(0..8),
                 })
                 .collect()
         }

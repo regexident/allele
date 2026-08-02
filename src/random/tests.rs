@@ -1,5 +1,5 @@
 use proptest::prelude::*;
-use rand::Rng;
+use rand::RngExt;
 
 use super::*;
 
@@ -143,7 +143,7 @@ mod weighted_distribution {
 
         let mut counter = [0, 0, 0, 0];
         for _ in 0..n_sum {
-            let random = rng.r#gen::<f64>() * weighted_distribution.sum();
+            let random = rng.random::<f64>() * weighted_distribution.sum();
             let index = weighted_distribution.select(random);
             counter[index] += 1;
         }

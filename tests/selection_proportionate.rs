@@ -6,7 +6,7 @@ use test_strategy::proptest;
 use allele::{
     algorithm::EvaluatedPopulation,
     operator::{SelectionOp, prelude::*},
-    random::{Prng, Rng, SeedableRng},
+    random::{Prng, RngExt, SeedableRng},
 };
 
 #[proptest(ProptestConfig {
@@ -23,10 +23,10 @@ fn roulette_wheel_selector_returns_expected_number_of_parent_tuples(
     let num_individuals_per_parents = 2usize;
 
     let individuals: Vec<Vec<i8>> = (0..population_size)
-        .map(|_| (0..4).map(|_| rng.gen_range(-10i8..=10i8)).collect())
+        .map(|_| (0..4).map(|_| rng.random_range(-10i8..=10i8)).collect())
         .collect();
     let fitness_values: Vec<u32> = (0..population_size)
-        .map(|_| rng.gen_range(1u32..100u32))
+        .map(|_| rng.random_range(1u32..100u32))
         .collect();
     let highest = *fitness_values.iter().max().unwrap();
     let lowest = *fitness_values.iter().min().unwrap();
@@ -66,10 +66,10 @@ fn universal_sampling_selector_returns_expected_number_of_parent_tuples(
     let num_individuals_per_parents = 2usize;
 
     let individuals: Vec<Vec<i8>> = (0..population_size)
-        .map(|_| (0..4).map(|_| rng.gen_range(-10i8..=10i8)).collect())
+        .map(|_| (0..4).map(|_| rng.random_range(-10i8..=10i8)).collect())
         .collect();
     let fitness_values: Vec<u32> = (0..population_size)
-        .map(|_| rng.gen_range(1u32..100u32))
+        .map(|_| rng.random_range(1u32..100u32))
         .collect();
     let highest = *fitness_values.iter().max().unwrap();
     let lowest = *fitness_values.iter().min().unwrap();

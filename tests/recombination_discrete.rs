@@ -3,7 +3,7 @@ use test_strategy::proptest;
 
 use allele::{
     operator::CrossoverOp,
-    random::{Prng, Rng, SeedableRng},
+    random::{Prng, RngExt, SeedableRng},
     recombination::discrete::{
         MultiPointCrossBreeder, SinglePointCrossBreeder, UniformCrossBreeder,
     },
@@ -17,7 +17,7 @@ fn uniform_crossbreeder_child_count_and_length(
 ) {
     let mut rng = Prng::seed_from_u64(seed);
     let parents: Vec<Vec<u8>> = (0..num_parents)
-        .map(|_| (0..genome_length).map(|_| rng.r#gen::<u8>()).collect())
+        .map(|_| (0..genome_length).map(|_| rng.random::<u8>()).collect())
         .collect();
     let op = UniformCrossBreeder::new();
     let children = op.crossover(parents, &mut rng);
@@ -35,7 +35,7 @@ fn uniform_crossbreeder_genes_come_from_parents_at_same_locus(
 ) {
     let mut rng = Prng::seed_from_u64(seed);
     let parents: Vec<Vec<u8>> = (0..num_parents)
-        .map(|_| (0..genome_length).map(|_| rng.r#gen::<u8>()).collect())
+        .map(|_| (0..genome_length).map(|_| rng.random::<u8>()).collect())
         .collect();
     let op = UniformCrossBreeder::new();
     let children = op.crossover(parents.clone(), &mut rng);
@@ -57,7 +57,7 @@ fn single_point_crossbreeder_child_count_and_length(
 ) {
     let mut rng = Prng::seed_from_u64(seed);
     let parents: Vec<Vec<u8>> = (0..num_parents)
-        .map(|_| (0..genome_length).map(|_| rng.r#gen::<u8>()).collect())
+        .map(|_| (0..genome_length).map(|_| rng.random::<u8>()).collect())
         .collect();
     let op = SinglePointCrossBreeder::new();
     let children = op.crossover(parents, &mut rng);
@@ -77,7 +77,7 @@ fn multi_point_crossbreeder_child_count_and_length(
     let mut rng = Prng::seed_from_u64(seed);
     let genome_length = genome_length.max(num_cut_points * 2 + 1);
     let parents: Vec<Vec<u8>> = (0..num_parents)
-        .map(|_| (0..genome_length).map(|_| rng.r#gen::<u8>()).collect())
+        .map(|_| (0..genome_length).map(|_| rng.random::<u8>()).collect())
         .collect();
     let op = MultiPointCrossBreeder::new(num_cut_points);
     let children = op.crossover(parents, &mut rng);
