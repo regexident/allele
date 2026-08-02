@@ -16,8 +16,8 @@
 //! genome has a length of 12 bits and the population comprises 200 individuals.
 //!
 //! ```rust
-//! use genevo::prelude::*;
-//! use genevo::population::BinaryEncodedGenomeBuilder;
+//! use allele::prelude::*;
+//! use allele::population::BinaryEncodedGenomeBuilder;
 //! #[cfg(feature = "fixedbitset")]
 //! use fixedbitset::FixedBitSet;
 //!
@@ -43,8 +43,8 @@
 //! The generated population consists of 200 individuals.
 //!
 //! ```rust
-//! use genevo::prelude::*;
-//! use genevo::population::ValueEncodedGenomeBuilder;
+//! use allele::prelude::*;
+//! use allele::population::ValueEncodedGenomeBuilder;
 //!
 //! fn main() {
 //!     let population: Population<Vec<i64>> = build_population()
@@ -62,7 +62,7 @@
 //! `Pos` values. The generated population comprises 200 individuals.
 //!
 //! ```rust
-//! use genevo::prelude::*;
+//! use allele::prelude::*;
 //!
 //! #[derive(Clone,Debug,PartialEq)]
 //! struct Pos {
