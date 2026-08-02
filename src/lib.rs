@@ -1,6 +1,6 @@
-//! # genevo
+//! # allele
 //!
-//! `genevo` is a library for implementing and executing simulations of
+//! `allele` is a library for implementing and executing simulations of
 //! optimization and search problems using a genetic algorithm (GA).
 //!
 //! It provides a default implementation of the genetic algorithm to be used
@@ -70,17 +70,16 @@
 //! Enough words about the building blocks. Show me some concrete examples. Have
 //! a look at the examples in the examples folder to find out how to use this crate:
 //!
-//! * [knapsack](https://github.com/innoave/genevo/blob/v0.4.0/examples/knapsack/main.rs):
+//! * [knapsack](https://github.com/regexident/allele/blob/main/examples/knapsack/main.rs):
 //!   tries to solve the
 //!   [0-1 knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem)
-//! * [monkeys](https://github.com/innoave/genevo/blob/v0.4.0/examples/monkeys/main.rs):
+//! * [monkeys](https://github.com/regexident/allele/blob/main/examples/monkeys/main.rs):
 //!   explores the idea of Shakespeare's monkeys, also known as the
 //!   [infinite monkey theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem)
-//! * [queens](https://github.com/innoave/genevo/blob/v0.4.0/examples/queens/main.rs):
+//! * [queens](https://github.com/regexident/allele/blob/main/examples/queens/main.rs):
 //!   searches for solutions of the
 //!   [N Queens Problem](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
 
-#![doc(html_root_url = "https://docs.rs/genevo/0.7.1")]
 #![warn(
     bare_trait_objects,
     missing_copy_implementations,
