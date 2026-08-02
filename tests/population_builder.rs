@@ -1,9 +1,3 @@
-#[cfg(test)]
-#[macro_use]
-extern crate galvanic_assert;
-
-use galvanic_assert::matchers::*;
-
 use allele::{
     population::{BinaryEncodedGenomeBuilder, ValueEncodedGenomeBuilder},
     prelude::*,
@@ -18,7 +12,7 @@ fn create_population_of_vec_of_bool_uniform_at_random() {
         .uniform_at_random();
 
     println!("{:?}", population);
-    assert_that!(&population.size(), eq(200));
+    assert_eq!(population.size(), 200);
 }
 
 #[test]
@@ -29,7 +23,7 @@ fn create_population_of_vec_of_f64_uniform_at_random() {
         .uniform_at_random();
 
     println!("{:?}", population);
-    assert_that!(&population.size(), eq(200));
+    assert_eq!(population.size(), 200);
 }
 
 #[test]
@@ -61,7 +55,7 @@ fn create_population_of_custom_genotype_uniform_at_random() {
         .uniform_at_random();
 
     println!("{:?}", population);
-    assert_that!(&population.size(), eq(200));
+    assert_eq!(population.size(), 200);
 }
 
 #[cfg(feature = "fixedbitset")]
@@ -78,7 +72,7 @@ mod fixedbitset_population_builder {
             .uniform_at_random();
 
         println!("{:?}", population);
-        assert_that!(&population.size(), eq(200));
+        assert_eq!(population.size(), 200);
     }
 
     #[test]
@@ -89,6 +83,6 @@ mod fixedbitset_population_builder {
             .using_seed([42; 32]);
 
         println!("{:?}", population);
-        assert_that!(&population.size(), eq(200));
+        assert_eq!(population.size(), 200);
     }
 }
