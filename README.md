@@ -1,40 +1,30 @@
-# genevo
+# allele
 
 [![Crates.io][crb]][crl]
 [![Docs.rs][dcb]][dcl]
 [![CI][ghb]][ghl]
-[![codevoc.io][cvb]][cvl]
 [![MIT/Apache][lib]][lil]
-[![Join the chat][gcb]][gcl]
 
-[crb]: https://img.shields.io/crates/v/genevo.svg
-[dcb]: https://docs.rs/genevo/badge.svg
+[crb]: https://img.shields.io/crates/v/allele.svg
+[dcb]: https://docs.rs/allele/badge.svg
 [ghb]: https://github.com/regexident/allele/actions/workflows/rust.yml/badge.svg
-[cvb]: https://codecov.io/gh/innoave/genevo/branch/master/graph/badge.svg
 [lib]: https://img.shields.io/badge/license-MIT%2FApache-blue.svg
-[l1b]: https://img.shields.io/badge/license-MIT-blue.svg
-[l2b]: https://img.shields.io/badge/license-Apache-blue.svg
-[gcb]: https://badges.gitter.im/innoave/general.svg
 
-[crl]: https://crates.io/crates/genevo/
-[dcl]: https://docs.rs/genevo
+[crl]: https://crates.io/crates/allele/
+[dcl]: https://docs.rs/allele
 [ghl]: https://github.com/regexident/allele/actions/workflows/rust.yml
-[cvl]: https://codecov.io/github/innoave/genevo?branch=master
 [lil]: COPYRIGHT.txt
-[l1l]: https://opensource.org/licenses/MIT
-[l2l]: https://www.apache.org/licenses/LICENSE-2.0
-[gcl]: https://gitter.im/innoave/genevo
 
-_genevo_ provides building blocks to run simulations of optimization and search
+_allele_ provides building blocks to run simulations of optimization and search
 problems using [genetic algorithms][GA] ([GA]).
 
-The vision for _genevo_ is to be a flexible and greatly extensible framework
+The vision for _allele_ is to be a flexible and greatly extensible framework
 for implementing genetic algorithm applications.
 
-_genevo_ is written in [Rust]. The library's API utilizes lots of traits and
+_allele_ is written in [Rust]. The library's API utilizes lots of traits and
 types for modelling the domain of genetic algorithms.
 
-[Documentation](https://docs.rs/genevo)
+[Documentation](https://docs.rs/allele)
 
 ## Features
 
@@ -119,25 +109,32 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genevo = "0.7"
+allele = "0.7"
 ```
 
 ## Crate Features
 
-`genevo` provides additional data types to be used as genotypes through optional crate features:
+`allele` provides additional data types to be used as genotypes through optional crate features:
 
 * `fixedbitset`: provides `Fixedbitset` to be used as genotype
 * `Smallvec`: provides `Smallvec` to be used as genotype
 * `parallel`: enables multithreading (implemented using `rayon`)
 
-since version 0.7.0 `genevo` supports wasm targets. To use `genevo` for target
+since version 0.7.0 `allele` supports wasm targets. To use `allele` for target
 `wasm32-unknown-unknown` enable the crate feature `wasm-bindgen`. Note: on wasm32 targets
 multithreading is not available!
 
 ```toml
 [dependencies]
-genevo = { version = "0.7", features = ["wasm-bindgen"] }
+allele = { version = "0.7", features = ["wasm-bindgen"] }
 ```
+
+## Acknowledgments
+
+allele is a renamed continuation of [genevo][genevo], a genetic algorithm
+framework originally created by Harald Maida and the contributors at
+Innoave.com. The project is dual-licensed under MIT/Apache-2.0; see
+[NOTICE](NOTICE) and [COPYRIGHT.txt](COPYRIGHT.txt) for attribution details.
 
 ## References
 
@@ -180,5 +177,7 @@ sources of information about GA that I found most useful for me.
 --------------------------------------------------------------------------------
 [GA]: https://en.wikipedia.org/wiki/Genetic_algorithm
 [Rust]: https://www.rust-lang.org/
+[genevo]: https://github.com/innoave/genevo
 
 Copyright &copy; 2017-2022, Innoave.com and contributors
+Copyright &copy; 2026, The allele developers.
