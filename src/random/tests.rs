@@ -160,3 +160,63 @@ mod weighted_distribution {
         expect_that!(&counter[3], is(less_than(60)));
     }
 }
+
+mod random_index {
+    use super::*;
+    use proptest::prelude::ProptestConfig;
+    use test_strategy::proptest;
+
+    #[proptest(ProptestConfig { cases: 200, failure_persistence: None, ..ProptestConfig::default() })]
+    fn random_index_is_in_bounds(
+        #[strategy(1usize..10_000)] length: usize,
+        #[strategy(0u64..u64::MAX)] seed: u64,
+    ) {
+        let mut rng = Prng::seed_from_u64(seed);
+        let index = random_index(&mut rng, length);
+        assert!(index < length);
+    }
+
+    #[proptest(ProptestConfig { cases: 200, failure_persistence: None, ..ProptestConfig::default() })]
+    fn random_index_from_range_is_in_range(
+        #[strategy(0usize..1000)] min: usize,
+        #[strategy(1usize..1001)] extra: usize,
+        #[strategy(0u64..u64::MAX)] seed: u64,
+    ) {
+        let max = min + extra;
+        let mut rng = Prng::seed_from_u64(seed);
+        let index = random_index_from_range(&mut rng, min, max);
+        assert!(index >= min && index < max);
+    }
+}
+
+mod random_probability_tests {
+    use super::*;
+    use proptest::prelude::ProptestConfig;
+    use test_strategy::proptest;
+
+    #[proptest(ProptestConfig { cases: 200, failure_persistence: None, ..ProptestConfig::default() })]
+    fn random_probability_is_in_open_unit_interval(
+        #[strategy(0u64..u64::MAX)] seed: u64,
+    ) {
+        let mut rng = Prng::seed_from_u64(seed);
+        let p = random_probability(&mut rng);
+        assert!(p > 0.0 && p < 1.0, "probability {p} not in (0, 1)");
+    }
+}
+
+mod number_of_mutations_tests {
+    use super::*;
+    use proptest::prelude::ProptestConfig;
+    use test_strategy::proptest;
+
+    #[proptest(ProptestConfig { cases: 200, failure_persistence: None, ..ProptestConfig::default() })]
+    fn number_of_mutations_does_not_exceed_genome_length(
+        #[strategy(0usize..10_000)] genome_length: usize,
+        #[strategy(0.0f64..=1.0)] mutation_rate: f64,
+        #[strategy(0u64..u64::MAX)] seed: u64,
+    ) {
+        let mut rng = Prng::seed_from_u64(seed);
+        let n = number_of_mutations(genome_length, mutation_rate, &mut rng);
+        assert!(n <= genome_length);
+    }
+}
