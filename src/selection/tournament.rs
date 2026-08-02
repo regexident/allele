@@ -202,10 +202,9 @@ where
             tournament.sort_by(|x, y| fitness_values[*y].cmp(&fitness_values[*x]));
             // pick candidates with probability
             let mut prob = self.probability;
-            let mut prob_redux = 1.;
-            while prob > 0. && !tournament.is_empty() {
+            while !tournament.is_empty() {
+                let picked = tournament.remove(0);
                 if random_probability(rng) <= prob {
-                    let picked = tournament.remove(0);
                     if self.remove_selected_individuals {
                         if let Some(position) = mating_pool.iter().position(|x| *x == picked) {
                             mating_pool.remove(position);
@@ -214,11 +213,11 @@ where
                     picked_candidates.push(picked);
                     count_candidates += 1;
                 }
-                prob_redux *= 1. - prob;
-                prob *= prob_redux;
+                prob *= 1.0 - self.probability;
             }
         }
         // convert selected candidate indices to parents of individuals
+        picked_candidates.truncate(target_num_candidates);
         let usable = (picked_candidates.len() / self.num_individuals_per_parents)
             * self.num_individuals_per_parents;
         picked_candidates.truncate(usable);
