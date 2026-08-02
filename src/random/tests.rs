@@ -162,9 +162,12 @@ mod weighted_distribution {
 }
 
 mod random_index {
-    use super::*;
+    #![allow(unused_qualifications)]
+
     use proptest::prelude::ProptestConfig;
     use test_strategy::proptest;
+
+    use super::*;
 
     #[proptest(ProptestConfig { cases: 200, failure_persistence: None, ..ProptestConfig::default() })]
     fn random_index_is_in_bounds(
@@ -190,14 +193,15 @@ mod random_index {
 }
 
 mod random_probability_tests {
-    use super::*;
+    #![allow(unused_qualifications)]
+
     use proptest::prelude::ProptestConfig;
     use test_strategy::proptest;
 
+    use super::*;
+
     #[proptest(ProptestConfig { cases: 200, failure_persistence: None, ..ProptestConfig::default() })]
-    fn random_probability_is_in_open_unit_interval(
-        #[strategy(0u64..u64::MAX)] seed: u64,
-    ) {
+    fn random_probability_is_in_open_unit_interval(#[strategy(0u64..u64::MAX)] seed: u64) {
         let mut rng = Prng::seed_from_u64(seed);
         let p = random_probability(&mut rng);
         assert!(p > 0.0 && p < 1.0, "probability {p} not in (0, 1)");
@@ -205,9 +209,12 @@ mod random_probability_tests {
 }
 
 mod number_of_mutations_tests {
-    use super::*;
+    #![allow(unused_qualifications)]
+
     use proptest::prelude::ProptestConfig;
     use test_strategy::proptest;
+
+    use super::*;
 
     #[proptest(ProptestConfig { cases: 200, failure_persistence: None, ..ProptestConfig::default() })]
     fn number_of_mutations_does_not_exceed_genome_length(
