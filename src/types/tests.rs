@@ -314,3 +314,29 @@ fn abs_diff_of_unsigned_1_and_max() {
         is(equal_to(usize::MAX - 1))
     );
 }
+
+mod fitness_properties {
+    use super::*;
+    use proptest::prelude::ProptestConfig;
+    use test_strategy::proptest;
+
+    #[proptest(ProptestConfig { cases: 500, failure_persistence: None, ..ProptestConfig::default() })]
+    fn unsigned_abs_diff_is_symmetric(a: u32, b: u32) {
+        assert_eq!(Fitness::abs_diff(&a, &b), Fitness::abs_diff(&b, &a));
+    }
+
+    #[proptest(ProptestConfig { cases: 500, failure_persistence: None, ..ProptestConfig::default() })]
+    fn unsigned_abs_diff_of_equal_values_is_zero(a: u32) {
+        assert_eq!(Fitness::abs_diff(&a, &a), u32::zero());
+    }
+
+    #[proptest(ProptestConfig { cases: 500, failure_persistence: None, ..ProptestConfig::default() })]
+    fn signed_abs_diff_is_symmetric(a: i32, b: i32) {
+        assert_eq!(Fitness::abs_diff(&a, &b), Fitness::abs_diff(&b, &a));
+    }
+
+    #[proptest(ProptestConfig { cases: 500, failure_persistence: None, ..ProptestConfig::default() })]
+    fn signed_abs_diff_of_equal_values_is_zero(a: i32) {
+        assert_eq!(Fitness::abs_diff(&a, &a), i32::zero());
+    }
+}
