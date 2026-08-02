@@ -97,7 +97,8 @@ where
 
         let num_parents_to_select =
             (individuals.len() as f64 * self.selection_ratio + 0.5).floor() as usize;
-        let pool_size = mating_pool.len();
+        let pool_size =
+            (num_parents_to_select * self.num_individuals_per_parents).min(mating_pool.len());
         let mut selected: Vec<Parents<G>> = Vec::with_capacity(num_parents_to_select);
 
         let mut index_m = 0;
