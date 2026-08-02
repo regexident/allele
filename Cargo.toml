@@ -4,7 +4,7 @@ description = "A modular framework for implementing and running genetic algorith
 repository = "https://github.com/regexident/allele"
 keywords = ["genetic", "evolutionary", "algorithm"]
 license = "MIT/Apache-2.0"
-edition = "2021"
+edition = "2024"
 rust-version = "1.85.1"
 version = "0.8.0"
 
