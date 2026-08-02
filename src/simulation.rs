@@ -1,9 +1,10 @@
 pub mod simulator;
 
+use std::time::{Duration, Instant};
+
 use crate::{
     algorithm::Algorithm, random::Seed, statistic::ProcessingTime, termination::StopReason,
 };
-use std::time::{Duration, Instant};
 
 /// A `Simulation` is the execution of an algorithm.
 pub trait Simulation<A>

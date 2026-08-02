@@ -1,11 +1,13 @@
-use super::GeneticAlgorithm;
+use std::{marker::PhantomData, rc::Rc};
+
 use crate::{
     genetic::{Fitness, FitnessFunction, Genotype},
     operator::{CrossoverOp, MutationOp, ReinsertionOp, SelectionOp},
     population::Population,
     statistic::ProcessingTime,
 };
-use std::{marker::PhantomData, rc::Rc};
+
+use super::GeneticAlgorithm;
 
 const DEFAULT_MIN_POPULATION_SIZE: usize = 6;
 

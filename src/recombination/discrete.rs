@@ -11,12 +11,13 @@
 //! * `MultiPointCrossBreeder` for `fixedbitset::FixedBitSet`,
 //!   `smallvec::SmallVec` and `Vec` of any type.
 
+use std::fmt::Debug;
+
 use crate::{
     genetic::{Children, Genotype, Parents},
     operator::{CrossoverOp, GeneticOperator},
     random::{Rng, RngExt, random_n_cut_points},
 };
-use std::fmt::Debug;
 
 /// The `UniformCrossBreeder` operator combines binary encoded or value encoded
 /// `genetic::Genotype`s by walking through the bits/values of the parents one
@@ -66,13 +67,15 @@ where
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_uniform_cross_breeder {
-    use super::UniformCrossBreeder;
+    use fixedbitset::FixedBitSet;
+    use rand::{Rng, RngExt};
+
     use crate::{
         genetic::{Children, Parents},
         operator::CrossoverOp,
     };
-    use fixedbitset::FixedBitSet;
-    use rand::{Rng, RngExt};
+
+    use super::UniformCrossBreeder;
 
     impl CrossoverOp<FixedBitSet> for UniformCrossBreeder {
         fn crossover<R>(&self, parents: Parents<FixedBitSet>, rng: &mut R) -> Children<FixedBitSet>
@@ -97,11 +100,14 @@ mod fixedbitset_uniform_cross_breeder {
 
 #[cfg(feature = "smallvec")]
 mod smallvec_uniform_cross_breeder {
-    use super::UniformCrossBreeder;
-    use crate::operator::CrossoverOp;
+    use std::fmt::Debug;
+
     use rand::{Rng, RngExt};
     use smallvec::{Array, SmallVec};
-    use std::fmt::Debug;
+
+    use crate::operator::CrossoverOp;
+
+    use super::UniformCrossBreeder;
 
     impl<A, V> CrossoverOp<SmallVec<A>> for UniformCrossBreeder
     where
@@ -272,11 +278,14 @@ where
 
 #[cfg(feature = "smallvec")]
 mod smallvec_multipoint_crossover {
-    use super::{MultiPointCrossover, random_n_cut_points};
-    use crate::genetic::{Children, Parents};
+    use std::fmt::Debug;
+
     use rand::{Rng, RngExt};
     use smallvec::{Array, SmallVec};
-    use std::fmt::Debug;
+
+    use crate::genetic::{Children, Parents};
+
+    use super::{MultiPointCrossover, random_n_cut_points};
 
     impl<A, V> MultiPointCrossover for SmallVec<A>
     where
@@ -337,10 +346,12 @@ mod smallvec_multipoint_crossover {
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_multipoint_crossover {
-    use super::{MultiPointCrossover, random_n_cut_points};
-    use crate::genetic::{Children, Parents};
     use fixedbitset::FixedBitSet;
     use rand::{Rng, RngExt};
+
+    use crate::genetic::{Children, Parents};
+
+    use super::{MultiPointCrossover, random_n_cut_points};
 
     impl MultiPointCrossover for FixedBitSet {
         type Dna = bool;

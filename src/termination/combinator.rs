@@ -10,12 +10,13 @@
 //! The functions `and` and `or` are provided for convenience and are
 //! re-exported by the `termination` module.
 
+use std::marker::PhantomData;
+
 use crate::{
     algorithm::Algorithm,
     simulation::State,
     termination::{StopFlag, Termination},
 };
-use std::marker::PhantomData;
 
 /// Combines two `Termination` conditions with a logical AND. The simulation
 /// stops only when both conditions are met.

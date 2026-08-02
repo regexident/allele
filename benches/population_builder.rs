@@ -1,8 +1,9 @@
 #[macro_use]
 extern crate criterion;
 
-use allele::population::{BinaryEncodedGenomeBuilder, build_population};
 use criterion::{BenchmarkId, Criterion};
+
+use allele::population::{BinaryEncodedGenomeBuilder, build_population};
 
 fn bench_build_population(c: &mut Criterion) {
     let seed = [42; 32];

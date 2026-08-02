@@ -21,8 +21,9 @@
 //! appropriate encoding trait. If an application is defining its own crossover
 //! and mutation operators then using these marker traits is optional.
 
-use crate::genetic::Genotype;
 use std::fmt::Debug;
+
+use crate::genetic::Genotype;
 
 /// Marker trait for declaring a `genetic::Genotype` as binary encoded.
 pub trait BinaryEncoded {}
@@ -58,9 +59,9 @@ impl PermutationEncoded for Vec<usize> {}
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_genotype {
-    use super::{BinaryEncoded, Genotype};
-
     use fixedbitset::FixedBitSet;
+
+    use super::{BinaryEncoded, Genotype};
 
     /// Implementation of genotype using `fixedbistset::FixedBitSet`.
     impl Genotype for FixedBitSet {
@@ -74,9 +75,11 @@ mod fixedbitset_genotype {
 
 #[cfg(feature = "smallvec")]
 mod smallvec_genotype {
-    use super::{BinaryEncoded, Genotype, PermutationEncoded, ValueEncoded};
-    use smallvec::{Array, SmallVec};
     use std::fmt::Debug;
+
+    use smallvec::{Array, SmallVec};
+
+    use super::{BinaryEncoded, Genotype, PermutationEncoded, ValueEncoded};
 
     /// Implementation of binary encoded `genetic::Genotype`
     /// using `smallvec::SmallVec`.

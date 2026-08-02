@@ -2,11 +2,12 @@
 //! concrete algorithms such as the `ga::GeneticAlgorithm` and various
 //! operators as defined in the `operator` module.
 
+use std::{error::Error, fmt::Debug, rc::Rc, time::Instant};
+
 use crate::{
     genetic::{Fitness, Genotype},
     random::Prng,
 };
-use std::{error::Error, fmt::Debug, rc::Rc, time::Instant};
 
 /// An `Algorithm` defines the steps to be processed in a
 /// `simulation::Simulation`. The `Simulation` uses an implementation of an

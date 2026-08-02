@@ -2,13 +2,14 @@
 //! individuals from the offspring and the old population by choosing the best
 //! individuals from both.
 
+use std::marker::PhantomData;
+
 use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{Fitness, FitnessFunction, Genotype, Offspring},
     operator::{GeneticOperator, MultiObjective, ReinsertionOp, SingleObjective},
     random::Rng,
 };
-use std::marker::PhantomData;
 
 /// The `ElitistReinserter` combines the best individuals from the offspring and
 /// the old population. When there are more individuals in the offspring than
