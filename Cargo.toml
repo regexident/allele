@@ -27,7 +27,6 @@ getrandom = { version = "0.2", features = ["js", "wasm-bindgen"] }
 
 [dev-dependencies]
 criterion = "=0.3.6"
-galvanic-assert = "=0.8.7"
 proptest = "=1.11.0"
 test-strategy = "=0.4.5"
 version-sync = "=0.9.5"
