@@ -30,8 +30,7 @@ macro_rules! implement_fitness_for_signed_integer {
                 }
 
                 fn abs_diff(&self, other: &$t) -> $t {
-                    let diff = self - other;
-                    diff.abs()
+                    (*self as i128).abs_diff(*other as i128) as $t
                 }
             }
 
@@ -56,11 +55,7 @@ macro_rules! implement_fitness_for_unsigned_integer {
                 }
 
                 fn abs_diff(&self, other: &$t) -> $t {
-                    if self > other {
-                        self - other
-                    } else {
-                        other - self
-                    }
+                    (*self).abs_diff(*other)
                 }
             }
 

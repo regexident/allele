@@ -161,69 +161,58 @@ fn abs_diff_of_signed_1_and_max() {
 }
 
 #[test]
-#[should_panic(expected = "attempt to subtract with overflow")]
 fn abs_diff_of_signed_max_and_neg1i8() {
-    expect_that!(
-        &Fitness::abs_diff(&i8::MAX, &-1i8),
-        is(equal_to(i8::MAX - 1))
-    );
+    expect_that!(&Fitness::abs_diff(&i8::MAX, &-1i8), is(equal_to(i8::MIN)));
 }
 
 #[test]
-#[should_panic(expected = "attempt to subtract with overflow")]
 fn abs_diff_of_signed_max_and_neg1i16() {
     expect_that!(
         &Fitness::abs_diff(&i16::MAX, &-1i16),
-        is(equal_to(i16::MAX - 1))
+        is(equal_to(i16::MIN))
     );
 }
 #[test]
-#[should_panic(expected = "attempt to subtract with overflow")]
 fn abs_diff_of_signed_max_and_neg1i32() {
     expect_that!(
         &Fitness::abs_diff(&i32::MAX, &-1i32),
-        is(equal_to(i32::MAX - 1))
+        is(equal_to(i32::MIN))
     );
 }
 #[test]
-#[should_panic(expected = "attempt to subtract with overflow")]
 fn abs_diff_of_signed_max_and_neg1i64() {
     expect_that!(
         &Fitness::abs_diff(&i64::MAX, &-1i64),
-        is(equal_to(i64::MAX - 1))
+        is(equal_to(i64::MIN))
     );
 }
 
 #[test]
-#[should_panic(expected = "attempt to negate with overflow")]
 fn abs_diff_of_signed_neg1i8_and_max() {
-    expect_that!(&Fitness::abs_diff(&-1i8, &i8::MAX), is(equal_to(i8::MAX)));
+    expect_that!(&Fitness::abs_diff(&-1i8, &i8::MAX), is(equal_to(i8::MIN)));
 }
 
 #[test]
-#[should_panic(expected = "attempt to negate with overflow")]
 fn abs_diff_of_signed_neg1i16_and_max() {
     expect_that!(
         &Fitness::abs_diff(&-1i16, &i16::MAX),
-        is(equal_to(i16::MAX))
+        is(equal_to(i16::MIN))
     );
 }
 
 #[test]
-#[should_panic(expected = "attempt to negate with overflow")]
 fn abs_diff_of_signed_neg1i32_and_max() {
     expect_that!(
         &Fitness::abs_diff(&-1i32, &i32::MAX),
-        is(equal_to(i32::MAX))
+        is(equal_to(i32::MIN))
     );
 }
 
 #[test]
-#[should_panic(expected = "attempt to negate with overflow")]
 fn abs_diff_of_signed_neg1i64_and_max() {
     expect_that!(
         &Fitness::abs_diff(&-1i64, &i64::MAX),
-        is(equal_to(i64::MAX))
+        is(equal_to(i64::MIN))
     );
 }
 

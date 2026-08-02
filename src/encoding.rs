@@ -50,11 +50,11 @@ impl BinaryEncoded for Vec<bool> {}
 
 /// Implementation of a value encoded `genetic::Genotype`.
 /// using `Vec`.
-impl<V> ValueEncoded for Vec<V> {}
+impl<V> ValueEncoded for Vec<V> where V: Clone + Debug + PartialEq + Send + Sync {}
 
 /// Implementation of a permutation encoded `genetic::Genotype`
 /// using `Vec`.
-impl<V> PermutationEncoded for Vec<V> {}
+impl PermutationEncoded for Vec<usize> {}
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_genotype {
@@ -98,5 +98,5 @@ mod smallvec_genotype {
 
     /// Implementation of a permutation encoded `genetic::Genotype`
     /// using `smallvec::SmallVec`.
-    impl<A> PermutationEncoded for SmallVec<A> where A: Array {}
+    impl<A> PermutationEncoded for SmallVec<A> where A: Array<Item = usize> {}
 }
