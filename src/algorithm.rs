@@ -6,8 +6,7 @@ use crate::{
     genetic::{Fitness, Genotype},
     random::Prng,
 };
-use chrono::{DateTime, Local};
-use std::{error::Error, fmt::Debug, rc::Rc};
+use std::{error::Error, fmt::Debug, rc::Rc, time::Instant};
 
 /// An `Algorithm` defines the steps to be processed in a
 /// `simulation::Simulation`. The `Simulation` uses an implementation of an
@@ -58,8 +57,8 @@ where
     G: Genotype,
     F: Fitness,
 {
-    /// The local time at which this solution is found.
-    pub found_at: DateTime<Local>,
+    /// The point in time at which this solution is found.
+    pub found_at: Instant,
     /// The number of the generation in which this solution is found.
     pub generation: u64,
     /// The evaluated `genetic::Genotype` that is considered to be best.

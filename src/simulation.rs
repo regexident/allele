@@ -3,7 +3,7 @@ pub mod simulator;
 use crate::{
     algorithm::Algorithm, random::Seed, statistic::ProcessingTime, termination::StopReason,
 };
-use chrono::{DateTime, Duration, Local};
+use std::time::{Duration, Instant};
 
 /// A `Simulation` is the execution of an algorithm.
 pub trait Simulation<A>
@@ -53,8 +53,8 @@ pub struct State<A>
 where
     A: Algorithm,
 {
-    /// The local time when this simulation started.
-    pub started_at: DateTime<Local>,
+    /// The point in time when this simulation started.
+    pub started_at: Instant,
     /// The number of the iteration that this state represents. Iterations
     /// are counted from 1 and increased by 1 on each iteration of the
     /// simulation loop.

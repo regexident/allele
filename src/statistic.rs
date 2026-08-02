@@ -1,11 +1,11 @@
 //! The `statistic` module provides functionality to collect and display
 //! statistic about a genetic algorithm application and its execution.
 
-use chrono::{Duration, Local};
 use std::{
     convert::From,
     fmt,
     ops::{Add, AddAssign},
+    time::{Duration, Instant},
 };
 
 #[derive(Clone, Copy, Eq, PartialEq)]
@@ -16,7 +16,7 @@ pub struct ProcessingTime {
 impl ProcessingTime {
     pub fn zero() -> Self {
         ProcessingTime {
-            duration: Duration::zero(),
+            duration: Duration::ZERO,
         }
     }
 
@@ -39,10 +39,7 @@ impl fmt::Debug for ProcessingTime {
 
 impl fmt::Display for ProcessingTime {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(
-            &humantime::Duration::from(self.duration.to_std().unwrap_or_default()),
-            f,
-        )
+        fmt::Display::fmt(&humantime::Duration::from(self.duration), f)
     }
 }
 
@@ -89,9 +86,9 @@ where
     F: FnOnce() -> U,
 {
     pub fn run(self) -> TimedResult<U> {
-        let started_at = Local::now();
+        let started_at = Instant::now();
         let result = (self.function)();
-        let time = Local::now().signed_duration_since(started_at);
+        let time = started_at.elapsed();
         TimedResult {
             result,
             time: ProcessingTime::from(time),

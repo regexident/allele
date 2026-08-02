@@ -12,7 +12,6 @@ version = "0.8.0"
 all-features = true
 
 [dependencies]
-chrono = "0.4"
 humantime = "2"
 rand = { version = "0.8", default-features = false, features = ["getrandom"] }
 rand_xoshiro = "0.6"
@@ -33,7 +32,7 @@ proptest = "1"
 version-sync = "0.9"
 
 [features]
-wasm-bindgen = ["wasm-bindgen_", "chrono/wasmbind"]
+wasm-bindgen = ["wasm-bindgen_"]
 parallel = ["rayon"]
 
 [lib]
