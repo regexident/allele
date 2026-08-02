@@ -1,8 +1,8 @@
 #[macro_use]
 extern crate criterion;
 
-use criterion::{BenchmarkId, Criterion};
 use allele::random::{get_rng, random_seed};
+use criterion::{BenchmarkId, Criterion};
 use rand::{
     distributions::{Bernoulli, Distribution},
     Rng,
