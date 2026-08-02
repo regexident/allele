@@ -1,7 +1,8 @@
 //! The `queens` example searches for solutions of the
 //! [N Queens Problem](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
 
-use allele::{operator::prelude::*, prelude::*, random::Rng, types::fmt::Display};
+use allele::{operator::prelude::*, prelude::*, random::Rng};
+use humantime::format_duration;
 
 const NUMBER_OF_QUEENS: i16 = 16;
 const NUM_ROWS: i16 = NUMBER_OF_QUEENS;
@@ -173,8 +174,8 @@ fn main() {
                     step.iteration,
                     evaluated_population.average_fitness(),
                     best_solution.solution.fitness,
-                    step.duration.fmt(),
-                    step.processing_time.fmt()
+                    format_duration(step.duration.to_std().unwrap_or_default()),
+                    step.processing_time
                 );
                 for row in best_solution.solution.genome.as_board() {
                     println!("      {:?}", row);
@@ -186,11 +187,11 @@ fn main() {
                 println!(
                     "Final result after {}: generation: {}, \
                      best solution with fitness {} found in generation {}, processing_time: {}",
-                    duration.fmt(),
+                    format_duration(duration.to_std().unwrap_or_default()),
                     step.iteration,
                     best_solution.solution.fitness,
                     best_solution.generation,
-                    processing_time.fmt()
+                    processing_time
                 );
                 for row in best_solution.solution.genome.as_board() {
                     println!("      {:?}", row);

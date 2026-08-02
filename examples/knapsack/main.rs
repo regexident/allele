@@ -4,7 +4,8 @@
 //!
 //! [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem)
 
-use allele::{operator::prelude::*, population::*, prelude::*, types::fmt::Display};
+use allele::{operator::prelude::*, population::*, prelude::*};
+use humantime::format_duration;
 use smallvec::SmallVec;
 
 #[derive(Debug, Clone)]
@@ -229,8 +230,8 @@ fn main() {
                     step.iteration,
                     evaluated_population.average_fitness(),
                     best_solution.solution.fitness,
-                    step.duration.fmt(),
-                    step.processing_time.fmt(),
+                    format_duration(step.duration.to_std().unwrap_or_default()),
+                    step.processing_time,
                 );
                 let knapsack = best_solution
                     .solution
@@ -249,11 +250,11 @@ fn main() {
                 println!(
                     "Final result after {}: generation: {}, \
                      best solution with fitness {} found in generation {}, processing_time: {}",
-                    duration.fmt(),
+                    format_duration(duration.to_std().unwrap_or_default()),
                     step.iteration,
                     best_solution.solution.fitness,
                     best_solution.generation,
-                    processing_time.fmt(),
+                    processing_time,
                 );
                 let knapsack = best_solution
                     .solution

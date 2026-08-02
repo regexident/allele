@@ -17,8 +17,6 @@
 //! * `u64`
 //! * `usize`
 
-pub mod fmt;
-
 use crate::genetic::{AsScalar, Fitness};
 
 macro_rules! implement_fitness_for_signed_integer {

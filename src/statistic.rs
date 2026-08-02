@@ -1,7 +1,6 @@
 //! The `statistic` module provides functionality to collect and display
 //! statistic about a genetic algorithm application and its execution.
 
-use crate::types::fmt::Display;
 use chrono::{Duration, Local};
 use std::{
     convert::From,
@@ -40,13 +39,10 @@ impl fmt::Debug for ProcessingTime {
 
 impl fmt::Display for ProcessingTime {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(&self.duration, f)
-    }
-}
-
-impl Display for ProcessingTime {
-    fn fmt(&self) -> String {
-        self.duration.fmt()
+        fmt::Display::fmt(
+            &humantime::Duration::from(self.duration.to_std().unwrap_or_default()),
+            f,
+        )
     }
 }
 

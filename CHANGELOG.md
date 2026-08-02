@@ -27,6 +27,7 @@ Please make sure to add your changes to the appropriate categories:
 - Made `rayon` dependency optional behind "parallel" feature
 - Renamed crate from `genevo` to `allele`
 - Added validation that `replace_ratio`, `selection_ratio`, and `mutation_rate` are within `[0.0, 1.0]` and added the public `number_of_mutations` helper
+- `ProcessingTime` now formats durations human-readably through `std::fmt::Display` via `humantime`
 
 ### Deprecated
 
@@ -35,6 +36,7 @@ Please make sure to add your changes to the appropriate categories:
 ### Removed
 
 - Removed the empty `selection::ranking` module
+- Removed the custom `Display` trait and the `types::fmt` module
 
 ### Fixed
 

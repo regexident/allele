@@ -2,9 +2,8 @@
 //! known as the
 //! [infinite monkey theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem).
 
-use allele::{
-    operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*, types::fmt::Display,
-};
+use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
+use humantime::format_duration;
 
 // const TARGET_TEXT: &str = "See how a genius creates a legend";
 const TARGET_TEXT: &str = "Be not afraid of greatness! Some are great, some achieve greatness, \
@@ -130,8 +129,8 @@ fn main() {
                     step.iteration,
                     evaluated_population.average_fitness(),
                     best_solution.solution.fitness,
-                    step.duration.fmt(),
-                    step.processing_time.fmt()
+                    format_duration(step.duration.to_std().unwrap_or_default()),
+                    step.processing_time
                 );
                 println!("      {}", best_solution.solution.genome.as_text());
                 //                println!("| population: [{}]", result.population.iter().map(|g| g.as_text())
@@ -143,11 +142,11 @@ fn main() {
                 println!(
                     "Final result after {}: generation: {}, \
                      best solution with fitness {} found in generation {}, processing_time: {}",
-                    duration.fmt(),
+                    format_duration(duration.to_std().unwrap_or_default()),
                     step.iteration,
                     best_solution.solution.fitness,
                     best_solution.generation,
-                    processing_time.fmt()
+                    processing_time
                 );
                 println!("      {}", best_solution.solution.genome.as_text());
                 break;
