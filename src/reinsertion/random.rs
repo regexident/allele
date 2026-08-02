@@ -37,6 +37,11 @@ impl UniformReinserter {
     /// Constructs a new instance of the `UniformReinserter` with the given
     /// parameters.
     pub fn new(replace_ratio: f64) -> Self {
+        assert!(
+            (0.0..=1.0).contains(&replace_ratio),
+            "replace_ratio must be in [0.0, 1.0], got {}",
+            replace_ratio
+        );
         UniformReinserter { replace_ratio }
     }
 
@@ -48,6 +53,11 @@ impl UniformReinserter {
     /// Set the `replace_ratio` of this `UniformReinserter` to the given
     /// value. The value must be between 0 and 1.0 (inclusive).
     pub fn set_replace_ratio(&mut self, value: f64) {
+        assert!(
+            (0.0..=1.0).contains(&value),
+            "replace_ratio must be in [0.0, 1.0], got {}",
+            value
+        );
         self.replace_ratio = value;
     }
 }

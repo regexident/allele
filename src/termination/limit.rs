@@ -57,7 +57,6 @@ impl<G, F, E, S, C, M, R> Termination<GeneticAlgorithm<G, F, E, S, C, M, R>> for
 where
     G: Genotype,
     F: Fitness + Send + Sync,
-    E: FitnessFunction<G, F>,
     E: FitnessFunction<G, F> + Sync,
     S: SelectionOp<G, F>,
     C: CrossoverOp<G> + Sync,

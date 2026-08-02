@@ -94,7 +94,6 @@ where
         let mut mating_pool: Vec<usize> = (0..fitness_values.len()).collect();
         // sort mating pool from best performing to worst performing index
         mating_pool.sort_by(|x, y| fitness_values[*y].cmp(&fitness_values[*x]));
-        let mating_pool = mating_pool;
 
         let num_parents_to_select =
             (individuals.len() as f64 * self.selection_ratio + 0.5).floor() as usize;
