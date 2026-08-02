@@ -6,21 +6,21 @@ pub use crate::genetic::{Fitness, FitnessFunction, Genotype, Phenotype};
 //
 pub use crate::{
     algorithm::Algorithm,
-    ga::{genetic_algorithm, GeneticAlgorithm},
+    ga::{GeneticAlgorithm, genetic_algorithm},
     random::{Prng, Rng, Seed},
 };
 
 // Population
 //
-pub use crate::population::{build_population, GenomeBuilder, Population};
+pub use crate::population::{GenomeBuilder, Population, build_population};
 
 // Simulation
 //
-pub use crate::simulation::{simulator::simulate, SimResult, Simulation, SimulationBuilder};
+pub use crate::simulation::{SimResult, Simulation, SimulationBuilder, simulator::simulate};
 
 // Termination
 //
 pub use crate::termination::{
-    combinator::{and, or, And, Or},
+    combinator::{And, Or, and, or},
     limit::*,
 };

@@ -2,9 +2,9 @@
 //! values for specific purposes.
 
 pub use rand::{
-    distributions::{uniform::SampleUniform, Open01},
-    seq::SliceRandom,
     Rng, SeedableRng,
+    distributions::{Open01, uniform::SampleUniform},
+    seq::SliceRandom,
 };
 
 use crate::genetic::AsScalar;
@@ -20,7 +20,7 @@ pub type Seed = <Prng as SeedableRng>::Seed;
 /// Generates a random seed to initialize the `Prng`.
 pub fn random_seed() -> Seed {
     let mut rng = Prng::from_entropy();
-    rng.gen()
+    rng.r#gen()
 }
 
 /// Returns a new `Prng` initialized with the given seed.
@@ -143,7 +143,7 @@ pub fn number_of_mutations<R>(genome_length: usize, mutation_rate: f64, rng: &mu
 where
     R: Rng + Sized,
 {
-    ((genome_length as f64 * mutation_rate) + rng.gen::<f64>()).floor() as usize
+    ((genome_length as f64 * mutation_rate) + rng.r#gen::<f64>()).floor() as usize
 }
 
 /// The `WeightedDistribution` is used to select values proportional to their

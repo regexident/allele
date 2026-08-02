@@ -4,8 +4,8 @@ extern crate criterion;
 use allele::random::{get_rng, random_seed};
 use criterion::{BenchmarkId, Criterion};
 use rand::{
-    distributions::{Bernoulli, Distribution},
     Rng,
+    distributions::{Bernoulli, Distribution},
 };
 
 fn generate_vec_of_random_bool_the_functional_way(c: &mut Criterion) {
@@ -15,7 +15,7 @@ fn generate_vec_of_random_bool_the_functional_way(c: &mut Criterion) {
     for length in [12, 24, 48, 96] {
         group.bench_with_input(BenchmarkId::from_parameter(length), &length, |b, length| {
             b.iter(|| {
-                let _genome: Vec<bool> = (0..*length).map(|_| rng.gen()).collect();
+                let _genome: Vec<bool> = (0..*length).map(|_| rng.r#gen()).collect();
             })
         });
     }
@@ -31,7 +31,7 @@ fn generate_vec_of_random_bool_using_for_loop(c: &mut Criterion) {
                 let length = *length;
                 let mut genome: Vec<bool> = Vec::with_capacity(length);
                 for _ in 0..length {
-                    genome.push(rng.gen());
+                    genome.push(rng.r#gen());
                 }
             })
         });

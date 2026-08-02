@@ -1,7 +1,7 @@
 use crate::{
     genetic::Genotype,
     operator::{GeneticOperator, MutationOp},
-    random::{number_of_mutations, random_index, Rng},
+    random::{Rng, number_of_mutations, random_index},
 };
 use rand::seq::SliceRandom;
 use std::fmt::Debug;
@@ -113,7 +113,7 @@ where
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_random_genome_mutation {
-    use super::{number_of_mutations, random_index, RandomGenomeMutation};
+    use super::{RandomGenomeMutation, number_of_mutations, random_index};
     use crate::genetic::Genotype;
     use fixedbitset::FixedBitSet;
     use rand::Rng;
@@ -136,7 +136,7 @@ mod fixedbitset_random_genome_mutation {
             let mut mutated = genome;
             for _ in 0..num_mutations {
                 let bit = random_index(rng, genome_length);
-                let value = rng.gen();
+                let value = rng.r#gen();
                 mutated.set(bit, value);
             }
             mutated
@@ -146,7 +146,7 @@ mod fixedbitset_random_genome_mutation {
 
 #[cfg(feature = "smallvec")]
 mod smallvec_random_genome_mutation {
-    use super::{number_of_mutations, random_index, RandomGenomeMutation, RandomValueMutation};
+    use super::{RandomGenomeMutation, RandomValueMutation, number_of_mutations, random_index};
     use rand::Rng;
     use smallvec::{Array, SmallVec};
     use std::fmt::Debug;

@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate criterion;
 
-use allele::population::{build_population, BinaryEncodedGenomeBuilder};
+use allele::population::{BinaryEncodedGenomeBuilder, build_population};
 use criterion::{BenchmarkId, Criterion};
 
 fn bench_build_population(c: &mut Criterion) {

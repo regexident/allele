@@ -18,7 +18,7 @@ use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{AsScalar, Fitness, Genotype, Parents},
     operator::{GeneticOperator, SelectionOp, SingleObjective},
-    random::{random_probability, Rng, WeightedDistribution},
+    random::{Rng, WeightedDistribution, random_probability},
 };
 
 /// The `RouletteWheelSelector` implements stochastic fitness proportionate

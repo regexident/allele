@@ -1,6 +1,6 @@
 use crate::{
     algorithm::Algorithm,
-    random::{get_rng, random_seed, Prng, Seed},
+    random::{Prng, Seed, get_rng, random_seed},
     simulation::{SimResult, Simulation, SimulationBuilder, State},
     statistic::{ProcessingTime, TrackProcessingTime},
     termination::{StopFlag, Termination},
@@ -190,13 +190,13 @@ where
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "in loop mode since {}",
                     self.started_at
-                )))
+                )));
             }
             RunMode::Step => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "in step mode since {}",
                     self.started_at
-                )))
+                )));
             }
             RunMode::NotRunning => {
                 self.run_mode = RunMode::Loop;
@@ -231,7 +231,7 @@ where
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "in loop mode since {}",
                     self.started_at
-                )))
+                )));
             }
             RunMode::Step => (),
             RunMode::NotRunning => {
@@ -268,14 +268,14 @@ where
                     "Simulation still running in loop mode since {}. Wait for the \
                      simulation to finish or stop it before resetting it.",
                     self.started_at
-                )))
+                )));
             }
             RunMode::Step => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "Simulation still running in step mode since {}. Wait for the \
                      simulation to finish or stop it before resetting it.",
                     self.started_at
-                )))
+                )));
             }
             RunMode::NotRunning => (),
         }
