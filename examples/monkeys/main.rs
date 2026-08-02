@@ -2,7 +2,7 @@
 //! known as the
 //! [infinite monkey theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem).
 
-use genevo::{
+use allele::{
     operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*, types::fmt::Display,
 };
 

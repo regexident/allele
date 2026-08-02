@@ -4,7 +4,7 @@
 //!
 //! [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem)
 
-use genevo::{operator::prelude::*, population::*, prelude::*, types::fmt::Display};
+use allele::{operator::prelude::*, population::*, prelude::*, types::fmt::Display};
 use smallvec::SmallVec;
 
 #[derive(Debug, Clone)]
