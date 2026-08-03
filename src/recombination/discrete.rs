@@ -226,6 +226,44 @@ pub trait MultiPointCrossover: Genotype {
         R: Rng + Sized;
 }
 
+fn crossover_one_child<V, R>(
+    parents: &[impl std::ops::Deref<Target = [V]>],
+    num_cut_points: usize,
+    rng: &mut R,
+) -> Vec<V>
+where
+    V: Clone,
+    R: Rng + Sized,
+{
+    let genome_length = parents[0].len();
+    let num_parents = parents.len();
+    let mut genome = Vec::with_capacity(genome_length);
+    let mut cutpoints = random_n_cut_points(rng, num_cut_points, genome_length);
+    cutpoints.push(genome_length);
+    let mut start = 0;
+    let mut end = cutpoints.remove(0);
+    let mut p_index = num_parents;
+    loop {
+        loop {
+            let index = rng.random_range(0..num_parents);
+            if index != p_index {
+                p_index = index;
+                break;
+            }
+        }
+        let partner = &parents[p_index];
+        for partner in partner.iter().take(end).skip(start) {
+            genome.push(partner.clone())
+        }
+        if cutpoints.is_empty() {
+            break;
+        }
+        start = end;
+        end = cutpoints.remove(0);
+    }
+    genome
+}
+
 impl<V> MultiPointCrossover for Vec<V>
 where
     V: Clone + Debug + PartialEq + Send + Sync,
@@ -236,9 +274,7 @@ where
     where
         R: Rng + Sized,
     {
-        let genome_length = parents[0].len();
         let num_parents = parents.len();
-        // breed one child for each partner in parents
         let mut offspring: Vec<Vec<V>> = Vec::with_capacity(num_parents);
         while num_parents > offspring.len() {
             if num_parents <= 1 {
@@ -247,31 +283,7 @@ where
                 }
                 continue;
             }
-            let mut genome = Vec::with_capacity(genome_length);
-            let mut cutpoints = random_n_cut_points(rng, num_cut_points, genome_length);
-            cutpoints.push(genome_length);
-            let mut start = 0;
-            let mut end = cutpoints.remove(0);
-            let mut p_index = num_parents;
-            loop {
-                loop {
-                    let index = rng.random_range(0..num_parents);
-                    if index != p_index {
-                        p_index = index;
-                        break;
-                    }
-                }
-                let partner = &parents[p_index];
-                for partner in partner.iter().take(end).skip(start) {
-                    genome.push(partner.clone())
-                }
-                if cutpoints.is_empty() {
-                    break;
-                }
-                start = end;
-                end = cutpoints.remove(0);
-            }
-            offspring.push(genome);
+            offspring.push(crossover_one_child(&parents, num_cut_points, rng));
         }
         offspring
     }
@@ -281,12 +293,12 @@ where
 mod smallvec_multipoint_crossover {
     use std::fmt::Debug;
 
-    use rand::{Rng, RngExt};
+    use rand::Rng;
     use smallvec::{Array, SmallVec};
 
     use crate::genetic::{Children, Parents};
 
-    use super::{MultiPointCrossover, random_n_cut_points};
+    use super::{MultiPointCrossover, crossover_one_child};
 
     impl<A, V> MultiPointCrossover for SmallVec<A>
     where
@@ -303,9 +315,7 @@ mod smallvec_multipoint_crossover {
         where
             R: Rng + Sized,
         {
-            let genome_length = parents[0].len();
             let num_parents = parents.len();
-            // breed one child for each partner in parents
             let mut offspring: Vec<SmallVec<A>> = Vec::with_capacity(num_parents);
             while num_parents > offspring.len() {
                 if num_parents <= 1 {
@@ -314,31 +324,11 @@ mod smallvec_multipoint_crossover {
                     }
                     continue;
                 }
-                let mut genome = SmallVec::with_capacity(genome_length);
-                let mut cutpoints = random_n_cut_points(rng, num_cut_points, genome_length);
-                cutpoints.push(genome_length);
-                let mut start = 0;
-                let mut end = cutpoints.remove(0);
-                let mut p_index = num_parents;
-                loop {
-                    loop {
-                        let index = rng.random_range(0..num_parents);
-                        if index != p_index {
-                            p_index = index;
-                            break;
-                        }
-                    }
-                    let partner = &parents[p_index];
-                    for partner in partner.iter().take(end).skip(start) {
-                        genome.push(partner.clone())
-                    }
-                    if cutpoints.is_empty() {
-                        break;
-                    }
-                    start = end;
-                    end = cutpoints.remove(0);
-                }
-                offspring.push(genome);
+                offspring.push(SmallVec::from_vec(crossover_one_child(
+                    &parents,
+                    num_cut_points,
+                    rng,
+                )));
             }
             offspring
         }
