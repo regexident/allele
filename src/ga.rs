@@ -28,7 +28,7 @@ pub mod builder;
 use std::{
     fmt::{self, Display},
     marker::PhantomData,
-    rc::Rc,
+    sync::Arc,
     time::Instant,
 };
 
@@ -118,7 +118,7 @@ where
     reinserter: R,
     min_population_size: usize,
     initial_population: Population<G>,
-    population: Rc<Vec<G>>,
+    population: Arc<Vec<G>>,
     processing_time: ProcessingTime,
 }
 
@@ -223,7 +223,7 @@ where
             + breeding.time
             + reinsertion.time;
         let next_generation = reinsertion.result;
-        self.population = Rc::new(next_generation);
+        self.population = Arc::new(next_generation);
         Ok(State {
             evaluated_population: evaluation.result,
             best_solution: best_solution.result,
@@ -233,13 +233,13 @@ where
 
     fn reset(&mut self) -> Result<bool, Self::Error> {
         self.processing_time = ProcessingTime::zero();
-        self.population = Rc::new(self.initial_population.individuals().to_vec());
+        self.population = Arc::new(self.initial_population.individuals().to_vec());
         Ok(true)
     }
 }
 
 fn evaluate_fitness<G, F, E>(
-    population: Rc<Vec<G>>,
+    population: Arc<Vec<G>>,
     evaluator: &E,
 ) -> TimedResult<EvaluatedPopulation<G, F>>
 where

@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, rc::Rc};
+use std::{marker::PhantomData, sync::Arc};
 
 use crate::{
     genetic::{Fitness, FitnessFunction, Genotype},
@@ -51,7 +51,7 @@ where
             mutator: self.mutator,
             reinserter: self.reinserter,
             min_population_size: self.min_population_size,
-            population: Rc::new(self.initial_population.individuals().to_vec()),
+            population: Arc::new(self.initial_population.individuals().to_vec()),
             initial_population: self.initial_population,
             processing_time: ProcessingTime::zero(),
         }
