@@ -13,7 +13,9 @@ use crate::{
 /// o individuals from the old population and combines them to the new
 /// population. The sum of n and o is always equal to the size of the
 /// old population. The individuals to be inserted in the new population
-/// are picked uniformly at random.
+/// are picked uniformly at random. Both offspring and old-population
+/// selection are done without replacement — each individual can appear at
+/// most once in the resulting population.
 ///
 /// The reinserter can be configured by the `replace_ratio` field. The
 /// replace ratio is the fraction of the population size that is replaced by
@@ -99,7 +101,7 @@ where
             // pick individuals from the offspring uniformly at random
             while num_offspring > new_population.len() {
                 let index = random_index(rng, offspring.len());
-                new_population.push(offspring.remove(index));
+                new_population.push(offspring.swap_remove(index));
             }
         } else {
             // insert all individuals from offspring
@@ -108,9 +110,11 @@ where
         // finally fill up new population with individuals from old population
         // (as many as needed).
         let num_old_population = population_size - new_population.len();
+        let mut available_indices: Vec<usize> = (0..old_individuals.len()).collect();
         for _ in 0..num_old_population {
-            let index = random_index(rng, old_individuals.len());
-            new_population.push(old_individuals[index].clone());
+            let index = random_index(rng, available_indices.len());
+            let chosen = available_indices.swap_remove(index);
+            new_population.push(old_individuals[chosen].clone());
         }
         new_population
     }
