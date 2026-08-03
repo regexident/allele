@@ -48,7 +48,6 @@ where
             termination: self.termination,
             run_mode: RunMode::NotRunning,
             rng: get_rng(seed),
-            started_at: Instant::now(),
             iteration: 0,
             processing_time: ProcessingTime::zero(),
         }
@@ -84,10 +83,10 @@ where
 enum RunMode {
     /// The simulation is running in loop mode. i.e. it was started by calling
     /// the `run` function.
-    Loop,
+    Loop(Instant),
     /// The simulation is running in step mode. i.e. it was started by calling
     /// the `step` function.
-    Step,
+    Step(Instant),
     /// The simulation is not running.
     NotRunning,
 }
@@ -140,7 +139,6 @@ where
     termination: T,
     run_mode: RunMode,
     rng: Prng,
-    started_at: Instant,
     iteration: u64,
     processing_time: ProcessingTime,
 }
@@ -156,7 +154,10 @@ where
     }
 
     /// Processes one iteration of the algorithm used in this simulation.
-    fn process_one_iteration(&mut self) -> Result<State<A>, <Self as Simulation<A>>::Error> {
+    fn process_one_iteration(
+        &mut self,
+        started_at: Instant,
+    ) -> Result<State<A>, <Self as Simulation<A>>::Error> {
         let loop_started_at = Instant::now();
 
         self.iteration += 1;
@@ -166,7 +167,7 @@ where
         let loop_duration = loop_started_at.elapsed();
         match result {
             Ok(result) => Ok(State {
-                started_at: self.started_at,
+                started_at,
                 iteration: self.iteration,
                 duration: loop_duration,
                 processing_time: self.algorithm.processing_time(),
@@ -186,33 +187,34 @@ where
     type Error = SimError<A>;
 
     fn run(&mut self) -> Result<SimResult<A>, Self::Error> {
-        match self.run_mode {
-            RunMode::Loop => {
+        let started_at = match self.run_mode.clone() {
+            RunMode::Loop(t) => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "in loop mode since {:?}",
-                    self.started_at
+                    t
                 )));
             }
-            RunMode::Step => {
+            RunMode::Step(t) => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "in step mode since {:?}",
-                    self.started_at
+                    t
                 )));
             }
             RunMode::NotRunning => {
-                self.run_mode = RunMode::Loop;
-                self.started_at = Instant::now();
+                let now = Instant::now();
+                self.run_mode = RunMode::Loop(now);
+                now
             }
-        }
+        };
         let result = loop {
-            match self.process_one_iteration() {
+            match self.process_one_iteration(started_at) {
                 Ok(state) => {
                     // Stage 5: Be aware of the termination:
                     match self.termination.evaluate(&state) {
                         StopFlag::Continue => {}
                         StopFlag::StopNow(reason) => {
                             let processing_time = self.processing_time;
-                            let duration = self.started_at.elapsed();
+                            let duration = started_at.elapsed();
                             break Ok(SimResult::Final(state, processing_time, duration, reason));
                         }
                     }
@@ -227,34 +229,36 @@ where
     }
 
     fn step(&mut self) -> Result<SimResult<A>, Self::Error> {
-        match self.run_mode {
-            RunMode::Loop => {
+        let started_at = match self.run_mode.clone() {
+            RunMode::Loop(t) => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "in loop mode since {:?}",
-                    self.started_at
+                    t
                 )));
             }
-            RunMode::Step => (),
+            RunMode::Step(t) => t,
             RunMode::NotRunning => {
-                self.run_mode = RunMode::Step;
-                self.started_at = Instant::now();
+                let now = Instant::now();
+                self.run_mode = RunMode::Step(now);
+                now
             }
-        }
-        self.process_one_iteration()
-            .map(|state| match self.termination.evaluate(&state) {
+        };
+        self.process_one_iteration(started_at).map(|state| {
+            match self.termination.evaluate(&state) {
                 StopFlag::Continue => SimResult::Intermediate(state),
                 StopFlag::StopNow(reason) => {
                     let processing_time = self.processing_time;
-                    let duration = self.started_at.elapsed();
+                    let duration = started_at.elapsed();
                     self.run_mode = RunMode::NotRunning;
                     SimResult::Final(state, processing_time, duration, reason)
                 }
-            })
+            }
+        })
     }
 
     fn stop(&mut self) -> Result<bool, Self::Error> {
         match self.run_mode {
-            RunMode::Loop | RunMode::Step => {
+            RunMode::Loop(_) | RunMode::Step(_) => {
                 self.run_mode = RunMode::NotRunning;
                 Ok(true)
             }
@@ -263,19 +267,19 @@ where
     }
 
     fn reset(&mut self) -> Result<bool, Self::Error> {
-        match self.run_mode {
-            RunMode::Loop => {
+        match &self.run_mode {
+            RunMode::Loop(t) => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "Simulation still running in loop mode since {:?}. Wait for the \
                      simulation to finish or stop it before resetting it.",
-                    self.started_at
+                    t
                 )));
             }
-            RunMode::Step => {
+            RunMode::Step(t) => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
                     "Simulation still running in step mode since {:?}. Wait for the \
                      simulation to finish or stop it before resetting it.",
-                    self.started_at
+                    t
                 )));
             }
             RunMode::NotRunning => (),
