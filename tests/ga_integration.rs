@@ -48,7 +48,7 @@ fn ga_run_preserves_population_size_and_improves_best_fitness() {
         .with_selection(TournamentSelector::new(0.5, 2, 3, 0.8, false).unwrap())
         .with_crossover(SinglePointCrossBreeder::new())
         .with_mutation(SwapOrderMutator::new(0.1))
-        .with_reinsertion(UniformReinserter::new(1.0))
+        .with_reinsertion(UniformReinserter::new(1.0).unwrap())
         .with_initial_population(initial_population)
         .build();
 

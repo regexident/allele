@@ -102,11 +102,9 @@ fn main() {
             ))
             .with_crossover(MultiPointCrossBreeder::new(params.num_crossover_points))
             .with_mutation(RandomValueMutator::new(params.mutation_rate, 32, 126))
-            .with_reinsertion(ElitistReinserter::new(
-                FitnessCalc,
-                true,
-                params.reinsertion_ratio,
-            ))
+            .with_reinsertion(
+                ElitistReinserter::new(FitnessCalc, true, params.reinsertion_ratio).unwrap(),
+            )
             .with_initial_population(initial_population)
             .build(),
     )

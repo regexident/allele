@@ -153,11 +153,9 @@ fn main() {
                     y: NUM_COLS,
                 },
             ))
-            .with_reinsertion(ElitistReinserter::new(
-                FitnessCalc,
-                false,
-                REINSERTION_RATIO,
-            ))
+            .with_reinsertion(
+                ElitistReinserter::new(FitnessCalc, false, REINSERTION_RATIO).unwrap(),
+            )
             .with_initial_population(initial_population)
             .build(),
     )

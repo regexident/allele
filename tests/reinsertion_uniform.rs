@@ -41,7 +41,7 @@ fn combine_returns_population_of_original_size(
         .collect();
     let original_offspring = offspring_to_combine.clone();
 
-    let reinserter = UniformReinserter::new(replace_ratio);
+    let reinserter = UniformReinserter::new(replace_ratio).unwrap();
     let new_population = reinserter.combine(&mut offspring_to_combine, &evaluated, &mut rng);
 
     assert_eq!(new_population.len(), population_size);
