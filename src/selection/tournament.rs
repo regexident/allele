@@ -3,6 +3,8 @@
 //! The provided `SelectionOp` implementations are:
 //! * `TournamentSelector`
 
+use std::collections::VecDeque;
+
 use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{Fitness, Genotype, Parents},
@@ -183,7 +185,7 @@ where
         let target_num_candidates = num_parents_to_select * self.num_individuals_per_parents;
 
         // select candidates for parents
-        let mut picked_candidates = Vec::with_capacity(target_num_candidates);
+        let mut picked_candidates: VecDeque<usize> = VecDeque::with_capacity(target_num_candidates);
         let mut count_candidates = 0;
         while count_candidates < target_num_candidates && !mating_pool.is_empty() {
             // fill up tournament with candidates
@@ -198,19 +200,16 @@ where
             if tournament.is_empty() {
                 break;
             }
-            // sort tournament from best performing to worst performing index
-            tournament.sort_by(|x, y| fitness_values[*y].cmp(&fitness_values[*x]));
-            // pick candidates with probability
+            tournament.sort_by(|x, y| fitness_values[*x].cmp(&fitness_values[*y]));
             let mut prob = self.probability;
-            while !tournament.is_empty() {
-                let picked = tournament.remove(0);
+            while let Some(picked) = tournament.pop() {
                 if random_probability(rng) <= prob {
                     if self.remove_selected_individuals {
                         if let Some(position) = mating_pool.iter().position(|x| *x == picked) {
-                            mating_pool.remove(position);
+                            mating_pool.swap_remove(position);
                         }
                     }
-                    picked_candidates.push(picked);
+                    picked_candidates.push_back(picked);
                     count_candidates += 1;
                 }
                 prob *= 1.0 - self.probability;
@@ -226,7 +225,7 @@ where
             let mut tuple = Vec::with_capacity(self.num_individuals_per_parents);
             for _ in 0..self.num_individuals_per_parents {
                 // index into individuals slice
-                let index_i = picked_candidates.remove(0);
+                let index_i = picked_candidates.pop_front().unwrap();
                 tuple.push(individuals[index_i].clone());
             }
             selected.push(tuple);
