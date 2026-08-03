@@ -24,6 +24,7 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Changed
 
+- Replaced `Rc<Vec<G>>` with `Arc<Vec<G>>` in `EvaluatedPopulation` and `GeneticAlgorithm`, making both types `Send`; `EvaluatedPopulation::new` and `EvaluatedPopulation::individuals()` now use `Arc`
 - `GeneticOperator::name()` now returns `Cow<'static, str>` instead of `String`, eliminating a heap allocation per call
 - Bumped MSRV from "1.80.0" to "1.85.1"
 - Bumped Rust edition from “2021” to “2024”

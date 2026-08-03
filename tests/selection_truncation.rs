@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use proptest::prelude::ProptestConfig;
 use test_strategy::proptest;
@@ -31,7 +31,7 @@ fn maximize_selector_returns_expected_number_of_parent_tuples(
     let lowest = *fitness_values.iter().min().unwrap();
     let average = fitness_values.iter().sum::<i32>() / fitness_values.len() as i32;
     let evaluated = EvaluatedPopulation::new(
-        Rc::new(individuals.clone()),
+        Arc::new(individuals.clone()),
         fitness_values,
         highest,
         lowest,
@@ -72,7 +72,7 @@ fn maximize_selector_selects_from_top_performers(
     let lowest = *fitness_values.iter().min().unwrap();
     let average = fitness_values.iter().sum::<i32>() / fitness_values.len() as i32;
     let evaluated = EvaluatedPopulation::new(
-        Rc::new(individuals.clone()),
+        Arc::new(individuals.clone()),
         fitness_values.clone(),
         highest,
         lowest,
