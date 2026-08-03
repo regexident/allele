@@ -59,7 +59,7 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Other
 
-- n/a
+- Documented `par_evaluate_fitness` panic precondition for empty populations
 
 ## [0.8.0] - 2026-08-02 (https://crates.io/crates/allele/0.8.0)
 
