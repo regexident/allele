@@ -15,10 +15,8 @@ use std::{
 };
 
 use crate::{
-    algorithm::Algorithm,
-    ga::GeneticAlgorithm,
-    genetic::{Fitness, FitnessFunction, Genotype},
-    operator::{CrossoverOp, MutationOp, ReinsertionOp, SelectionOp},
+    algorithm::{Algorithm, OptimizationResult},
+    genetic::{Fitness, Genotype},
     simulation::State,
     termination::{StopFlag, Termination},
 };
@@ -56,18 +54,15 @@ where
     }
 }
 
-impl<G, F, E, S, C, M, R> Termination<GeneticAlgorithm<G, F, E, S, C, M, R>> for FitnessLimit<G, F>
+impl<A, G, F> Termination<A> for FitnessLimit<G, F>
 where
     G: Genotype,
-    F: Fitness + Send + Sync,
-    E: FitnessFunction<G, F> + Sync,
-    S: SelectionOp<G, F>,
-    C: CrossoverOp<G> + Sync,
-    M: MutationOp<G> + Sync,
-    R: ReinsertionOp<G, F>,
+    F: Fitness,
+    A: Algorithm,
+    A::Output: OptimizationResult<G, F>,
 {
-    fn evaluate(&mut self, state: &State<GeneticAlgorithm<G, F, E, S, C, M, R>>) -> StopFlag {
-        let highest_fitness = &state.result.best_solution.solution.fitness;
+    fn evaluate(&mut self, state: &State<A>) -> StopFlag {
+        let highest_fitness = &state.result.best_solution().solution.fitness;
         if *highest_fitness >= self.fitness_target {
             StopFlag::StopNow(format!(
                 "Simulation stopped after a solution with a fitness of {:?} \
