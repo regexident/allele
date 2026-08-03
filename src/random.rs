@@ -88,26 +88,11 @@ where
             cutpoints.push(cp2);
         }
         _ => {
-            let slice_len = length / n;
-            let mut start = 0;
-            let mut end = slice_len;
-            let mut count = 1;
-            loop {
+            for i in 1..=n {
+                let start = ((i - 1) * length) / n + 1;
+                let end = if i == n { length } else { (i * length) / n };
                 let cutpoint = random_index_from_range(rng, start, end);
-                if cutpoint == 0 || cutpoint == length {
-                    continue;
-                }
                 cutpoints.push(cutpoint);
-                count += 1;
-                if count > n {
-                    break;
-                }
-                start = cutpoint + 1;
-                if count == n {
-                    end = length;
-                } else {
-                    end += slice_len;
-                }
             }
         }
     }
