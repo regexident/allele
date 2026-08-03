@@ -29,6 +29,7 @@ Please make sure to add your changes to the appropriate categories:
 - Bumped MSRV from "1.80.0" to "1.85.1"
 - Bumped Rust edition from “2021” to “2024”
 - Replaced the `chrono` dependency with `std::time`; `State::started_at` is now an `Instant`, and `State::duration`, `SimResult::Final`'s duration, `ProcessingTime`, and `TimeLimit` now use `std::time::Duration`
+- Renamed `GeneticAlgorithm` intermediate builder structs to use full operator words for readability in compiler errors
 
 ### Deprecated
 
