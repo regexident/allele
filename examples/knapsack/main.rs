@@ -211,7 +211,7 @@ fn main() {
             .with_selection(MaximizeSelector::new(0.85, 12))
             .with_crossover(SinglePointCrossBreeder::new())
             .with_mutation(RandomValueMutator::new(0.2, false, true))
-            .with_reinsertion(ElitistReinserter::new(&problem, false, 0.85))
+            .with_reinsertion(ElitistReinserter::new(&problem, false, 0.85).unwrap())
             .with_initial_population(initial_population)
             .build(),
     )

@@ -25,6 +25,7 @@ Please make sure to add your changes to the appropriate categories:
 ### Changed
 
 - `TournamentSelector::new` now returns `Result<Self, InvalidArgumentError>` instead of panicking on invalid `probability`
+- `ElitistReinserter::new` and `UniformReinserter::new` now return `Result<Self, InvalidArgumentError>` instead of panicking on invalid parameters
 - Replaced `Rc<Vec<G>>` with `Arc<Vec<G>>` in `EvaluatedPopulation` and `GeneticAlgorithm`, making both types `Send`; `EvaluatedPopulation::new` and `EvaluatedPopulation::individuals()` now use `Arc`
 - `GeneticOperator::name()` now returns `Cow<'static, str>` instead of `String`, eliminating a heap allocation per call
 - Bumped MSRV from "1.80.0" to "1.85.1"

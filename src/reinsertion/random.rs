@@ -40,13 +40,16 @@ pub struct UniformReinserter {
 impl UniformReinserter {
     /// Constructs a new instance of the `UniformReinserter` with the given
     /// parameters.
-    pub fn new(replace_ratio: f64) -> Self {
-        assert!(
-            (0.0..=1.0).contains(&replace_ratio),
-            "replace_ratio must be in [0.0, 1.0], got {}",
-            replace_ratio
-        );
-        UniformReinserter { replace_ratio }
+    ///
+    /// Returns [`InvalidArgumentError`] if `replace_ratio` is not in [0.0, 1.0].
+    pub fn new(replace_ratio: f64) -> Result<Self, crate::InvalidArgumentError> {
+        if !(0.0..=1.0).contains(&replace_ratio) {
+            return Err(crate::InvalidArgumentError::new(
+                "replace_ratio",
+                format!("must be in [0.0, 1.0], got {}", replace_ratio),
+            ));
+        }
+        Ok(UniformReinserter { replace_ratio })
     }
 
     /// Returns the `replace_ratio` of this `UniformReinserter`.
@@ -56,6 +59,10 @@ impl UniformReinserter {
 
     /// Set the `replace_ratio` of this `UniformReinserter` to the given
     /// value. The value must be between 0 and 1.0 (inclusive).
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is not in [0.0, 1.0].
     pub fn set_replace_ratio(&mut self, value: f64) {
         assert!(
             (0.0..=1.0).contains(&value),
