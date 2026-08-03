@@ -64,21 +64,9 @@ where
 {
     assert!(max >= min + 4);
     let max_slice = max - min - 2;
-    loop {
-        let cutpoint1 = rng.random_range(min..max);
-        let cutpoint2 = rng.random_range(min..max);
-        if cutpoint1 < cutpoint2 {
-            if cutpoint2 - cutpoint1 >= max_slice {
-                continue;
-            }
-            return (cutpoint1, cutpoint2);
-        } else if cutpoint2 < cutpoint1 {
-            if cutpoint1 - cutpoint2 >= max_slice {
-                continue;
-            }
-            return (cutpoint2, cutpoint1);
-        }
-    }
+    let delta = rng.random_range(1..max_slice);
+    let cutpoint1 = rng.random_range(min..(max - delta));
+    (cutpoint1, cutpoint1 + delta)
 }
 
 /// Generates `n` cut points for a slice of given length using the given `Prng`.
