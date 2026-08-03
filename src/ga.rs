@@ -287,6 +287,10 @@ where
 
 /// Calculates the `genetic::Fitness` value of each `genetic::Genotype` and
 /// records the highest and lowest values.
+///
+/// # Panics
+///
+/// Panics if `population` is empty.
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
 fn par_evaluate_fitness<G, F, E>(population: &[G], evaluator: &E) -> TimedResult<(Vec<F>, F, F)>
 where
@@ -323,6 +327,9 @@ where
     }
 }
 
+/// # Panics
+///
+/// Panics if `population` is empty.
 #[cfg(any(target_arch = "wasm32", not(feature = "parallel")))]
 fn par_evaluate_fitness<G, F, E>(population: &[G], evaluator: &E) -> TimedResult<(Vec<F>, F, F)>
 where
