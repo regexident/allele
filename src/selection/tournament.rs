@@ -55,25 +55,30 @@ pub struct TournamentSelector {
 
 impl TournamentSelector {
     /// Constructs a new instance of the `TournamentSelector`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`InvalidArgumentError`] if `probability` is not in (0.0, 1.0].
     pub fn new(
         selection_ratio: f64,
         num_individuals_per_parents: usize,
         tournament_size: usize,
         probability: f64,
         remove_selected_individuals: bool,
-    ) -> Self {
-        assert!(
-            probability > 0.0 && probability <= 1.0,
-            "probability must be in (0.0, 1.0], got {}",
-            probability
-        );
-        TournamentSelector {
+    ) -> Result<Self, crate::InvalidArgumentError> {
+        if !(probability > 0.0 && probability <= 1.0) {
+            return Err(crate::InvalidArgumentError::new(
+                "probability",
+                format!("must be in (0.0, 1.0], got {}", probability),
+            ));
+        }
+        Ok(TournamentSelector {
             selection_ratio,
             num_individuals_per_parents,
             tournament_size,
             probability,
             remove_selected_individuals,
-        }
+        })
     }
 
     /// Returns the selection ratio.
@@ -90,6 +95,10 @@ impl TournamentSelector {
     /// The selection ratio is the fraction of number of parents that are
     /// selected on every call of the `select_from` function and the number
     /// of individuals in the population.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is not in `[0.0, 1.0]`.
     pub fn set_selection_ratio(&mut self, value: f64) {
         assert!(
             (0.0..=1.0).contains(&value),
@@ -133,6 +142,10 @@ impl TournamentSelector {
     ///
     /// A probability of 1.0 means the tournament is deterministic. The best
     /// and only the best individual of each tournament is selected.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is not in `(0.0, 1.0]`.
     pub fn set_probability(&mut self, value: f64) {
         assert!(
             value > 0.0 && value <= 1.0,
