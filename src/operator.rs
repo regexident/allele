@@ -9,6 +9,8 @@
 
 pub mod prelude;
 
+use std::borrow::Cow;
+
 use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{Children, Fitness, Genotype, Offspring, Parents},
@@ -39,7 +41,7 @@ pub trait GeneticOperator: Clone {
     /// It is recommended to combine some name of the method implemented by
     /// this operator (first part) with some name for the kind of operator
     /// (second part), e.g. "Flip-Bit-Mutation" or "Roulette-Wheel-Selection".
-    fn name() -> String;
+    fn name() -> Cow<'static, str>;
 }
 
 /// A `SelectionOp` defines the function of how to select solutions for being

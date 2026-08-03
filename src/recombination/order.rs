@@ -7,6 +7,7 @@
 //! * `OrderOneCrossover` (OX1)
 //! * `PartiallyMappedCrossover` (PMX)
 
+use std::borrow::Cow;
 use std::collections::HashMap;
 
 use crate::{
@@ -31,8 +32,8 @@ impl OrderOneCrossover {
 }
 
 impl GeneticOperator for OrderOneCrossover {
-    fn name() -> String {
-        "Order-One-Crossover".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Order-One-Crossover")
     }
 }
 
@@ -61,8 +62,8 @@ impl PartiallyMappedCrossover {
 }
 
 impl GeneticOperator for PartiallyMappedCrossover {
-    fn name() -> String {
-        "Partially-Mapped-Crossover".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Partially-Mapped-Crossover")
     }
 }
 

@@ -24,6 +24,7 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Changed
 
+- `GeneticOperator::name()` now returns `Cow<'static, str>` instead of `String`, eliminating a heap allocation per call
 - Bumped MSRV from "1.80.0" to "1.85.1"
 - Bumped Rust edition from “2021” to “2024”
 - Replaced the `chrono` dependency with `std::time`; `State::started_at` and `BestSolution::found_at` are now `Instant`s, and `State::duration`, `SimResult::Final`'s duration, `ProcessingTime`, and `TimeLimit` now use `std::time::Duration`

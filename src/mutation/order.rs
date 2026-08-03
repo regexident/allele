@@ -1,6 +1,7 @@
 //! The `order` module provides `operator::MutationOp`s for permutation encoded
 //! `genetic::Genotype`s.
 
+use std::borrow::Cow;
 use std::fmt::Debug;
 
 use crate::{
@@ -39,8 +40,8 @@ impl InsertOrderMutator {
 }
 
 impl GeneticOperator for InsertOrderMutator {
-    fn name() -> String {
-        "Order-Insert-Mutation".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Order-Insert-Mutation")
     }
 }
 
@@ -95,8 +96,8 @@ impl SwapOrderMutator {
 }
 
 impl GeneticOperator for SwapOrderMutator {
-    fn name() -> String {
-        "Order-Swap-Mutation".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Order-Swap-Mutation")
     }
 }
 
