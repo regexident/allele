@@ -387,6 +387,21 @@ pub trait BreederValueMutation {
     fn breeder_mutated(value: Self, range: &Self, adjustment: f64, sign: i8) -> Self;
 }
 
+macro_rules! impl_breeder_mutation_unsigned {
+    ($($t:ty),*) => {
+        $(
+            impl BreederValueMutation for $t {
+                #[inline]
+                fn breeder_mutated(value: $t, range: &$t, adjustment: f64, sign: i8) -> $t {
+                    let result = value as i128
+                        + *range as i128 * (adjustment * sign as f64) as i128;
+                    result.clamp(<$t>::MIN as i128, <$t>::MAX as i128) as $t
+                }
+            }
+        )*
+    }
+}
+
 macro_rules! impl_breeder_mutation {
     ($($t:ty),*) => {
         $(
@@ -401,4 +416,5 @@ macro_rules! impl_breeder_mutation {
     }
 }
 
-impl_breeder_mutation!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
+impl_breeder_mutation_unsigned!(u8, u16, u32, u64, usize);
+impl_breeder_mutation!(i8, i16, i32, i64, isize, f32, f64);
