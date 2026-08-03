@@ -262,6 +262,30 @@ where
     }
 }
 
+fn serial_evaluate_fitness<G, F, E>(population: &[G], evaluator: &E) -> (Vec<F>, F, F)
+where
+    G: Genotype + Sync,
+    F: Fitness + Send + Sync,
+    E: FitnessFunction<G, F> + Sync,
+{
+    let score = evaluator.fitness_of(&population[0]);
+    let mut highest = score.clone();
+    let mut lowest = score.clone();
+    let mut fitness = Vec::with_capacity(population.len());
+    fitness.push(score);
+    for genome in population.iter().skip(1) {
+        let score = evaluator.fitness_of(genome);
+        if score > highest {
+            highest = score.clone();
+        }
+        if score < lowest {
+            lowest = score.clone();
+        }
+        fitness.push(score);
+    }
+    (fitness, highest, lowest)
+}
+
 /// Calculates the `genetic::Fitness` value of each `genetic::Genotype` and
 /// records the highest and lowest values.
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
@@ -272,25 +296,7 @@ where
     E: FitnessFunction<G, F> + Sync,
 {
     if population.len() < 50 {
-        timed(|| {
-            let score = evaluator.fitness_of(&population[0]);
-            let mut highest = score.clone();
-            let mut lowest = score.clone();
-            let mut fitness = Vec::with_capacity(population.len());
-            fitness.push(score);
-            for genome in population.iter().skip(1) {
-                let score = evaluator.fitness_of(genome);
-                if score > highest {
-                    highest = score.clone();
-                }
-                if score < lowest {
-                    lowest = score.clone();
-                }
-                fitness.push(score);
-            }
-            (fitness, highest, lowest)
-        })
-        .run()
+        timed(|| serial_evaluate_fitness(population, evaluator)).run()
     } else {
         let mid_point = population.len() / 2;
         let (l_slice, r_slice) = population.split_at(mid_point);
@@ -325,25 +331,7 @@ where
     F: Fitness + Send + Sync,
     E: FitnessFunction<G, F> + Sync,
 {
-    timed(|| {
-        let score = evaluator.fitness_of(&population[0]);
-        let mut highest = score.clone();
-        let mut lowest = score.clone();
-        let mut fitness = Vec::with_capacity(population.len());
-        fitness.push(score);
-        for genome in population.iter().skip(1) {
-            let score = evaluator.fitness_of(genome);
-            if score > highest {
-                highest = score.clone();
-            }
-            if score < lowest {
-                lowest = score.clone();
-            }
-            fitness.push(score);
-        }
-        (fitness, highest, lowest)
-    })
-    .run()
+    timed(|| serial_evaluate_fitness(population, evaluator)).run()
 }
 
 /// Determines the best solution of the current population
@@ -371,6 +359,28 @@ where
     .run())
 }
 
+fn serial_breed_offspring<G, C, M>(
+    parents: Vec<Parents<G>>,
+    breeder: &C,
+    mutator: &M,
+    rng: &mut Prng,
+) -> Offspring<G>
+where
+    G: Genotype + Send,
+    C: CrossoverOp<G> + Sync,
+    M: MutationOp<G> + Sync,
+{
+    let mut offspring: Offspring<G> = Vec::with_capacity(parents.len() * parents[0].len());
+    for parents in parents {
+        let children = breeder.crossover(parents, rng);
+        for child in children {
+            let mutated = mutator.mutate(child, rng);
+            offspring.push(mutated);
+        }
+    }
+    offspring
+}
+
 /// Lets the parents breed their offspring and mutate its children. And
 /// finally combines the offspring of all parents into one big offspring.
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
@@ -389,18 +399,7 @@ where
         return timed(|| Vec::new()).run();
     }
     if parents.len() < 50 {
-        timed(|| {
-            let mut offspring: Offspring<G> = Vec::with_capacity(parents.len() * parents[0].len());
-            for parents in parents {
-                let children = breeder.crossover(parents, rng);
-                for child in children {
-                    let mutated = mutator.mutate(child, rng);
-                    offspring.push(mutated);
-                }
-            }
-            offspring
-        })
-        .run()
+        timed(|| serial_breed_offspring(parents, breeder, mutator, rng)).run()
     } else {
         rng.jump();
         let mut rng1 = rng.clone();
@@ -439,16 +438,5 @@ where
     if parents.is_empty() {
         return timed(|| Vec::new()).run();
     }
-    timed(|| {
-        let mut offspring: Offspring<G> = Vec::with_capacity(parents.len() * parents[0].len());
-        for parents in parents {
-            let children = breeder.crossover(parents, rng);
-            for child in children {
-                let mutated = mutator.mutate(child, rng);
-                offspring.push(mutated);
-            }
-        }
-        offspring
-    })
-    .run()
+    timed(|| serial_breed_offspring(parents, breeder, mutator, rng)).run()
 }
