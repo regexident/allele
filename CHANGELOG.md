@@ -40,6 +40,7 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Fixed
 
+- Eliminated dead `Instant::now()` initialization of `Simulator::started_at` at build time; start time is now recorded only when the simulation begins running
 - Fixed `UniformReinserter` sampling old population with replacement; both offspring and old-population picks are now without replacement
 - Replaced unbounded rejection-sampling loop in `random_cut_points_from_range` with O(1) direct construction
 - Fixed `BreederValueMutation` on unsigned types producing asymmetric boundary behavior when the intermediate arithmetic result is negative; both bounds now clamp symmetrically via `i128` intermediate
