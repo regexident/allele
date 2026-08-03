@@ -35,7 +35,7 @@ use std::{
 use rayon;
 
 use crate::{
-    algorithm::{Algorithm, BestSolution, EvaluatedPopulation},
+    algorithm::{Algorithm, BestSolution, EvaluatedPopulation, OptimizationResult},
     genetic::{Fitness, FitnessFunction, Genotype, Offspring, Parents},
     operator::{CrossoverOp, MutationOp, ReinsertionOp, SelectionOp},
     population::Population,
@@ -61,6 +61,16 @@ where
     /// Processing time for this generation. In case of parallel processing it
     /// is the accumulated time spent by each thread.
     pub processing_time: ProcessingTime,
+}
+
+impl<G, F> OptimizationResult<G, F> for State<G, F>
+where
+    G: Genotype,
+    F: Fitness,
+{
+    fn best_solution(&self) -> &BestSolution<G, F> {
+        &self.best_solution
+    }
 }
 
 /// An error that can occur during execution of a `GeneticAlgorithm`.
