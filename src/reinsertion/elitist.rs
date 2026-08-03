@@ -192,20 +192,18 @@ where
             }
             // sort offspring from worst to best performing performing
             offspring_fitness.sort_by(|x, y| x.1.cmp(&y.1));
+            let mut old_idx = 0;
             for _ in 0..population_size {
-                // compare fitness of best offspring with best fitness of old population
-                let index_old = old_population_indices[0];
+                let index_old = old_population_indices[old_idx];
                 if !offspring_fitness.is_empty()
                     && offspring_fitness[offspring_fitness.len() - 1].1
                         > old_fitness_values[index_old]
                 {
                     let (offspring, _) = offspring_fitness.pop().unwrap();
-                    // insert best from offspring
                     new_population.push(offspring);
                 } else {
-                    // insert best from old population
                     new_population.push(old_individuals[index_old].clone());
-                    old_population_indices.remove(0);
+                    old_idx += 1;
                 }
             }
         }
