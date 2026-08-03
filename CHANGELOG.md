@@ -28,7 +28,7 @@ Please make sure to add your changes to the appropriate categories:
 - `GeneticOperator::name()` now returns `Cow<'static, str>` instead of `String`, eliminating a heap allocation per call
 - Bumped MSRV from "1.80.0" to "1.85.1"
 - Bumped Rust edition from “2021” to “2024”
-- Replaced the `chrono` dependency with `std::time`; `State::started_at` and `BestSolution::found_at` are now `Instant`s, and `State::duration`, `SimResult::Final`'s duration, `ProcessingTime`, and `TimeLimit` now use `std::time::Duration`
+- Replaced the `chrono` dependency with `std::time`; `State::started_at` is now an `Instant`, and `State::duration`, `SimResult::Final`'s duration, `ProcessingTime`, and `TimeLimit` now use `std::time::Duration`
 
 ### Deprecated
 
@@ -36,7 +36,7 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Removed
 
-- n/a
+- Removed `BestSolution::found_at` field; timestamp-of-discovery is not part of the optimality result
 
 ### Fixed
 
