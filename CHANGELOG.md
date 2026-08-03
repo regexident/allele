@@ -20,7 +20,7 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Added
 
-- n/a
+- Added `InvalidArgumentError` type (re-exported from crate root) returned by constructors with out-of-range parameter values
 
 ### Changed
 

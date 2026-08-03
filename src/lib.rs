@@ -93,6 +93,9 @@
 )]
 #![deny(unsafe_code)]
 
+pub mod error;
+pub use error::InvalidArgumentError;
+
 pub mod prelude;
 
 pub mod genetic;
