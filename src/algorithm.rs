@@ -2,7 +2,7 @@
 //! concrete algorithms such as the `ga::GeneticAlgorithm` and various
 //! operators as defined in the `operator` module.
 
-use std::{error::Error, fmt::Debug, sync::Arc, time::Instant};
+use std::{error::Error, fmt::Debug, sync::Arc};
 
 use crate::{
     genetic::{Fitness, Genotype},
@@ -58,8 +58,6 @@ where
     G: Genotype,
     F: Fitness,
 {
-    /// The point in time at which this solution is found.
-    pub found_at: Instant,
     /// The number of the generation in which this solution is found.
     pub generation: u64,
     /// The evaluated `genetic::Genotype` that is considered to be best.

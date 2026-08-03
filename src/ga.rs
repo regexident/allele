@@ -29,7 +29,6 @@ use std::{
     fmt::{self, Display},
     marker::PhantomData,
     sync::Arc,
-    time::Instant,
 };
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
@@ -352,7 +351,6 @@ where
             ))
         })?;
     Ok(timed(|| BestSolution {
-        found_at: Instant::now(),
         generation,
         solution: evaluated,
     })
