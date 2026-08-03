@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::fmt::Debug;
 
 use rand::seq::IndexedRandom;
@@ -44,8 +45,8 @@ impl<G> GeneticOperator for RandomValueMutator<G>
 where
     G: Genotype + RandomGenomeMutation,
 {
-    fn name() -> String {
-        "Random-Value-Mutator".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Random-Value-Mutator")
     }
 }
 
@@ -286,8 +287,8 @@ impl<G> GeneticOperator for BreederValueMutator<G>
 where
     G: Genotype + BreederGenomeMutation,
 {
-    fn name() -> String {
-        "Breeder-Value-Mutator".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Breeder-Value-Mutator")
     }
 }
 

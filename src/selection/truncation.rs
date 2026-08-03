@@ -5,6 +5,8 @@
 //! The provided `SelectionOp` implementations are:
 //! * `MaximizeSelector`
 
+use std::borrow::Cow;
+
 use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{Fitness, Genotype, Parents},
@@ -73,8 +75,8 @@ impl SingleObjective for MaximizeSelector {}
 impl MultiObjective for MaximizeSelector {}
 
 impl GeneticOperator for MaximizeSelector {
-    fn name() -> String {
-        "Maximizing-Truncation-Selection".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Maximizing-Truncation-Selection")
     }
 }
 

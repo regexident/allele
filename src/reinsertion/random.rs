@@ -2,6 +2,8 @@
 //! individuals from the offspring and the old population without considering
 //! the fitness or any other attribute of the individuals.
 
+use std::borrow::Cow;
+
 use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{Fitness, Genotype, Offspring},
@@ -65,8 +67,8 @@ impl UniformReinserter {
 }
 
 impl GeneticOperator for UniformReinserter {
-    fn name() -> String {
-        "Uniform-Reinserter".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Uniform-Reinserter")
     }
 }
 

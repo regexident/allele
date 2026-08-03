@@ -2,6 +2,7 @@
 //! individuals from the offspring and the old population by choosing the best
 //! individuals from both.
 
+use std::borrow::Cow;
 use std::marker::PhantomData;
 
 use crate::{
@@ -107,8 +108,8 @@ where
     F: Fitness,
     E: FitnessFunction<G, F>,
 {
-    fn name() -> String {
-        "Elitist-Reinserter".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Elitist-Reinserter")
     }
 }
 

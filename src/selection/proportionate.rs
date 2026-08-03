@@ -14,6 +14,8 @@
 //! * `RouletteWheelSelector` - no bias - does not guarantee minimal spread.
 //! * `UniversalSamplingSelector` - no bias - minimal spread.
 
+use std::borrow::Cow;
+
 use crate::{
     algorithm::EvaluatedPopulation,
     genetic::{AsScalar, Fitness, Genotype, Parents},
@@ -82,8 +84,8 @@ impl RouletteWheelSelector {
 impl SingleObjective for RouletteWheelSelector {}
 
 impl GeneticOperator for RouletteWheelSelector {
-    fn name() -> String {
-        "Roulette-Wheel-Selection".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Roulette-Wheel-Selection")
     }
 }
 
@@ -176,8 +178,8 @@ impl UniversalSamplingSelector {
 impl SingleObjective for UniversalSamplingSelector {}
 
 impl GeneticOperator for UniversalSamplingSelector {
-    fn name() -> String {
-        "Stochastic-Universal-Sampling-Selection".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Stochastic-Universal-Sampling-Selection")
     }
 }
 

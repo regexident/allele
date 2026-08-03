@@ -11,6 +11,7 @@
 //! * `MultiPointCrossBreeder` for `fixedbitset::FixedBitSet`,
 //!   `smallvec::SmallVec` and `Vec` of any type.
 
+use std::borrow::Cow;
 use std::fmt::Debug;
 
 use crate::{
@@ -37,8 +38,8 @@ impl UniformCrossBreeder {
 }
 
 impl GeneticOperator for UniformCrossBreeder {
-    fn name() -> String {
-        "Uniform-Cross-Breeder".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Uniform-Cross-Breeder")
     }
 }
 
@@ -152,8 +153,8 @@ impl SinglePointCrossBreeder {
 }
 
 impl GeneticOperator for SinglePointCrossBreeder {
-    fn name() -> String {
-        "Single-Point-Cross-Breeder".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Single-Point-Cross-Breeder")
     }
 }
 
@@ -200,8 +201,8 @@ impl MultiPointCrossBreeder {
 }
 
 impl GeneticOperator for MultiPointCrossBreeder {
-    fn name() -> String {
-        "Multi-Point-Cross-Breeder".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Multi-Point-Cross-Breeder")
     }
 }
 

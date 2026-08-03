@@ -3,6 +3,7 @@
 //! The provided `SelectionOp` implementations are:
 //! * `TournamentSelector`
 
+use std::borrow::Cow;
 use std::collections::VecDeque;
 
 use crate::{
@@ -160,8 +161,8 @@ impl SingleObjective for TournamentSelector {}
 impl MultiObjective for TournamentSelector {}
 
 impl GeneticOperator for TournamentSelector {
-    fn name() -> String {
-        "Tournament-Selection".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("Tournament-Selection")
     }
 }
 
