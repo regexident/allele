@@ -140,7 +140,6 @@ fn order_one_crossover(
             p2_index = 0;
         }
     }
-    //    println!("{}-{} : {:?} <-> {:?}", cutpoint1, cutpoint2, p1_slice, p2_slice);
     // insert genes into child genome at correct position
     let right_offset = genome_length - cutpoint2 - 1;
     for locus in 0..genome_length {
