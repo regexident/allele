@@ -39,6 +39,7 @@ Please make sure to add your changes to the appropriate categories:
 ### Fixed
 
 - Fixed `UniformReinserter` sampling old population with replacement; both offspring and old-population picks are now without replacement
+- Replaced unbounded rejection-sampling loop in `random_cut_points_from_range` with O(1) direct construction
 
 ### Performance
 
