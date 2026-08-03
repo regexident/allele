@@ -38,11 +38,11 @@ Please make sure to add your changes to the appropriate categories:
 
 ### Fixed
 
-- n/a
+- Fixed `UniformReinserter` sampling old population with replacement; both offspring and old-population picks are now without replacement
 
 ### Performance
 
-- n/a
+- Replaced `Vec::remove(index)` with `swap_remove` in `UniformReinserter::combine`, removing O(n²) behavior
 
 ### Security
 
