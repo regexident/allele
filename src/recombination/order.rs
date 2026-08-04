@@ -113,21 +113,17 @@ fn order_one_crossover(
     let genome_length = parent1.len();
     let mut genome: Vec<usize> = Vec::with_capacity(genome_length);
     // collect genes of parent1 located at cutpoint1 to cutpoint2
-    let mut p1_slice: Vec<usize> = if cutpoint1 == 0 {
-        parent1
-            .iter()
-            .take(cutpoint2 + 1)
-            .map(ToOwned::to_owned)
-            .collect()
+    let mut p1_deque: VecDeque<usize> = if cutpoint1 == 0 {
+        parent1.iter().take(cutpoint2 + 1).copied().collect()
     } else {
         parent1
             .iter()
             .skip(cutpoint1)
             .take(cutpoint2 - cutpoint1 + 1)
-            .map(ToOwned::to_owned)
+            .copied()
             .collect()
     };
-    let p1_set: HashSet<usize> = p1_slice.iter().copied().collect();
+    let p1_set: HashSet<usize> = p1_deque.iter().copied().collect();
     // collect genes from parent2 which are not in cut slice
     let mut p2_deque: VecDeque<usize> = VecDeque::with_capacity(genome_length);
     let mut p2_index = (cutpoint2 + 1) % genome_length;
@@ -143,16 +139,14 @@ fn order_one_crossover(
     }
     // insert genes into child genome at correct position
     let right_offset = genome_length - cutpoint2 - 1;
+    let mut right_deque: VecDeque<usize> = p2_deque.drain(..right_offset).collect();
     for locus in 0..genome_length {
         if locus < cutpoint1 {
-            let mut tail = p2_deque.split_off(right_offset);
-            let val = tail.pop_front().unwrap();
-            p2_deque.extend(tail);
-            genome.push(val);
-        } else if locus > cutpoint2 {
             genome.push(p2_deque.pop_front().unwrap());
+        } else if locus > cutpoint2 {
+            genome.push(right_deque.pop_front().unwrap());
         } else {
-            genome.push(p1_slice.remove(0));
+            genome.push(p1_deque.pop_front().unwrap());
         }
     }
     genome

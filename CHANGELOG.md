@@ -60,6 +60,7 @@ Please make sure to add your changes to the appropriate categories:
 - Used prefix sums and `partition_point` in `WeightedDistribution`
 - Replaced `remove`+`insert` with `rotate_right(1)` in `InsertOrderMutator`
 - Replaced `cutpoints.remove(0)` with iterator in discrete crossover
+- Eliminated two quadratic complexity patterns in `order_one_crossover`
 
 ### Security
 
