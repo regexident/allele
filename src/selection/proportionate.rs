@@ -198,19 +198,29 @@ where
         let mut parents = Vec::with_capacity(num_parents_to_select);
         let weighted_distribution =
             WeightedDistribution::from_scalar_values(evaluated.fitness_values());
-        let distance = weighted_distribution.sum()
-            / (num_parents_to_select * self.num_individuals_per_parents) as f64;
+        let prefix_sums = weighted_distribution.prefix_sums();
+        let sum = weighted_distribution.sum();
+        let total = num_parents_to_select * self.num_individuals_per_parents;
+        let distance = sum / total as f64;
         let mut pointer = random_probability(rng) * distance;
-        for _ in 0..num_parents_to_select {
-            let mut tuple = Vec::with_capacity(self.num_individuals_per_parents);
-            for _ in 0..self.num_individuals_per_parents {
-                let selected = weighted_distribution.select(pointer);
-                tuple.push(individuals[selected].clone());
-                pointer += distance;
-                if pointer >= weighted_distribution.sum() {
-                    pointer -= weighted_distribution.sum();
-                }
+        let mut cursor = 0usize;
+        let mut selections: Vec<usize> = Vec::with_capacity(total);
+        for _ in 0..total {
+            while cursor < prefix_sums.len() && prefix_sums[cursor] < pointer {
+                cursor += 1;
             }
+            if cursor >= prefix_sums.len() {
+                cursor = 0;
+            }
+            selections.push(cursor.min(prefix_sums.len().saturating_sub(1)));
+            pointer += distance;
+            if pointer >= sum {
+                pointer -= sum;
+                cursor = 0;
+            }
+        }
+        for chunk in selections.chunks_exact(self.num_individuals_per_parents) {
+            let tuple = chunk.iter().map(|&i| individuals[i].clone()).collect();
             parents.push(tuple);
         }
         parents
