@@ -58,6 +58,7 @@ Please make sure to add your changes to the appropriate categories:
 - Optimized `order_one_crossover` with `HashSet` membership and `VecDeque`
 - Used `HashMap` index for O(1) removal in `TournamentSelector`
 - Used prefix sums and `partition_point` in `WeightedDistribution`
+- Replaced `remove`+`insert` with `rotate_right(1)` in `InsertOrderMutator`
 
 ### Security
 

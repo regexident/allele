@@ -58,8 +58,7 @@ where
         let mut mutated = genome;
         for _ in 0..num_mutations {
             let (locus1, locus2) = random_cut_points(rng, genome_length);
-            let value2 = mutated.remove(locus2);
-            mutated.insert(locus1 + 1, value2);
+            mutated[locus1 + 1..=locus2].rotate_right(1);
         }
         mutated
     }
