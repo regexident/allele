@@ -2,6 +2,8 @@
 //! known as the
 //! [infinite monkey theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem).
 
+use std::ops::ControlFlow;
+
 use humantime::format_duration;
 
 use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
@@ -122,7 +124,7 @@ fn main() {
     loop {
         let result = monkeys_sim.step();
         match result {
-            Ok(SimResult::Intermediate(step)) => {
+            Ok(ControlFlow::Continue(step)) => {
                 let evaluated_population = step.result.evaluated_population;
                 let best_solution = step.result.best_solution;
                 println!(
@@ -138,17 +140,17 @@ fn main() {
                 //                println!("| population: [{}]", result.population.iter().map(|g| g.as_text())
                 //                    .collect::<Vec<String>>().join("], ["));
             }
-            Ok(SimResult::Final(step, processing_time, duration, stop_reason)) => {
-                let best_solution = step.result.best_solution;
-                println!("{}", stop_reason);
+            Ok(ControlFlow::Break(result)) => {
+                let best_solution = result.state.result.best_solution;
+                println!("{}", result.stop_reason);
                 println!(
                     "Final result after {}: generation: {}, \
                      best solution with fitness {} found in generation {}, processing_time: {}",
-                    format_duration(duration),
-                    step.iteration,
+                    format_duration(result.duration),
+                    result.state.iteration,
                     best_solution.solution.fitness,
                     best_solution.generation,
-                    processing_time
+                    result.processing_time
                 );
                 println!("      {}", best_solution.solution.genome.as_text());
                 break;

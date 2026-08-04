@@ -25,7 +25,7 @@ pub use self::combinator::{and, or};
 
 pub mod limit;
 
-use crate::{algorithm::Algorithm, simulation::State};
+use crate::{algorithm::Algorithm, simulation::SimulationState};
 
 /// The `StopFlag` is the result of the `Termination` function. It tells
 /// the simulation whether it shall stop or if it can continue.
@@ -65,7 +65,7 @@ where
     /// returned also a the reason why the simulation shall be stopped is
     /// returned. This reason should explain to the user of the simulation,
     /// why the simulation has been stopped.
-    fn evaluate(&mut self, state: &State<A>) -> StopFlag;
+    fn evaluate(&mut self, state: &SimulationState<A>) -> StopFlag;
 
     /// Resets the state of this `Termination` condition. This function is
     /// called on each `Termination` instance when the simulation is reset.

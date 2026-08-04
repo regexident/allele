@@ -1,6 +1,7 @@
 use std::{
     fmt::{Debug, Display},
     hash::Hash,
+    ops::ControlFlow,
     time::Instant,
 };
 
@@ -9,7 +10,9 @@ use thiserror::Error;
 use crate::{
     algorithm::Algorithm,
     random::{Prng, Seed, get_rng, random_seed},
-    simulation::{SimResult, Simulation, SimulationBuilder, State},
+    simulation::{
+        Simulation, SimulationBuilder, SimulationControlFlow, SimulationResult, SimulationState,
+    },
     statistic::{ProcessingTime, TrackProcessingTime},
     termination::{StopFlag, Termination},
 };
@@ -132,7 +135,7 @@ where
     fn process_one_iteration(
         &mut self,
         started_at: Instant,
-    ) -> Result<State<A>, <Self as Simulation<A>>::Error> {
+    ) -> Result<SimulationState<A>, <Self as Simulation<A>>::Error> {
         let loop_started_at = Instant::now();
 
         self.iteration += 1;
@@ -141,7 +144,7 @@ where
 
         let loop_duration = loop_started_at.elapsed();
         match result {
-            Ok(result) => Ok(State {
+            Ok(result) => Ok(SimulationState {
                 started_at,
                 iteration: self.iteration,
                 duration: loop_duration,
@@ -161,7 +164,7 @@ where
 {
     type Error = SimError<A>;
 
-    fn run(&mut self) -> Result<SimResult<A>, Self::Error> {
+    fn run(&mut self) -> Result<SimulationControlFlow<A>, Self::Error> {
         let started_at = match self.run_mode.clone() {
             RunMode::Loop(t) => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
@@ -190,7 +193,12 @@ where
                         StopFlag::StopNow(reason) => {
                             let processing_time = self.processing_time;
                             let duration = started_at.elapsed();
-                            break Ok(SimResult::Final(state, processing_time, duration, reason));
+                            break Ok(ControlFlow::Break(SimulationResult {
+                                state,
+                                processing_time,
+                                duration,
+                                stop_reason: reason,
+                            }));
                         }
                     }
                 }
@@ -203,7 +211,7 @@ where
         result
     }
 
-    fn step(&mut self) -> Result<SimResult<A>, Self::Error> {
+    fn step(&mut self) -> Result<SimulationControlFlow<A>, Self::Error> {
         let started_at = match self.run_mode.clone() {
             RunMode::Loop(t) => {
                 return Err(SimError::SimulationAlreadyRunning(format!(
@@ -220,12 +228,17 @@ where
         };
         self.process_one_iteration(started_at).map(|state| {
             match self.termination.evaluate(&state) {
-                StopFlag::Continue => SimResult::Intermediate(state),
+                StopFlag::Continue => ControlFlow::Continue(state),
                 StopFlag::StopNow(reason) => {
                     let processing_time = self.processing_time;
                     let duration = started_at.elapsed();
                     self.run_mode = RunMode::NotRunning;
-                    SimResult::Final(state, processing_time, duration, reason)
+                    ControlFlow::Break(SimulationResult {
+                        state,
+                        processing_time,
+                        duration,
+                        stop_reason: reason,
+                    })
                 }
             }
         })

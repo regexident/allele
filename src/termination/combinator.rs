@@ -14,7 +14,7 @@ use std::marker::PhantomData;
 
 use crate::{
     algorithm::Algorithm,
-    simulation::State,
+    simulation::SimulationState,
     termination::{StopFlag, Termination},
 };
 
@@ -75,7 +75,7 @@ where
     T2: Termination<A>,
     A: Algorithm,
 {
-    fn evaluate(&mut self, state: &State<A>) -> StopFlag {
+    fn evaluate(&mut self, state: &SimulationState<A>) -> StopFlag {
         let mut reasons = Vec::with_capacity(2);
         match self.condition1.evaluate(state) {
             StopFlag::StopNow(reason) => reasons.push(reason),
@@ -149,7 +149,7 @@ where
     T2: Termination<A>,
     A: Algorithm,
 {
-    fn evaluate(&mut self, state: &State<A>) -> StopFlag {
+    fn evaluate(&mut self, state: &SimulationState<A>) -> StopFlag {
         let mut reasons = Vec::with_capacity(2);
         match self.condition1.evaluate(state) {
             StopFlag::StopNow(reason) => reasons.push(reason),
