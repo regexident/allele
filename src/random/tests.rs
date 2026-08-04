@@ -7,13 +7,13 @@ mod random_cut_points_from_range {
     use super::*;
 
     #[test]
-    #[should_panic(expected = "assertion failed: max >= min + 4")]
+    #[should_panic(expected = "range must span at least 5 elements")]
     fn random_cut_points_from_range_0_to_3() {
         random_cut_points_from_range(&mut get_rng(random_seed()), 0, 3);
     }
 
     #[test]
-    #[should_panic(expected = "assertion failed: max >= min + 4")]
+    #[should_panic(expected = "range must span at least 5 elements")]
     fn random_cut_points_from_range_4_to_4() {
         random_cut_points_from_range(&mut get_rng(random_seed()), 4, 4);
     }
@@ -23,7 +23,7 @@ mod random_cut_points_from_range {
         #[test]
         fn in_random_cut_points_from_range_cutpoint1_is_smaller_than_cutpoint2(
             (min, max) in (1usize..999_999).prop_flat_map(|min|
-                (Just(min), (min + 4..999_999 + 4))
+                (Just(min), (min + 5..999_999 + 5))
             ),
         ) {
             let (cutpoint1, cutpoint2) = random_cut_points_from_range(&mut get_rng(random_seed()), min, max);
@@ -39,7 +39,7 @@ mod random_cut_points_from_range {
         #[test]
         fn in_random_cut_points_from_range_delta_between_cutpoints_is_smaller_than_range_minus_2(
             (min, max) in (1usize..999_999).prop_flat_map(|min|
-                (Just(min), (min + 4..999_999 + 4))
+                (Just(min), (min + 5..999_999 + 5))
             ),
         ) {
             let (cutpoint1, cutpoint2) = random_cut_points_from_range(&mut get_rng(random_seed()), min, max);
@@ -55,7 +55,7 @@ mod random_cut_points_from_range {
         #[test]
         fn in_random_cut_points_from_range_cutpoint1_is_not_smaller_than_min_of_range(
             (min, max) in (1usize..999_999).prop_flat_map(|min|
-                (Just(min), (min + 4..999_999 + 4))
+                (Just(min), (min + 5..999_999 + 5))
             ),
         ) {
             let (cutpoint1, _cutpoint2) = random_cut_points_from_range(&mut get_rng(random_seed()), min, max);
@@ -71,7 +71,7 @@ mod random_cut_points_from_range {
         #[test]
         fn in_random_cut_points_from_range_cutpoint2_is_not_greater_than_max_of_range(
             (min, max) in (1usize..999_999 / 4).prop_flat_map(|min|
-                (Just(min), (min + 4..999_999 + 4))
+                (Just(min), (min + 5..999_999 + 5))
             ),
         ) {
             let (_cutpoint1, cutpoint2) = random_cut_points_from_range(&mut get_rng(random_seed()), min, max);

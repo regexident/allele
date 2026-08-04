@@ -47,8 +47,9 @@ where
 }
 
 /// Generates two cut points for a slice of given length using the given `Prng`.
-/// The first of the two returned cut points is always smaller than the second
-/// one.
+/// The cut points are non-edge (at least one position from the ends) with a
+/// minimum delta between them, producing non-degenerate crossover. The first
+/// of the two returned cut points is always smaller than the second one.
 pub fn random_cut_points<R>(rng: &mut R, length: usize) -> (usize, usize)
 where
     R: Rng + Sized,
@@ -62,7 +63,11 @@ pub fn random_cut_points_from_range<R>(rng: &mut R, min: usize, max: usize) -> (
 where
     R: Rng + Sized,
 {
-    assert!(max >= min + 4);
+    // delta must be drawn from [1, max-min-3], so the range must span at least 5 positions
+    assert!(
+        max >= min + 5,
+        "range must span at least 5 elements: max={max}, min={min}"
+    );
     let max_slice = max - min - 2;
     let delta = rng.random_range(1..max_slice);
     let cutpoint1 = rng.random_range(min..(max - delta));
@@ -71,6 +76,11 @@ where
 
 /// Generates `n` cut points for a slice of given length using the given `Prng`.
 /// The returned cut points are ordered in ascending order.
+///
+/// For n==2: cut points are non-edge with minimum delta (via [`random_cut_points`]).
+/// For n==1: edge-positions are possible, representing degenerate crossover
+/// (via [`random_index`]).
+/// For n>=3: cut points are distributed across proportional segments.
 pub fn random_n_cut_points<R>(rng: &mut R, n: usize, length: usize) -> Vec<usize>
 where
     R: Rng + Sized,

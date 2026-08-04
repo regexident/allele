@@ -8,7 +8,7 @@ impl GenomeBuilder<Vec<i8>> for TrivialGenomeBuilder {
     where
         R: Rng + Sized,
     {
-        (0..4).map(|_| rng.random_range(-10i8..=10i8)).collect()
+        (0..5).map(|_| rng.random_range(-10i8..=10i8)).collect()
     }
 }
 
@@ -25,11 +25,11 @@ impl FitnessFunction<Vec<i8>, i32> for SumFitnessEvaluator {
     }
 
     fn highest_possible_fitness(&self) -> i32 {
-        40
+        50
     }
 
     fn lowest_possible_fitness(&self) -> i32 {
-        -40
+        -50
     }
 }
 

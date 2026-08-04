@@ -21,7 +21,7 @@ fn is_valid_permutation(genome: &[usize]) -> bool {
 
 #[proptest(ProptestConfig { cases: 100, failure_persistence: None, ..ProptestConfig::default() })]
 fn order_one_crossover_children_are_valid_permutations(
-    #[strategy(4usize..20)] genome_length: usize,
+    #[strategy(5usize..20)] genome_length: usize,
     #[strategy(2usize..5)] num_parents: usize,
     #[strategy(0u64..u64::MAX)] seed: u64,
 ) {
@@ -49,7 +49,7 @@ fn order_one_crossover_children_are_valid_permutations(
 
 #[proptest(ProptestConfig { cases: 100, failure_persistence: None, ..ProptestConfig::default() })]
 fn partially_mapped_crossover_children_are_valid_permutations(
-    #[strategy(4usize..20)] genome_length: usize,
+    #[strategy(5usize..20)] genome_length: usize,
     #[strategy(2usize..5)] num_parents: usize,
     #[strategy(0u64..u64::MAX)] seed: u64,
 ) {
