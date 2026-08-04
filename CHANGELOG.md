@@ -57,6 +57,7 @@ Please make sure to add your changes to the appropriate categories:
 - Replaced `Vec::remove(0)` with `VecDeque::pop_front()` and `swap_remove` in `TournamentSelector::select_from`, removing O(n²) behavior
 - Optimized `order_one_crossover` with `HashSet` membership and `VecDeque`
 - Used `HashMap` index for O(1) removal in `TournamentSelector`
+- Used prefix sums and `partition_point` in `WeightedDistribution`
 
 ### Security
 

@@ -188,6 +188,11 @@ where
     pub fn value(&self, index: usize) -> &T {
         &self.values[index]
     }
+
+    /// Returns the prefix-sum array used by this distribution.
+    pub fn prefix_sums(&self) -> &[f64] {
+        &self.weights
+    }
 }
 
 /// Calculates weights and the sum for the given values.
@@ -195,27 +200,24 @@ fn calc_weights_and_sum<'a, T>(values: &'a [T]) -> (Vec<f64>, f64)
 where
     T: 'a + AsScalar,
 {
-    let mut weights = Vec::with_capacity(values.len());
-    let mut weight_sum: f64 = 0.;
-    for value in values.iter() {
-        let scalar = value.as_scalar();
-        weight_sum += scalar;
-        weights.push(scalar);
-    }
-    (weights, weight_sum)
+    let mut prefix_sum = 0.0f64;
+    let weights: Vec<f64> = values
+        .iter()
+        .map(|v| {
+            prefix_sum += v.as_scalar();
+            prefix_sum
+        })
+        .collect();
+    let sum = weights.last().copied().unwrap_or(0.0);
+
+    (weights, sum)
 }
 
 /// Selects one index proportional to their weights.
-fn weighted_select(pointer: f64, weights: &[f64]) -> usize {
-    let mut delta = pointer;
-    for (i, weight) in weights.iter().enumerate() {
-        delta -= *weight;
-        if delta <= 0. {
-            return i;
-        }
-    }
-    // when rounding errors occur, return the last item's index
-    weights.len() - 1
+fn weighted_select(pointer: f64, prefix_sums: &[f64]) -> usize {
+    prefix_sums
+        .partition_point(|&w| w < pointer)
+        .min(prefix_sums.len() - 1)
 }
 
 #[cfg(test)]
