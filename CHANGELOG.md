@@ -55,6 +55,7 @@ Please make sure to add your changes to the appropriate categories:
 - Replaced `Vec::remove(index)` with `swap_remove` in `UniformReinserter::combine`, removing O(n²) behavior
 - Replaced `Vec::remove(0)` with an index cursor in `ElitistReinserter::combine`, removing O(n²) behavior in the `!offspring_has_precedence` path
 - Replaced `Vec::remove(0)` with `VecDeque::pop_front()` and `swap_remove` in `TournamentSelector::select_from`, removing O(n²) behavior
+- Optimized `order_one_crossover` with `HashSet` membership and `VecDeque`
 
 ### Security
 

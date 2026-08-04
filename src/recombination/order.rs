@@ -8,7 +8,7 @@
 //! * `PartiallyMappedCrossover` (PMX)
 
 use std::borrow::Cow;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use crate::{
     genetic::{Children, Parents, ParentsSlice},
@@ -127,13 +127,14 @@ fn order_one_crossover(
             .map(ToOwned::to_owned)
             .collect()
     };
+    let p1_set: HashSet<usize> = p1_slice.iter().copied().collect();
     // collect genes from parent2 which are not in cut slice
-    let mut p2_slice: Vec<usize> = Vec::with_capacity(genome_length);
+    let mut p2_deque: VecDeque<usize> = VecDeque::with_capacity(genome_length);
     let mut p2_index = (cutpoint2 + 1) % genome_length;
     for _ in 0..genome_length {
         let p2_genome = parent2[p2_index];
-        if p1_slice.iter().all(|g| p2_genome != *g) {
-            p2_slice.push(p2_genome);
+        if !p1_set.contains(&p2_genome) {
+            p2_deque.push_back(p2_genome);
         }
         p2_index += 1;
         if p2_index >= genome_length {
@@ -144,9 +145,12 @@ fn order_one_crossover(
     let right_offset = genome_length - cutpoint2 - 1;
     for locus in 0..genome_length {
         if locus < cutpoint1 {
-            genome.push(p2_slice.remove(right_offset));
+            let mut tail = p2_deque.split_off(right_offset);
+            let val = tail.pop_front().unwrap();
+            p2_deque.extend(tail);
+            genome.push(val);
         } else if locus > cutpoint2 {
-            genome.push(p2_slice.remove(0));
+            genome.push(p2_deque.pop_front().unwrap());
         } else {
             genome.push(p1_slice.remove(0));
         }
