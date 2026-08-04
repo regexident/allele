@@ -1,9 +1,10 @@
 use std::{
-    error::Error,
-    fmt::{self, Debug, Display},
+    fmt::{Debug, Display},
     hash::Hash,
     time::Instant,
 };
+
+use thiserror::Error;
 
 use crate::{
     algorithm::Algorithm,
@@ -91,42 +92,16 @@ enum RunMode {
     NotRunning,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Error, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum SimError<A>
 where
     A: Algorithm + Debug,
     <A as Algorithm>::Error: Eq + Hash + Debug,
 {
-    AlgorithmError(<A as Algorithm>::Error),
+    #[error("algorithm error: {0}")]
+    AlgorithmError(#[source] <A as Algorithm>::Error),
+    #[error("simulation already running {0}")]
     SimulationAlreadyRunning(String),
-}
-
-impl<A> Display for SimError<A>
-where
-    A: Algorithm + Debug,
-    <A as Algorithm>::Error: Eq + Hash + Debug + Display,
-{
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            SimError::AlgorithmError(ref error) => write!(f, "algorithm error: {}", error),
-            SimError::SimulationAlreadyRunning(ref message) => {
-                write!(f, "simulation already running {}", message)
-            }
-        }
-    }
-}
-
-impl<A> Error for SimError<A>
-where
-    A: Algorithm + Debug,
-    <A as Algorithm>::Error: 'static + Eq + Hash + Debug + Display,
-{
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        match *self {
-            SimError::AlgorithmError(ref error) => Some(error),
-            SimError::SimulationAlreadyRunning(_) => None,
-        }
-    }
 }
 
 #[derive(Clone, Debug)]
