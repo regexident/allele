@@ -25,11 +25,9 @@
 
 pub mod builder;
 
-use std::{
-    fmt::{self, Display},
-    marker::PhantomData,
-    sync::Arc,
-};
+use std::{marker::PhantomData, sync::Arc};
+
+use thiserror::Error;
 
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
 use rayon;
@@ -74,29 +72,23 @@ where
 }
 
 /// An error that can occur during execution of a `GeneticAlgorithm`.
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Error, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum GeneticAlgorithmError {
     /// The algorithm is run with an empty population.
+    #[error("{0}")]
     EmptyPopulation(String),
     /// The algorithm is run with an population size that is smaller than the
     /// required minimum.
+    #[error("{0}")]
     PopulationTooSmall(String),
     /// The algorithm could not determine a best solution from the evaluated
     /// population.
+    #[error("{0}")]
     NoFitnessFound(String),
+    /// An operator returned an error during execution.
+    #[error("operator error: {0}")]
+    OperatorError(crate::error::Error),
 }
-
-impl Display for GeneticAlgorithmError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            GeneticAlgorithmError::EmptyPopulation(details) => write!(f, "{}", details),
-            GeneticAlgorithmError::PopulationTooSmall(details) => write!(f, "{}", details),
-            GeneticAlgorithmError::NoFitnessFound(details) => write!(f, "{}", details),
-        }
-    }
-}
-
-impl std::error::Error for GeneticAlgorithmError {}
 
 pub fn genetic_algorithm<G, F>() -> EmptyGeneticAlgorithmBuilder<G, F>
 where
