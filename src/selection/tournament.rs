@@ -4,7 +4,7 @@
 //! * `TournamentSelector`
 
 use std::borrow::Cow;
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 
 use crate::{
     algorithm::EvaluatedPopulation,
@@ -193,6 +193,11 @@ where
 
         // mating pool holds indices to the individuals and fitness_values slices
         let mut mating_pool: Vec<usize> = (0..fitness_values.len()).collect();
+        let mut pool_pos: HashMap<usize, usize> = mating_pool
+            .iter()
+            .enumerate()
+            .map(|(i, &v)| (v, i))
+            .collect();
 
         let num_parents_to_select =
             (individuals.len() as f64 * self.selection_ratio + 0.5).floor() as usize;
@@ -219,8 +224,12 @@ where
             while let Some(picked) = tournament.pop() {
                 if random_probability(rng) <= prob {
                     if self.remove_selected_individuals {
-                        if let Some(position) = mating_pool.iter().position(|x| *x == picked) {
-                            mating_pool.swap_remove(position);
+                        if let Some(&pos) = pool_pos.get(&picked) {
+                            mating_pool.swap_remove(pos);
+                            pool_pos.remove(&picked);
+                            if pos < mating_pool.len() {
+                                pool_pos.insert(mating_pool[pos], pos);
+                            }
                         }
                     }
                     picked_candidates.push_back(picked);
