@@ -138,10 +138,9 @@ fn main() {
     let mut queens_sim = simulate(
         genetic_algorithm()
             .with_evaluation(FitnessCalc)
-            .with_selection(RouletteWheelSelector::new(
-                SELECTION_RATIO,
-                NUM_INDIVIDUALS_PER_PARENTS,
-            ))
+            .with_selection(
+                RouletteWheelSelector::new(SELECTION_RATIO, NUM_INDIVIDUALS_PER_PARENTS).unwrap(),
+            )
             .with_crossover(UniformCrossBreeder::new())
             .with_mutation(BreederValueMutator::new(
                 MUTATION_RATE,

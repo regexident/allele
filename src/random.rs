@@ -9,6 +9,7 @@ pub use rand::{
 
 use rand_xoshiro::Xoshiro256Plus;
 
+use crate::error::Error;
 use crate::genetic::AsScalar;
 
 /// The `Prng` is the pseudo random number generator used through out this
@@ -152,13 +153,16 @@ where
 {
     /// Constructs a new instance of `WeightedDistribution` for the given slice
     /// of values.
-    pub fn from_scalar_values(values: &'a [T]) -> Self {
+    pub fn from_scalar_values(values: &'a [T]) -> Result<Self, Error> {
         let (weights, weight_sum) = calc_weights_and_sum(values);
-        WeightedDistribution {
+        if weight_sum == 0.0 {
+            return Err(Error::ZeroWeightSum);
+        }
+        Ok(WeightedDistribution {
             values,
             weights,
             sum: weight_sum,
-        }
+        })
     }
 
     /// Selects a value proportional to its weight and returns its index.

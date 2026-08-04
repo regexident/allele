@@ -3,10 +3,11 @@
 //! the fitness or any other attribute of the individuals.
 
 use std::borrow::Cow;
+use std::marker::PhantomData;
 
 use crate::{
     algorithm::EvaluatedPopulation,
-    genetic::{Fitness, Genotype, Offspring},
+    genetic::{Fitness, FitnessFunction, Genotype, Offspring},
     operator::{GeneticOperator, MultiObjective, ReinsertionOp, SingleObjective},
     random::{Rng, random_index},
 };
@@ -31,25 +32,49 @@ use crate::{
 /// the population then the individuals are chosen uniformly at random.
 #[allow(missing_copy_implementations)]
 #[derive(Clone, Debug, PartialEq)]
-pub struct UniformReinserter {
+pub struct UniformReinserter<G, F, E>
+where
+    G: Genotype,
+    F: Fitness,
+    E: FitnessFunction<G, F>,
+{
+    /// The `FitnessFunction` to be used to calculate fitness values of
+    /// individuals of the offspring.
+    fitness_evaluator: E,
     /// The `replace_ratio` defines the fraction of the population size that
     /// is going to be replaced by individuals from the offspring.
     replace_ratio: f64,
+    // phantom types
+    _g: PhantomData<G>,
+    _f: PhantomData<F>,
 }
 
-impl UniformReinserter {
+impl<G, F, E> UniformReinserter<G, F, E>
+where
+    G: Genotype,
+    F: Fitness,
+    E: FitnessFunction<G, F>,
+{
     /// Constructs a new instance of the `UniformReinserter` with the given
     /// parameters.
     ///
     /// Returns [`InvalidArgumentError`] if `replace_ratio` is not in [0.0, 1.0].
-    pub fn new(replace_ratio: f64) -> Result<Self, crate::InvalidArgumentError> {
+    pub fn new(
+        fitness_evaluator: E,
+        replace_ratio: f64,
+    ) -> Result<Self, crate::InvalidArgumentError> {
         if !(0.0..=1.0).contains(&replace_ratio) {
             return Err(crate::InvalidArgumentError::new(
                 "replace_ratio",
                 format!("must be in [0.0, 1.0], got {}", replace_ratio),
             ));
         }
-        Ok(UniformReinserter { replace_ratio })
+        Ok(UniformReinserter {
+            fitness_evaluator,
+            replace_ratio,
+            _g: PhantomData,
+            _f: PhantomData,
+        })
     }
 
     /// Returns the `replace_ratio` of this `UniformReinserter`.
@@ -73,32 +98,51 @@ impl UniformReinserter {
     }
 }
 
-impl GeneticOperator for UniformReinserter {
+impl<G, F, E> GeneticOperator for UniformReinserter<G, F, E>
+where
+    G: Genotype,
+    F: Fitness,
+    E: FitnessFunction<G, F>,
+{
     fn name() -> Cow<'static, str> {
         Cow::Borrowed("Uniform-Reinserter")
     }
 }
 
 /// Can be used for single-objective optimization
-impl SingleObjective for UniformReinserter {}
-/// Can be used for multi-objective optimization
-impl MultiObjective for UniformReinserter {}
-
-impl<G, F> ReinsertionOp<G, F> for UniformReinserter
+impl<G, F, E> SingleObjective for UniformReinserter<G, F, E>
 where
     G: Genotype,
     F: Fitness,
+    E: FitnessFunction<G, F>,
+{
+}
+/// Can be used for multi-objective optimization
+impl<G, F, E> MultiObjective for UniformReinserter<G, F, E>
+where
+    G: Genotype,
+    F: Fitness,
+    E: FitnessFunction<G, F>,
+{
+}
+
+impl<G, F, E> ReinsertionOp<G, F> for UniformReinserter<G, F, E>
+where
+    G: Genotype,
+    F: Fitness,
+    E: FitnessFunction<G, F>,
 {
     fn combine<R>(
         &self,
         offspring: &mut Offspring<G>,
         evaluated: &EvaluatedPopulation<G, F>,
         rng: &mut R,
-    ) -> Vec<G>
+    ) -> Vec<(G, F)>
     where
         R: Rng + Sized,
     {
         let old_individuals = evaluated.individuals();
+        let old_fitness_values = evaluated.fitness_values();
         let population_size = old_individuals.len();
         let mut new_population = Vec::with_capacity(population_size);
 
@@ -110,11 +154,16 @@ where
             // pick individuals from the offspring uniformly at random
             while num_offspring > new_population.len() {
                 let index = random_index(rng, offspring.len());
-                new_population.push(offspring.swap_remove(index));
+                let genome = offspring.swap_remove(index);
+                let fitness = self.fitness_evaluator.fitness_of(&genome);
+                new_population.push((genome, fitness));
             }
         } else {
             // insert all individuals from offspring
-            new_population.append(offspring);
+            while let Some(genome) = offspring.pop() {
+                let fitness = self.fitness_evaluator.fitness_of(&genome);
+                new_population.push((genome, fitness));
+            }
         }
         // finally fill up new population with individuals from old population
         // (as many as needed).
@@ -123,7 +172,10 @@ where
         for _ in 0..num_old_population {
             let index = random_index(rng, available_indices.len());
             let chosen = available_indices.swap_remove(index);
-            new_population.push(old_individuals[chosen].clone());
+            new_population.push((
+                old_individuals[chosen].clone(),
+                old_fitness_values[chosen].clone(),
+            ));
         }
         new_population
     }

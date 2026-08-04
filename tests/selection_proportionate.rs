@@ -39,15 +39,16 @@ fn roulette_wheel_selector_returns_expected_number_of_parent_tuples(
         average,
     );
 
-    let selector = RouletteWheelSelector::new(selection_ratio, num_individuals_per_parents);
-    let parents = selector.select_from(&evaluated, &mut rng);
+    let selector =
+        RouletteWheelSelector::new(selection_ratio, num_individuals_per_parents).unwrap();
+    let parents = selector.select_from(&evaluated, &mut rng).unwrap();
 
     let expected = (population_size as f64 * selection_ratio + 0.5).floor() as usize;
     assert_eq!(parents.len(), expected);
     for tuple in &parents {
         assert_eq!(tuple.len(), num_individuals_per_parents);
-        for individual in tuple {
-            assert!(individuals.contains(individual));
+        for &index in tuple {
+            assert!(index < individuals.len());
         }
     }
 }
@@ -82,15 +83,16 @@ fn universal_sampling_selector_returns_expected_number_of_parent_tuples(
         average,
     );
 
-    let selector = UniversalSamplingSelector::new(selection_ratio, num_individuals_per_parents);
-    let parents = selector.select_from(&evaluated, &mut rng);
+    let selector =
+        UniversalSamplingSelector::new(selection_ratio, num_individuals_per_parents).unwrap();
+    let parents = selector.select_from(&evaluated, &mut rng).unwrap();
 
     let expected = (population_size as f64 * selection_ratio + 0.5).floor() as usize;
     assert_eq!(parents.len(), expected);
     for tuple in &parents {
         assert_eq!(tuple.len(), num_individuals_per_parents);
-        for individual in tuple {
-            assert!(individuals.contains(individual));
+        for &index in tuple {
+            assert!(index < individuals.len());
         }
     }
 }

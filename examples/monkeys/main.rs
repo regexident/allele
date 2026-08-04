@@ -96,11 +96,14 @@ fn main() {
     let mut monkeys_sim = simulate(
         genetic_algorithm()
             .with_evaluation(FitnessCalc)
-            .with_selection(MaximizeSelector::new(
-                params.selection_ratio,
-                params.num_individuals_per_parents,
-            ))
-            .with_crossover(MultiPointCrossBreeder::new(params.num_crossover_points))
+            .with_selection(
+                MaximizeSelector::new(params.selection_ratio, params.num_individuals_per_parents)
+                    .unwrap(),
+            )
+            .with_crossover(
+                MultiPointCrossBreeder::new(params.num_crossover_points)
+                    .expect("invalid num_cut_points"),
+            )
             .with_mutation(RandomValueMutator::new(params.mutation_rate, 32, 126))
             .with_reinsertion(
                 ElitistReinserter::new(FitnessCalc, true, params.reinsertion_ratio).unwrap(),

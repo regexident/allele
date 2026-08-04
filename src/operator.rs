@@ -13,7 +13,7 @@ use std::borrow::Cow;
 
 use crate::{
     algorithm::EvaluatedPopulation,
-    genetic::{Children, Fitness, Genotype, Offspring, Parents},
+    genetic::{Children, Fitness, Genotype, Offspring, ParentIndices, Parents},
     random::Rng,
 };
 
@@ -57,7 +57,7 @@ where
         &self,
         population: &EvaluatedPopulation<G, F>,
         rng: &mut R,
-    ) -> Vec<Parents<G>>
+    ) -> Result<Vec<ParentIndices>, crate::error::Error>
     where
         R: Rng + Sized;
 }
@@ -134,7 +134,7 @@ where
         offspring: &mut Offspring<G>,
         population: &EvaluatedPopulation<G, F>,
         rng: &mut R,
-    ) -> Vec<G>
+    ) -> Vec<(G, F)>
     where
         R: Rng + Sized;
 }

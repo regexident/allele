@@ -208,7 +208,7 @@ fn main() {
     let mut knapsack_sim = simulate(
         genetic_algorithm()
             .with_evaluation(&problem)
-            .with_selection(MaximizeSelector::new(0.85, 12))
+            .with_selection(MaximizeSelector::new(0.85, 12).unwrap())
             .with_crossover(SinglePointCrossBreeder::new())
             .with_mutation(RandomValueMutator::new(0.2, false, true))
             .with_reinsertion(ElitistReinserter::new(&problem, false, 0.85).unwrap())

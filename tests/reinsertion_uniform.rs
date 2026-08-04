@@ -5,9 +5,35 @@ use test_strategy::proptest;
 
 use allele::{
     algorithm::EvaluatedPopulation,
+    genetic::FitnessFunction,
     operator::{ReinsertionOp, prelude::*},
     random::{Prng, RngExt, SeedableRng},
 };
+
+#[derive(Clone, Debug, PartialEq)]
+struct DummyEvaluator;
+
+impl FitnessFunction<Vec<i8>, i32> for DummyEvaluator {
+    fn fitness_of(&self, _: &Vec<i8>) -> i32 {
+        0
+    }
+
+    fn average(&self, fitness_values: &[i32]) -> i32 {
+        if fitness_values.is_empty() {
+            0
+        } else {
+            fitness_values.iter().sum::<i32>() / fitness_values.len() as i32
+        }
+    }
+
+    fn highest_possible_fitness(&self) -> i32 {
+        100
+    }
+
+    fn lowest_possible_fitness(&self) -> i32 {
+        -100
+    }
+}
 
 #[proptest(ProptestConfig {
     cases: 50,
@@ -41,11 +67,11 @@ fn combine_returns_population_of_original_size(
         .collect();
     let original_offspring = offspring_to_combine.clone();
 
-    let reinserter = UniformReinserter::new(replace_ratio).unwrap();
+    let reinserter = UniformReinserter::new(DummyEvaluator, replace_ratio).unwrap();
     let new_population = reinserter.combine(&mut offspring_to_combine, &evaluated, &mut rng);
 
     assert_eq!(new_population.len(), population_size);
-    for individual in &new_population {
+    for (individual, _) in &new_population {
         assert!(original_offspring.contains(individual) || individuals.contains(individual));
     }
 }

@@ -209,8 +209,24 @@ where
         let best_solution = determine_best_solution(iteration, &evaluation.result)?;
 
         // Stage 3: The making of a new population:
-        let selection = timed(|| self.selector.select_from(&evaluation.result, rng)).run();
-        let mut breeding = par_breed_offspring(selection.result, &self.breeder, &self.mutator, rng);
+        let selection = timed(|| {
+            self.selector
+                .select_from(&evaluation.result, rng)
+                .map_err(GeneticAlgorithmError::OperatorError)
+        })
+        .run();
+        let parent_index_groups = selection.result?;
+        let population_individuals = evaluation.result.individuals();
+        let parents: Vec<Parents<G>> = parent_index_groups
+            .into_iter()
+            .map(|indices| {
+                indices
+                    .iter()
+                    .map(|&i| population_individuals[i].clone())
+                    .collect()
+            })
+            .collect();
+        let mut breeding = par_breed_offspring(parents, &self.breeder, &self.mutator, rng);
         let reinsertion = timed(|| {
             self.reinserter
                 .combine(&mut breeding.result, &evaluation.result, rng)
@@ -223,7 +239,7 @@ where
             + selection.time
             + breeding.time
             + reinsertion.time;
-        let next_generation = reinsertion.result;
+        let next_generation: Vec<G> = reinsertion.result.into_iter().map(|(g, _)| g).collect();
         self.population = Arc::new(next_generation);
         Ok(State {
             evaluated_population: evaluation.result,
@@ -377,7 +393,7 @@ where
     C: CrossoverOp<G> + Sync,
     M: MutationOp<G> + Sync,
 {
-    let mut offspring: Offspring<G> = Vec::with_capacity(parents.len() * parents[0].len());
+    let mut offspring = Vec::with_capacity(parents.len() * parents.first().unwrap().len());
     for parents in parents {
         let children = breeder.crossover(parents, rng);
         for child in children {
@@ -413,7 +429,7 @@ where
         rng.jump();
         let mut rng2 = rng.clone();
         let mid_point = parents.len() / 2;
-        let mut offspring = Vec::with_capacity(parents.len() * parents[0].len());
+        let mut offspring = Vec::with_capacity(parents.len() * parents.first().unwrap().len());
         let mut parents = parents;
         let r_slice = parents.drain(mid_point..).collect();
         let l_slice = parents;

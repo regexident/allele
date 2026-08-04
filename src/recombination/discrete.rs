@@ -185,8 +185,13 @@ pub struct MultiPointCrossBreeder {
 }
 
 impl MultiPointCrossBreeder {
-    pub fn new(num_cut_points: usize) -> Self {
-        MultiPointCrossBreeder { num_cut_points }
+    pub fn new(num_cut_points: usize) -> Result<Self, crate::error::Error> {
+        if num_cut_points < 1 {
+            return Err(crate::error::Error::InvalidNumCutPoints {
+                value: num_cut_points,
+            });
+        }
+        Ok(MultiPointCrossBreeder { num_cut_points })
     }
 
     /// Returns the number of cut points used by this operator.

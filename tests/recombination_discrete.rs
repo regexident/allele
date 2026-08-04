@@ -79,7 +79,7 @@ fn multi_point_crossbreeder_child_count_and_length(
     let parents: Vec<Vec<u8>> = (0..num_parents)
         .map(|_| (0..genome_length).map(|_| rng.random::<u8>()).collect())
         .collect();
-    let op = MultiPointCrossBreeder::new(num_cut_points);
+    let op = MultiPointCrossBreeder::new(num_cut_points).expect("invalid num_cut_points");
     let children = op.crossover(parents, &mut rng);
     assert_eq!(children.len(), num_parents);
     for child in &children {

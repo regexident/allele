@@ -139,7 +139,7 @@ mod weighted_distribution {
         let weights = vec![200, 150, 600, 50];
         let n_sum = 1_000;
 
-        let weighted_distribution = WeightedDistribution::from_scalar_values(&weights);
+        let weighted_distribution = WeightedDistribution::from_scalar_values(&weights).unwrap();
 
         let mut counter = [0, 0, 0, 0];
         for _ in 0..n_sum {
@@ -156,6 +156,15 @@ mod weighted_distribution {
         assert!(counter[2] < 660);
         assert!(counter[3] > 40);
         assert!(counter[3] < 60);
+    }
+
+    #[test]
+    fn weighted_distribution_zero_sum_returns_error() {
+        let values: Vec<i32> = vec![0, 0, 0];
+        assert_eq!(
+            WeightedDistribution::from_scalar_values(&values).unwrap_err(),
+            Error::ZeroWeightSum
+        );
     }
 }
 

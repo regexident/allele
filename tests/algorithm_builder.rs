@@ -33,8 +33,8 @@ fn create_new_genetic_algorithm_application() {
 
     let algorithm = genetic_algorithm()
         .with_evaluation(MyFitnessEvaluator)
-        .with_selection(RouletteWheelSelector::new(0.7, 2))
-        .with_crossover(MultiPointCrossBreeder::new(3))
+        .with_selection(RouletteWheelSelector::new(0.7, 2).unwrap())
+        .with_crossover(MultiPointCrossBreeder::new(3).expect("invalid num_cut_points"))
         .with_mutation(RandomValueMutator::new(0.015, -2.0, 2.0))
         .with_reinsertion(ElitistReinserter::new(MyFitnessEvaluator, false, 0.7).unwrap())
         .with_initial_population(initial_population)
