@@ -57,6 +57,8 @@ pub type Locus = usize;
 pub type Parents<G> = Vec<G>;
 pub type ParentsSlice<'a, G> = &'a [G];
 
+pub type ParentIndices = Vec<usize>;
+
 /// The `Children` type defines a set of `Genotype`s which is the outcome of
 /// the `operator::CrossoverOp` function.
 pub type Children<G> = Vec<G>;

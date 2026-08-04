@@ -51,7 +51,7 @@ fn main() {
         genetic_algorithm()
             .with_evaluation(FitnessCalc)
             .with_selection(MaximizeSelector::new(0.7, 2))
-            .with_crossover(MultiPointCrossBreeder::new(2))
+            .with_crossover(MultiPointCrossBreeder::new(2).expect("invalid num_cut_points"))
             .with_mutation(RandomValueMutator::new(0.1, 32, 126))
             .with_reinsertion(ElitistReinserter::new(FitnessCalc, true, 0.7))
             .with_initial_population(population)

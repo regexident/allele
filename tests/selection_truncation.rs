@@ -38,14 +38,14 @@ fn maximize_selector_returns_expected_number_of_parent_tuples(
         average,
     );
 
-    let selector = MaximizeSelector::new(selection_ratio, 2);
-    let parents = selector.select_from(&evaluated, &mut rng);
+    let selector = MaximizeSelector::new(selection_ratio, 2).unwrap();
+    let parents = selector.select_from(&evaluated, &mut rng).unwrap();
 
     let expected = (population_size as f64 * selection_ratio + 0.5).floor() as usize;
     assert_eq!(parents.len(), expected);
     for tuple in &parents {
-        for individual in tuple {
-            assert!(individuals.contains(individual));
+        for &index in tuple {
+            assert!(index < individuals.len());
         }
     }
 }
@@ -80,8 +80,8 @@ fn maximize_selector_selects_from_top_performers(
     );
 
     let num_individuals_per_parents = 2usize;
-    let selector = MaximizeSelector::new(selection_ratio, num_individuals_per_parents);
-    let parents = selector.select_from(&evaluated, &mut rng);
+    let selector = MaximizeSelector::new(selection_ratio, num_individuals_per_parents).unwrap();
+    let parents = selector.select_from(&evaluated, &mut rng).unwrap();
 
     let num_parents_to_select = (population_size as f64 * selection_ratio + 0.5).floor() as usize;
     let pool_size = num_parents_to_select * num_individuals_per_parents;
@@ -90,12 +90,11 @@ fn maximize_selector_selects_from_top_performers(
     let threshold = sorted_fitness[pool_size.min(population_size) - 1];
 
     for tuple in &parents {
-        for individual in tuple {
-            let idx = individuals.iter().position(|i| i == individual).unwrap();
+        for &index in tuple {
             assert!(
-                fitness_values[idx] >= threshold,
+                fitness_values[index] >= threshold,
                 "selected individual has fitness {} below threshold {}",
-                fitness_values[idx],
+                fitness_values[index],
                 threshold
             );
         }

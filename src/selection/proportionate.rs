@@ -18,7 +18,7 @@ use std::borrow::Cow;
 
 use crate::{
     algorithm::EvaluatedPopulation,
-    genetic::{AsScalar, Fitness, Genotype, Parents},
+    genetic::{AsScalar, Fitness, Genotype, ParentIndices},
     operator::{GeneticOperator, SelectionOp, SingleObjective},
     random::{Rng, WeightedDistribution, random_probability},
 };
@@ -28,8 +28,7 @@ use crate::{
 /// picked that is proportional to its fitness value.
 ///
 /// Characteristics: no bias, does not guarantee minimal spread.
-#[allow(missing_copy_implementations)]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct RouletteWheelSelector {
     /// The fraction of number of parents to select in relation to the
     /// number of individuals in the population.
@@ -40,11 +39,19 @@ pub struct RouletteWheelSelector {
 
 impl RouletteWheelSelector {
     /// Constructs a new instance of `RouletteWheelSelector`.
-    pub fn new(selection_ratio: f64, num_individuals_per_parents: usize) -> Self {
-        RouletteWheelSelector {
+    pub fn new(
+        selection_ratio: f64,
+        num_individuals_per_parents: usize,
+    ) -> Result<Self, crate::error::Error> {
+        if !(0.0..=1.0).contains(&selection_ratio) {
+            return Err(crate::error::Error::InvalidSelectionRatio {
+                value: selection_ratio,
+            });
+        }
+        Ok(RouletteWheelSelector {
             selection_ratio,
             num_individuals_per_parents,
-        }
+        })
     }
 
     /// Returns the selection ratio.
@@ -61,13 +68,12 @@ impl RouletteWheelSelector {
     /// The selection ratio is the fraction of number of parents that are
     /// selected on every call of the `select_from` function and the number
     /// of individuals in the population.
-    pub fn set_selection_ratio(&mut self, value: f64) {
-        assert!(
-            (0.0..=1.0).contains(&value),
-            "selection_ratio must be in [0.0, 1.0], got {}",
-            value
-        );
+    pub fn set_selection_ratio(&mut self, value: f64) -> Result<(), crate::error::Error> {
+        if !(0.0..=1.0).contains(&value) {
+            return Err(crate::error::Error::InvalidSelectionRatio { value });
+        }
         self.selection_ratio = value;
+        Ok(())
     }
 
     /// Returns the number of individuals per parents use by this selector.
@@ -94,26 +100,30 @@ where
     G: Genotype,
     F: Fitness + AsScalar,
 {
-    fn select_from<R>(&self, evaluated: &EvaluatedPopulation<G, F>, rng: &mut R) -> Vec<Parents<G>>
+    fn select_from<R>(
+        &self,
+        evaluated: &EvaluatedPopulation<G, F>,
+        rng: &mut R,
+    ) -> Result<Vec<ParentIndices>, crate::error::Error>
     where
         R: Rng + Sized,
     {
         let individuals = evaluated.individuals();
         let num_parents_to_select =
             (individuals.len() as f64 * self.selection_ratio + 0.5).floor() as usize;
-        let mut parents = Vec::with_capacity(num_parents_to_select);
+        let mut parents: Vec<ParentIndices> = Vec::with_capacity(num_parents_to_select);
         let weighted_distribution =
-            WeightedDistribution::from_scalar_values(evaluated.fitness_values());
+            WeightedDistribution::from_scalar_values(evaluated.fitness_values())?;
         for _ in 0..num_parents_to_select {
             let mut tuple = Vec::with_capacity(self.num_individuals_per_parents);
             for _ in 0..self.num_individuals_per_parents {
                 let random = random_probability(rng) * weighted_distribution.sum();
                 let selected = weighted_distribution.select(random);
-                tuple.push(individuals[selected].clone());
+                tuple.push(selected);
             }
             parents.push(tuple);
         }
-        parents
+        Ok(parents)
     }
 }
 
@@ -122,8 +132,7 @@ where
 /// picked by equidistant jumps.
 ///
 /// Characteristics: no bias, minimal spread.
-#[allow(missing_copy_implementations)]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct UniversalSamplingSelector {
     /// The fraction of number of parents to select in relation to the
     /// number of individuals in the population.
@@ -134,11 +143,24 @@ pub struct UniversalSamplingSelector {
 
 impl UniversalSamplingSelector {
     /// Constructs a new instance of `UniversalSamplingSelector`.
-    pub fn new(selection_ratio: f64, num_individuals_per_parents: usize) -> Self {
-        UniversalSamplingSelector {
+    pub fn new(
+        selection_ratio: f64,
+        num_individuals_per_parents: usize,
+    ) -> Result<Self, crate::error::Error> {
+        if !(0.0..=1.0).contains(&selection_ratio) {
+            return Err(crate::error::Error::InvalidSelectionRatio {
+                value: selection_ratio,
+            });
+        }
+        if num_individuals_per_parents < 1 {
+            return Err(crate::error::Error::InvalidNumIndividualsPerParents {
+                value: num_individuals_per_parents,
+            });
+        }
+        Ok(UniversalSamplingSelector {
             selection_ratio,
             num_individuals_per_parents,
-        }
+        })
     }
 
     /// Returns the selection ratio.
@@ -155,13 +177,12 @@ impl UniversalSamplingSelector {
     /// The selection ratio is the fraction of number of parents that are
     /// selected on every call of the `select_from` function and the number
     /// of individuals in the population.
-    pub fn set_selection_ratio(&mut self, value: f64) {
-        assert!(
-            (0.0..=1.0).contains(&value),
-            "selection_ratio must be in [0.0, 1.0], got {}",
-            value
-        );
+    pub fn set_selection_ratio(&mut self, value: f64) -> Result<(), crate::error::Error> {
+        if !(0.0..=1.0).contains(&value) {
+            return Err(crate::error::Error::InvalidSelectionRatio { value });
+        }
         self.selection_ratio = value;
+        Ok(())
     }
 
     /// Returns the number of individuals per parents use by this selector.
@@ -188,16 +209,23 @@ where
     G: Genotype,
     F: Fitness + AsScalar,
 {
-    fn select_from<R>(&self, evaluated: &EvaluatedPopulation<G, F>, rng: &mut R) -> Vec<Parents<G>>
+    fn select_from<R>(
+        &self,
+        evaluated: &EvaluatedPopulation<G, F>,
+        rng: &mut R,
+    ) -> Result<Vec<ParentIndices>, crate::error::Error>
     where
         R: Rng + Sized,
     {
         let individuals = evaluated.individuals();
         let num_parents_to_select =
             (individuals.len() as f64 * self.selection_ratio + 0.5).floor() as usize;
-        let mut parents = Vec::with_capacity(num_parents_to_select);
+        if num_parents_to_select == 0 {
+            return Err(crate::error::Error::ZeroParentsSelected);
+        }
+        let mut parents: Vec<ParentIndices> = Vec::with_capacity(num_parents_to_select);
         let weighted_distribution =
-            WeightedDistribution::from_scalar_values(evaluated.fitness_values());
+            WeightedDistribution::from_scalar_values(evaluated.fitness_values())?;
         let prefix_sums = weighted_distribution.prefix_sums();
         let sum = weighted_distribution.sum();
         let total = num_parents_to_select * self.num_individuals_per_parents;
@@ -220,9 +248,8 @@ where
             }
         }
         for chunk in selections.chunks_exact(self.num_individuals_per_parents) {
-            let tuple = chunk.iter().map(|&i| individuals[i].clone()).collect();
-            parents.push(tuple);
+            parents.push(chunk.to_vec());
         }
-        parents
+        Ok(parents)
     }
 }

@@ -9,7 +9,7 @@ use std::borrow::Cow;
 
 use crate::{
     algorithm::EvaluatedPopulation,
-    genetic::{Fitness, Genotype, Parents},
+    genetic::{Fitness, Genotype, ParentIndices},
     operator::{GeneticOperator, MultiObjective, SelectionOp, SingleObjective},
     random::Rng,
 };
@@ -19,8 +19,7 @@ use crate::{
 ///
 /// This `MaximizeSelector` can be used for single-objective fitness values
 /// as well as multi-objective fitness values.
-#[allow(missing_copy_implementations)]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct MaximizeSelector {
     /// The truncation threshold is the ratio between the number of parents
     /// to be selected and the size of the population:
@@ -33,11 +32,19 @@ pub struct MaximizeSelector {
 
 impl MaximizeSelector {
     /// Constructs a new instance of the `MaximizeSelector`.
-    pub fn new(selection_ratio: f64, num_individuals_per_parents: usize) -> Self {
-        MaximizeSelector {
+    pub fn new(
+        selection_ratio: f64,
+        num_individuals_per_parents: usize,
+    ) -> Result<Self, crate::error::Error> {
+        if !(0.0..=1.0).contains(&selection_ratio) {
+            return Err(crate::error::Error::InvalidSelectionRatio {
+                value: selection_ratio,
+            });
+        }
+        Ok(MaximizeSelector {
             selection_ratio,
             num_individuals_per_parents,
-        }
+        })
     }
 
     /// Returns the selection ratio.
@@ -54,8 +61,12 @@ impl MaximizeSelector {
     /// The selection ratio is the fraction of number of parents that are
     /// selected on every call of the `selection` function and the number
     /// of individuals in the population.
-    pub fn set_selection_ratio(&mut self, value: f64) {
+    pub fn set_selection_ratio(&mut self, value: f64) -> Result<(), crate::error::Error> {
+        if !(0.0..=1.0).contains(&value) {
+            return Err(crate::error::Error::InvalidSelectionRatio { value });
+        }
         self.selection_ratio = value;
+        Ok(())
     }
 
     /// Returns the number of individuals per parents use by this selector.
@@ -85,37 +96,37 @@ where
     G: Genotype,
     F: Fitness,
 {
-    fn select_from<R>(&self, evaluated: &EvaluatedPopulation<G, F>, _: &mut R) -> Vec<Parents<G>>
+    fn select_from<R>(
+        &self,
+        evaluated: &EvaluatedPopulation<G, F>,
+        _: &mut R,
+    ) -> Result<Vec<ParentIndices>, crate::error::Error>
     where
         R: Rng + Sized,
     {
         let individuals = evaluated.individuals();
         let fitness_values = evaluated.fitness_values();
 
-        // mating pool holds indices to the individuals and fitness_values slices
         let mut mating_pool: Vec<usize> = (0..fitness_values.len()).collect();
-        // sort mating pool from best performing to worst performing index
         mating_pool.sort_by(|x, y| fitness_values[*y].cmp(&fitness_values[*x]));
 
         let num_parents_to_select =
             (individuals.len() as f64 * self.selection_ratio + 0.5).floor() as usize;
         let pool_size =
             (num_parents_to_select * self.num_individuals_per_parents).min(mating_pool.len());
-        let mut selected: Vec<Parents<G>> = Vec::with_capacity(num_parents_to_select);
+        let mut selected: Vec<ParentIndices> = Vec::with_capacity(num_parents_to_select);
 
         let mut index_m = 0;
         for _ in 0..num_parents_to_select {
             let mut tuple = Vec::with_capacity(self.num_individuals_per_parents);
             for _ in 0..self.num_individuals_per_parents {
-                // index into mating pool
                 index_m %= pool_size;
-                // index into individuals slice
                 let index_i = mating_pool[index_m];
-                tuple.push(individuals[index_i].clone());
+                tuple.push(index_i);
                 index_m += 1;
             }
             selected.push(tuple);
         }
-        selected
+        Ok(selected)
     }
 }

@@ -113,8 +113,8 @@ where
     }
 
     /// Returns the individuals of the population that has been evaluated.
-    pub fn individuals(&self) -> Arc<Vec<G>> {
-        self.individuals.clone()
+    pub fn individuals(&self) -> &[G] {
+        &self.individuals
     }
 
     /// Returns the fitness values of all individuals of the evaluated
