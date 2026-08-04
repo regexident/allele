@@ -1,7 +1,10 @@
+//! The `value` module provides `operator::MutationOp`s for value-encoded
+//! `genetic::Genotype`s. Exports `RandomValueMutator`, `BreederValueMutator`,
+//! and their associated traits `RandomGenomeMutation`, `BreederGenomeMutation`,
+//! `RandomExclusiveValueMutation`, `RandomInclusiveValueMutation`, and `BreederValueMutation`.
+
 use std::borrow::Cow;
 use std::fmt::Debug;
-
-use rand::seq::IndexedRandom;
 
 use crate::{
     genetic::Genotype,
@@ -84,7 +87,7 @@ pub trait RandomGenomeMutation: Genotype {
 
 impl<V> RandomGenomeMutation for Vec<V>
 where
-    V: Clone + Debug + PartialEq + Send + Sync + RandomValueMutation,
+    V: Clone + Debug + PartialEq + Send + Sync + RandomExclusiveValueMutation,
 {
     type Dna = V;
 
@@ -103,7 +106,7 @@ where
         let mut mutated = genome;
         for _ in 0..num_mutations {
             let index = random_index(rng, genome_length);
-            mutated[index] = RandomValueMutation::random_mutated(
+            mutated[index] = RandomExclusiveValueMutation::random_mutated(
                 mutated[index].clone(),
                 min_value,
                 max_value,
@@ -156,12 +159,14 @@ mod smallvec_random_genome_mutation {
     use rand::Rng;
     use smallvec::{Array, SmallVec};
 
-    use super::{RandomGenomeMutation, RandomValueMutation, number_of_mutations, random_index};
+    use super::{
+        RandomExclusiveValueMutation, RandomGenomeMutation, number_of_mutations, random_index,
+    };
 
     impl<V, A> RandomGenomeMutation for SmallVec<A>
     where
         A: Array<Item = V> + Sync,
-        V: Clone + Debug + PartialEq + Send + Sync + RandomValueMutation,
+        V: Clone + Debug + PartialEq + Send + Sync + RandomExclusiveValueMutation,
     {
         type Dna = V;
 
@@ -180,7 +185,7 @@ mod smallvec_random_genome_mutation {
             let mut mutated = genome;
             for _ in 0..num_mutations {
                 let index = random_index(rng, genome_length);
-                mutated[index] = RandomValueMutation::random_mutated(
+                mutated[index] = RandomExclusiveValueMutation::random_mutated(
                     mutated[index].clone(),
                     min_value,
                     max_value,
@@ -192,8 +197,13 @@ mod smallvec_random_genome_mutation {
     }
 }
 
-pub trait RandomValueMutation {
-    fn random_mutated<R>(value: Self, min_value: &Self, max_value: &Self, rng: &mut R) -> Self
+pub trait RandomExclusiveValueMutation {
+    fn random_mutated<R>(
+        value: Self,
+        min_value: &Self,
+        max_value_exclusive: &Self,
+        rng: &mut R,
+    ) -> Self
     where
         R: Rng + Sized;
 }
@@ -201,12 +211,12 @@ pub trait RandomValueMutation {
 macro_rules! impl_random_value_mutation {
     ($($t:ty),*) => {
         $(
-            impl RandomValueMutation for $t {
+            impl RandomExclusiveValueMutation for $t {
                 #[inline]
-                fn random_mutated<R>(_: $t, min_value: &$t, max_value: &$t, rng: &mut R) -> $t
+                fn random_mutated<R>(_: $t, min_value: &$t, max_value_exclusive: &$t, rng: &mut R) -> $t
                     where R: Rng + Sized
                 {
-                    rng.random_range(*min_value..*max_value)
+                    rng.random_range(*min_value..*max_value_exclusive)
                 }
             }
         )*
@@ -215,29 +225,117 @@ macro_rules! impl_random_value_mutation {
 
 impl_random_value_mutation!(u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
-impl RandomValueMutation for usize {
+impl RandomExclusiveValueMutation for usize {
     #[inline]
-    fn random_mutated<R>(_: usize, min_value: &usize, max_value: &usize, rng: &mut R) -> usize
+    fn random_mutated<R>(
+        _: usize,
+        min_value: &usize,
+        max_value_exclusive: &usize,
+        rng: &mut R,
+    ) -> usize
     where
         R: Rng + Sized,
     {
-        rng.random_range(*min_value as u64..*max_value as u64) as usize
+        rng.random_range(*min_value as u64..*max_value_exclusive as u64) as usize
     }
 }
 
-impl RandomValueMutation for isize {
+impl RandomExclusiveValueMutation for isize {
     #[inline]
-    fn random_mutated<R>(_: isize, min_value: &isize, max_value: &isize, rng: &mut R) -> isize
+    fn random_mutated<R>(
+        _: isize,
+        min_value: &isize,
+        max_value_exclusive: &isize,
+        rng: &mut R,
+    ) -> isize
     where
         R: Rng + Sized,
     {
-        rng.random_range(*min_value as i64..*max_value as i64) as isize
+        rng.random_range(*min_value as i64..*max_value_exclusive as i64) as isize
     }
 }
 
-impl RandomValueMutation for bool {
+impl RandomExclusiveValueMutation for bool {
     #[inline]
-    fn random_mutated<R>(_value: bool, _min_value: &bool, _max_value: &bool, rng: &mut R) -> bool
+    fn random_mutated<R>(
+        _value: bool,
+        _min_value: &bool,
+        _max_value_exclusive: &bool,
+        rng: &mut R,
+    ) -> bool
+    where
+        R: Rng + Sized,
+    {
+        rng.random_bool(0.5)
+    }
+}
+
+pub trait RandomInclusiveValueMutation {
+    fn random_mutated<R>(
+        value: Self,
+        min_value: &Self,
+        max_value_inclusive: &Self,
+        rng: &mut R,
+    ) -> Self
+    where
+        R: Rng + Sized;
+}
+
+macro_rules! impl_random_inclusive_value_mutation {
+    ($($t:ty),*) => {
+        $(
+            impl RandomInclusiveValueMutation for $t {
+                #[inline]
+                fn random_mutated<R>(_: $t, min_value: &$t, max_value_inclusive: &$t, rng: &mut R) -> $t
+                    where R: Rng + Sized
+                {
+                    rng.random_range(*min_value..=*max_value_inclusive)
+                }
+            }
+        )*
+    }
+}
+
+impl_random_inclusive_value_mutation!(u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
+
+impl RandomInclusiveValueMutation for usize {
+    #[inline]
+    fn random_mutated<R>(
+        _: usize,
+        min_value: &usize,
+        max_value_inclusive: &usize,
+        rng: &mut R,
+    ) -> usize
+    where
+        R: Rng + Sized,
+    {
+        rng.random_range(*min_value as u64..=*max_value_inclusive as u64) as usize
+    }
+}
+
+impl RandomInclusiveValueMutation for isize {
+    #[inline]
+    fn random_mutated<R>(
+        _: isize,
+        min_value: &isize,
+        max_value_inclusive: &isize,
+        rng: &mut R,
+    ) -> isize
+    where
+        R: Rng + Sized,
+    {
+        rng.random_range(*min_value as i64..=*max_value_inclusive as i64) as isize
+    }
+}
+
+impl RandomInclusiveValueMutation for bool {
+    #[inline]
+    fn random_mutated<R>(
+        _value: bool,
+        _min_value: &bool,
+        _max_value_inclusive: &bool,
+        rng: &mut R,
+    ) -> bool
     where
         R: Rng + Sized,
     {
@@ -337,7 +435,7 @@ where
         + Send
         + Sync
         + BreederValueMutation
-        + RandomValueMutation,
+        + RandomExclusiveValueMutation,
 {
     type Dna = V;
 
@@ -358,8 +456,8 @@ where
         let mut mutated = genome;
         for _ in 0..num_mutations {
             let index = random_index(rng, genome_length);
-            let sign = *[-1, 1].choose(rng).unwrap();
-            let adjustment = if *[true, false].choose(rng).unwrap() {
+            let sign = if rng.random::<bool>() { 1 } else { -1 };
+            let adjustment = if rng.random::<bool>() {
                 1. / (1i64 << precision) as f64
             } else {
                 1.
@@ -371,8 +469,9 @@ where
                 sign,
             );
             if value_mut < *min_value {
-                mutated[index] =
-                    RandomValueMutation::random_mutated(value_mut, min_value, max_value, rng)
+                mutated[index] = RandomExclusiveValueMutation::random_mutated(
+                    value_mut, min_value, max_value, rng,
+                )
             } else if value_mut > *max_value {
                 mutated[index] = max_value.clone();
             } else {
