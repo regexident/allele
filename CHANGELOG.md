@@ -61,6 +61,7 @@ Please make sure to add your changes to the appropriate categories:
 - Replaced `remove`+`insert` with `rotate_right(1)` in `InsertOrderMutator`
 - Replaced `cutpoints.remove(0)` with iterator in discrete crossover
 - Eliminated two quadratic complexity patterns in `order_one_crossover`
+- Implemented stateful SUS cursor in `UniversalSamplingSelector`
 
 ### Security
 
