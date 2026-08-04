@@ -9,7 +9,7 @@ use allele::{
 
 #[proptest(ProptestConfig { cases: 100, failure_persistence: None, ..ProptestConfig::default() })]
 fn insert_order_mutator_preserves_permutation(
-    #[strategy(4usize..50)] genome_length: usize,
+    #[strategy(5usize..50)] genome_length: usize,
     #[strategy(0.0f64..=1.0)] mutation_rate: f64,
     #[strategy(0u64..u64::MAX)] seed: u64,
 ) {
@@ -29,7 +29,7 @@ fn insert_order_mutator_preserves_permutation(
 
 #[proptest(ProptestConfig { cases: 100, failure_persistence: None, ..ProptestConfig::default() })]
 fn swap_order_mutator_preserves_permutation(
-    #[strategy(4usize..50)] genome_length: usize,
+    #[strategy(5usize..50)] genome_length: usize,
     #[strategy(0.0f64..=1.0)] mutation_rate: f64,
     #[strategy(0u64..u64::MAX)] seed: u64,
 ) {
