@@ -240,8 +240,9 @@ where
     let mut genome = Vec::with_capacity(genome_length);
     let mut cutpoints = random_n_cut_points(rng, num_cut_points, genome_length);
     cutpoints.push(genome_length);
+    let mut cutpoints_iter = cutpoints.into_iter();
     let mut start = 0;
-    let mut end = cutpoints.remove(0);
+    let mut end = cutpoints_iter.next().unwrap();
     let mut p_index = num_parents;
     loop {
         loop {
@@ -255,11 +256,13 @@ where
         for partner in partner.iter().take(end).skip(start) {
             genome.push(partner.clone())
         }
-        if cutpoints.is_empty() {
-            break;
+        match cutpoints_iter.next() {
+            None => break,
+            Some(next) => {
+                start = end;
+                end = next;
+            }
         }
-        start = end;
-        end = cutpoints.remove(0);
     }
     genome
 }
@@ -369,8 +372,9 @@ mod fixedbitset_multipoint_crossover {
                 let mut genome = FixedBitSet::with_capacity(genome_length);
                 let mut cutpoints = random_n_cut_points(rng, num_cut_points, genome_length);
                 cutpoints.push(genome_length);
+                let mut cutpoints_iter = cutpoints.into_iter();
                 let mut start = 0;
-                let mut end = cutpoints.remove(0);
+                let mut end = cutpoints_iter.next().unwrap();
                 let mut p_index = num_parents;
                 loop {
                     loop {
@@ -384,11 +388,13 @@ mod fixedbitset_multipoint_crossover {
                     for bit in start..end {
                         genome.set(bit, partner[bit])
                     }
-                    if cutpoints.is_empty() {
-                        break;
+                    match cutpoints_iter.next() {
+                        None => break,
+                        Some(next) => {
+                            start = end;
+                            end = next;
+                        }
                     }
-                    start = end;
-                    end = cutpoints.remove(0);
                 }
                 offspring.push(genome);
             }
