@@ -41,7 +41,7 @@ impl InsertOrderMutator {
 
 impl GeneticOperator for InsertOrderMutator {
     fn name() -> Cow<'static, str> {
-        Cow::Borrowed("Order-Insert-Mutation")
+        Cow::Borrowed("Insert-Order-Mutation")
     }
 }
 
@@ -97,7 +97,7 @@ impl SwapOrderMutator {
 
 impl GeneticOperator for SwapOrderMutator {
     fn name() -> Cow<'static, str> {
-        Cow::Borrowed("Order-Swap-Mutation")
+        Cow::Borrowed("Swap-Order-Mutation")
     }
 }
 
