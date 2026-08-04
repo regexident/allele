@@ -100,7 +100,7 @@ impl BreederValueMutation for Pos {
     }
 }
 
-impl RandomValueMutation for Pos {
+impl RandomExclusiveValueMutation for Pos {
     fn random_mutated<R>(value: Self, min_value: &Pos, max_value: &Pos, rng: &mut R) -> Self
     where
         R: Rng + Sized,
