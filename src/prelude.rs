@@ -16,7 +16,7 @@ pub use crate::population::{GenomeBuilder, Population, build_population};
 
 // Simulation
 //
-pub use crate::simulation::{SimResult, Simulation, SimulationBuilder, simulator::simulate};
+pub use crate::simulation::{Simulation, SimulationBuilder, SimulationResult, simulator::simulate};
 
 // Termination
 //

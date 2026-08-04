@@ -1,3 +1,5 @@
+use std::ops::ControlFlow;
+
 use allele::{operator::prelude::*, prelude::*, random::RngExt};
 use proptest::prelude::ProptestConfig;
 use test_strategy::proptest;
@@ -63,12 +65,13 @@ fn ga_run_preserves_population_size_and_improves_best_fitness() {
 
     for _ in 0..5 {
         match simulator.step() {
-            Ok(SimResult::Intermediate(state)) => {
+            Ok(ControlFlow::Continue(state)) => {
                 best_fitnesses.push(state.result.best_solution.solution.fitness);
             }
-            Ok(SimResult::Final(state, _, _, _)) => {
-                best_fitnesses.push(state.result.best_solution.solution.fitness);
-                final_population_size = state.result.evaluated_population.individuals().len();
+            Ok(ControlFlow::Break(result)) => {
+                best_fitnesses.push(result.state.result.best_solution.solution.fitness);
+                final_population_size =
+                    result.state.result.evaluated_population.individuals().len();
             }
             Err(_) => panic!("simulation step returned an error"),
         }
@@ -115,14 +118,14 @@ fn parallel_serial_parity() {
         let mut best_solution = None;
         loop {
             match simulator.step() {
-                Ok(SimResult::Intermediate(state)) => {
+                Ok(ControlFlow::Continue(state)) => {
                     #[allow(unused_assignments)]
                     {
                         best_solution = Some(state.result.best_solution);
                     }
                 }
-                Ok(SimResult::Final(state, _, _, _)) => {
-                    best_solution = Some(state.result.best_solution);
+                Ok(ControlFlow::Break(result)) => {
+                    best_solution = Some(result.state.result.best_solution);
                     break;
                 }
                 Err(_) => panic!("simulation step returned an error"),
@@ -175,15 +178,15 @@ fn population_size_preserved_across_generations(
 
     loop {
         match simulator.step() {
-            Ok(SimResult::Intermediate(state)) => {
+            Ok(ControlFlow::Continue(state)) => {
                 let pop_len = state.result.evaluated_population.individuals().len();
                 assert_eq!(
                     pop_len, population_size,
                     "population size must be preserved"
                 );
             }
-            Ok(SimResult::Final(state, _, _, _)) => {
-                let pop_len = state.result.evaluated_population.individuals().len();
+            Ok(ControlFlow::Break(result)) => {
+                let pop_len = result.state.result.evaluated_population.individuals().len();
                 assert_eq!(
                     pop_len, population_size,
                     "final population size must be preserved"

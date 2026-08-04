@@ -17,7 +17,7 @@ use std::{
 use crate::{
     algorithm::{Algorithm, OptimizationResult},
     genetic::{Fitness, Genotype},
-    simulation::State,
+    simulation::SimulationState,
     termination::{StopFlag, Termination},
 };
 
@@ -61,7 +61,7 @@ where
     A: Algorithm,
     A::Output: OptimizationResult<G, F>,
 {
-    fn evaluate(&mut self, state: &State<A>) -> StopFlag {
+    fn evaluate(&mut self, state: &SimulationState<A>) -> StopFlag {
         let highest_fitness = &state.result.best_solution().solution.fitness;
         if *highest_fitness >= self.fitness_target {
             StopFlag::StopNow(format!(
@@ -100,7 +100,7 @@ impl<A> Termination<A> for GenerationLimit
 where
     A: Algorithm,
 {
-    fn evaluate(&mut self, state: &State<A>) -> StopFlag {
+    fn evaluate(&mut self, state: &SimulationState<A>) -> StopFlag {
         if state.iteration >= self.max_generations {
             StopFlag::StopNow(format!(
                 "Simulation stopped after the limit of {} generations have \
@@ -140,7 +140,7 @@ impl<A> Termination<A> for TimeLimit
 where
     A: Algorithm,
 {
-    fn evaluate(&mut self, state: &State<A>) -> StopFlag {
+    fn evaluate(&mut self, state: &SimulationState<A>) -> StopFlag {
         let duration = Instant::now().duration_since(state.started_at);
         if duration >= self.max_time {
             StopFlag::StopNow(format!(

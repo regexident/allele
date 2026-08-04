@@ -4,6 +4,8 @@
 //!
 //! [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem)
 
+use std::ops::ControlFlow;
+
 use humantime::format_duration;
 use smallvec::SmallVec;
 
@@ -222,7 +224,7 @@ fn main() {
         let result = knapsack_sim.step();
 
         match result {
-            Ok(SimResult::Intermediate(step)) => {
+            Ok(ControlFlow::Continue(step)) => {
                 let evaluated_population = step.result.evaluated_population;
                 let best_solution = step.result.best_solution;
                 println!(
@@ -245,17 +247,17 @@ fn main() {
                     knapsack.weight
                 );
             }
-            Ok(SimResult::Final(step, processing_time, duration, stop_reason)) => {
-                let best_solution = step.result.best_solution;
-                println!("{}", stop_reason);
+            Ok(ControlFlow::Break(result)) => {
+                let best_solution = result.state.result.best_solution;
+                println!("{}", result.stop_reason);
                 println!(
                     "Final result after {}: generation: {}, \
                      best solution with fitness {} found in generation {}, processing_time: {}",
-                    format_duration(duration),
-                    step.iteration,
+                    format_duration(result.duration),
+                    result.state.iteration,
                     best_solution.solution.fitness,
                     best_solution.generation,
-                    processing_time,
+                    result.processing_time,
                 );
                 let knapsack = best_solution
                     .solution

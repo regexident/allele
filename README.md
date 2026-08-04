@@ -65,12 +65,12 @@ fn main() {
 
     loop {
         match sim.step() {
-            Ok(SimResult::Final(step, _, _, stop_reason)) => {
-                let genome = step.result.best_solution.solution.genome;
-                println!("{stop_reason}: {}", String::from_utf8(genome).unwrap());
+            Ok(ControlFlow::Break(result)) => {
+                let genome = result.state.result.best_solution.solution.genome;
+                println!("{}: {}", result.stop_reason, String::from_utf8(genome).unwrap());
                 break;
             }
-            Ok(SimResult::Intermediate(_)) => {}
+            Ok(ControlFlow::Continue(_)) => {}
             Err(error) => {
                 eprintln!("{error}");
                 break;

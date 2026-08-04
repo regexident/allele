@@ -1,6 +1,9 @@
 pub mod simulator;
 
-use std::time::{Duration, Instant};
+use std::{
+    ops::ControlFlow,
+    time::{Duration, Instant},
+};
 
 use crate::{
     algorithm::Algorithm, random::Seed, statistic::ProcessingTime, termination::StopReason,
@@ -15,11 +18,21 @@ where
 
     /// Runs this simulation completely. The simulation ends when the
     /// termination criteria are met.
-    fn run(&mut self) -> Result<SimResult<A>, Self::Error>;
+    ///
+    /// Returns a [`std::ops::ControlFlow`]: `Break` with the
+    /// [`SimulationResult`] once the simulation has finished, and `Continue`
+    /// with the [`State`] of the last processed iteration while the simulation
+    /// is still running.
+    fn run(&mut self) -> Result<SimulationControlFlow<A>, Self::Error>;
 
     /// Makes one step in this simulation. One step in the simulation performs
     /// one time the complete loop of the genetic algorithm.
-    fn step(&mut self) -> Result<SimResult<A>, Self::Error>;
+    ///
+    /// Returns a [`std::ops::ControlFlow`]: `Break` with the
+    /// [`SimulationResult`] once the simulation has finished, and `Continue`
+    /// with the [`State`] of the last processed iteration while the simulation
+    /// is still running.
+    fn step(&mut self) -> Result<SimulationControlFlow<A>, Self::Error>;
 
     /// Stops the simulation after the current loop is finished.
     fn stop(&mut self) -> Result<bool, Self::Error>;
@@ -49,8 +62,8 @@ where
 }
 
 /// The `State` struct holds the state of the `Simulation`.
-#[derive(Debug, PartialEq)]
-pub struct State<A>
+#[derive(Clone, PartialEq, Debug)]
+pub struct SimulationState<A>
 where
     A: Algorithm,
 {
@@ -72,21 +85,20 @@ where
     pub result: <A as Algorithm>::Output,
 }
 
-/// The result of running a step in the `Simulation`.
-#[derive(Debug, PartialEq)]
-pub enum SimResult<A>
+/// The result of a finished `Simulation`.
+#[derive(Clone, PartialEq, Debug)]
+pub struct SimulationResult<A>
 where
     A: Algorithm,
 {
-    /// The step was successful, but the simulation has not finished.
-    ///
-    /// The `State` contains the result of the last processed generation.
-    Intermediate(State<A>),
-    /// The simulation is finished, and this is the final result.
-    ///
-    /// The parameters are:
-    /// * The `State` of last processed generation.
-    /// * The total processing time of the simulation.
-    /// * The `StopReason` is the matching criteria why the simulation stopped.
-    Final(State<A>, ProcessingTime, Duration, StopReason),
+    /// The `State` of the last processed generation.
+    pub state: SimulationState<A>,
+    /// The total processing time of the simulation.
+    pub processing_time: ProcessingTime,
+    /// The total duration of the simulation.
+    pub duration: Duration,
+    /// The `StopReason` is the matching criteria why the simulation stopped.
+    pub stop_reason: StopReason,
 }
+
+pub type SimulationControlFlow<A> = ControlFlow<SimulationResult<A>, SimulationState<A>>;
