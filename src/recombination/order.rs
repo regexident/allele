@@ -8,7 +8,7 @@
 //! * `PartiallyMappedCrossover` (PMX)
 
 use std::borrow::Cow;
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, HashSet};
 
 use crate::{
     genetic::{Children, Parents, ParentsSlice},
@@ -112,41 +112,38 @@ fn order_one_crossover(
 ) -> Vec<usize> {
     let genome_length = parent1.len();
     let mut genome: Vec<usize> = Vec::with_capacity(genome_length);
-    // collect genes of parent1 located at cutpoint1 to cutpoint2
-    let mut p1_deque: VecDeque<usize> = if cutpoint1 == 0 {
-        parent1.iter().take(cutpoint2 + 1).copied().collect()
+    let p1_slice = if cutpoint1 == 0 {
+        &parent1[..=cutpoint2]
     } else {
-        parent1
-            .iter()
-            .skip(cutpoint1)
-            .take(cutpoint2 - cutpoint1 + 1)
-            .copied()
-            .collect()
+        &parent1[cutpoint1..=cutpoint2]
     };
-    let p1_set: HashSet<usize> = p1_deque.iter().copied().collect();
-    // collect genes from parent2 which are not in cut slice
-    let mut p2_deque: VecDeque<usize> = VecDeque::with_capacity(genome_length);
+    let p1_set: HashSet<usize> = p1_slice.iter().copied().collect();
+    let mut p2: Vec<usize> = Vec::with_capacity(genome_length);
     let mut p2_index = (cutpoint2 + 1) % genome_length;
     for _ in 0..genome_length {
         let p2_genome = parent2[p2_index];
         if !p1_set.contains(&p2_genome) {
-            p2_deque.push_back(p2_genome);
+            p2.push(p2_genome);
         }
         p2_index += 1;
         if p2_index >= genome_length {
             p2_index = 0;
         }
     }
-    // insert genes into child genome at correct position
     let right_offset = genome_length - cutpoint2 - 1;
-    let mut right_deque: VecDeque<usize> = p2_deque.drain(..right_offset).collect();
+    let mut p1_idx = 0usize;
+    let mut left_idx = right_offset;
+    let mut right_idx = 0usize;
     for locus in 0..genome_length {
         if locus < cutpoint1 {
-            genome.push(p2_deque.pop_front().unwrap());
+            genome.push(p2[left_idx]);
+            left_idx += 1;
         } else if locus > cutpoint2 {
-            genome.push(right_deque.pop_front().unwrap());
+            genome.push(p2[right_idx]);
+            right_idx += 1;
         } else {
-            genome.push(p1_deque.pop_front().unwrap());
+            genome.push(p1_slice[p1_idx]);
+            p1_idx += 1;
         }
     }
     genome
