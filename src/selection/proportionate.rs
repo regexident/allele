@@ -48,6 +48,11 @@ impl RouletteWheelSelector {
                 value: selection_ratio,
             });
         }
+        if num_individuals_per_parents < 1 {
+            return Err(crate::error::Error::InvalidNumIndividualsPerParents {
+                value: num_individuals_per_parents,
+            });
+        }
         Ok(RouletteWheelSelector {
             selection_ratio,
             num_individuals_per_parents,
@@ -82,8 +87,14 @@ impl RouletteWheelSelector {
     }
 
     /// Sets the number of individuals per parents to the given value.
-    pub fn set_num_individuals_per_parents(&mut self, value: usize) {
+    pub fn set_num_individuals_per_parents(&mut self, value: usize) -> Result<(), crate::error::Error> {
+        if value < 1 {
+            return Err(crate::error::Error::InvalidNumIndividualsPerParents {
+                value,
+            });
+        }
         self.num_individuals_per_parents = value;
+        Ok(())
     }
 }
 
