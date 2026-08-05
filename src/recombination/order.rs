@@ -159,13 +159,10 @@ fn partial_mapped_crossover(
     cutpoint2: usize,
 ) -> Vec<usize> {
     let genome_length = parent1.len();
-    let mut genome: Vec<usize> = Vec::with_capacity(genome_length);
-    // using HashMap as indexed array of variable length
-    let mut result: HashMap<usize, usize> = HashMap::with_capacity(genome_length);
-    // mapping of value to index
+    let mut result: Vec<usize> = vec![0; genome_length];
     let mut inverse: HashMap<usize, usize> = HashMap::with_capacity(genome_length);
     for (i, v2) in parent2.iter().enumerate() {
-        result.insert(i, *v2);
+        result[i] = *v2;
         inverse.insert(*v2, i);
     }
     for (j, v1) in parent1
@@ -174,16 +171,13 @@ fn partial_mapped_crossover(
         .take(cutpoint2 + 1)
         .skip(cutpoint1)
     {
-        let orig = result[&j];
-        result.insert(j, *v1);
+        let orig = result[j];
+        result[j] = *v1;
         let k = inverse[v1];
-        result.insert(k, orig);
+        result[k] = orig;
         inverse.insert(orig, k);
     }
-    for i in 0..genome_length {
-        genome.push(result[&i])
-    }
-    genome
+    result
 }
 
 #[cfg(test)]
