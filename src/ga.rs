@@ -25,7 +25,7 @@
 
 pub mod builder;
 
-use std::{marker::PhantomData, sync::Arc};
+use std::marker::PhantomData;
 
 use thiserror::Error;
 
@@ -119,7 +119,7 @@ where
     reinserter: R,
     min_population_size: usize,
     initial_population: Population<G>,
-    population: Arc<Vec<G>>,
+    population: Vec<G>,
     processing_time: ProcessingTime,
 }
 
@@ -205,7 +205,7 @@ where
         }
 
         // Stage 2: The fitness check:
-        let evaluation = evaluate_fitness(self.population.clone(), &self.evaluator);
+        let evaluation = evaluate_fitness(self.population.to_vec(), &self.evaluator);
         let best_solution = determine_best_solution(iteration, &evaluation.result)?;
 
         // Stage 3: The making of a new population:
@@ -240,7 +240,7 @@ where
             + breeding.time
             + reinsertion.time;
         let next_generation: Vec<G> = reinsertion.result.into_iter().map(|(g, _)| g).collect();
-        self.population = Arc::new(next_generation);
+        self.population = next_generation;
         Ok(State {
             evaluated_population: evaluation.result,
             best_solution: best_solution.result,
@@ -250,13 +250,13 @@ where
 
     fn reset(&mut self) -> Result<bool, Self::Error> {
         self.processing_time = ProcessingTime::zero();
-        self.population = Arc::new(self.initial_population.individuals().to_vec());
+        self.population = self.initial_population.individuals().to_vec();
         Ok(true)
     }
 }
 
 fn evaluate_fitness<G, F, E>(
-    population: Arc<Vec<G>>,
+    population: Vec<G>,
     evaluator: &E,
 ) -> TimedResult<EvaluatedPopulation<G, F>>
 where
