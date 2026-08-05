@@ -249,7 +249,6 @@ mod tests {
     use crate::random::Prng;
     use rand::SeedableRng;
     use std::ops::RangeInclusive;
-    use std::sync::Arc;
 
     #[derive(Clone, Debug, PartialEq)]
     struct DummyEvaluator;
@@ -281,13 +280,7 @@ mod tests {
         let lowest = *fitness_values.iter().min().unwrap();
         let sum: i32 = fitness_values.iter().sum();
         let average = sum / fitness_values.len() as i32;
-        EvaluatedPopulation::new(
-            Arc::new(individuals),
-            fitness_values,
-            highest,
-            lowest,
-            average,
-        )
+        EvaluatedPopulation::new(individuals, fitness_values, highest, lowest, average)
     }
 
     #[test]
