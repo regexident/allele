@@ -25,6 +25,7 @@
 
 pub mod builder;
 
+use std::collections::HashMap;
 use std::marker::PhantomData;
 
 use thiserror::Error;
@@ -121,6 +122,7 @@ where
     initial_population: Population<G>,
     population: Vec<G>,
     processing_time: ProcessingTime,
+    precomputed_fitness: Option<HashMap<usize, F>>,
 }
 
 impl<G, F, E, S, C, M, R> GeneticAlgorithm<G, F, E, S, C, M, R>
@@ -205,7 +207,11 @@ where
         }
 
         // Stage 2: The fitness check:
-        let evaluation = evaluate_fitness(self.population.to_vec(), &self.evaluator);
+        let evaluation = evaluate_fitness(
+            self.population.to_vec(),
+            &self.evaluator,
+            self.precomputed_fitness.as_ref(),
+        );
         let best_solution = determine_best_solution(iteration, &evaluation.result)?;
 
         // Stage 3: The making of a new population:
@@ -239,6 +245,13 @@ where
             + selection.time
             + breeding.time
             + reinsertion.time;
+        let precomputed: HashMap<usize, F> = reinsertion
+            .result
+            .iter()
+            .enumerate()
+            .map(|(i, (_, f))| (i, f.clone()))
+            .collect();
+        self.precomputed_fitness = Some(precomputed);
         let next_generation: Vec<G> = reinsertion.result.into_iter().map(|(g, _)| g).collect();
         self.population = next_generation;
         Ok(State {
@@ -251,6 +264,7 @@ where
     fn reset(&mut self) -> Result<bool, Self::Error> {
         self.processing_time = ProcessingTime::zero();
         self.population = self.initial_population.individuals().to_vec();
+        self.precomputed_fitness = None;
         Ok(true)
     }
 }
@@ -258,13 +272,14 @@ where
 fn evaluate_fitness<G, F, E>(
     population: Vec<G>,
     evaluator: &E,
+    precomputed: Option<&HashMap<usize, F>>,
 ) -> TimedResult<EvaluatedPopulation<G, F>>
 where
     G: Genotype + Sync,
     F: Fitness + Send + Sync,
     E: FitnessFunction<G, F> + Sync,
 {
-    let evaluation = par_evaluate_fitness(&population, evaluator);
+    let evaluation = par_evaluate_fitness(&population, evaluator, precomputed, 0);
     let average = timed(|| evaluator.average(&evaluation.result.0)).run();
     let evaluated = EvaluatedPopulation::new(
         population,
@@ -279,19 +294,24 @@ where
     }
 }
 
-fn serial_evaluate_fitness<G, F, E>(population: &[G], evaluator: &E) -> (Vec<F>, F, F)
+fn serial_evaluate_fitness<G, F, E>(
+    population: &[G],
+    evaluator: &E,
+    precomputed: Option<&HashMap<usize, F>>,
+    offset: usize,
+) -> (Vec<F>, F, F)
 where
     G: Genotype + Sync,
     F: Fitness + Send + Sync,
     E: FitnessFunction<G, F> + Sync,
 {
-    let score = evaluator.fitness_of(&population[0]);
+    let score = compute_fitness(&population[0], 0, evaluator, precomputed, offset);
     let mut highest = score.clone();
     let mut lowest = score.clone();
     let mut fitness = Vec::with_capacity(population.len());
     fitness.push(score);
-    for genome in population.iter().skip(1) {
-        let score = evaluator.fitness_of(genome);
+    for (i, genome) in population.iter().enumerate().skip(1) {
+        let score = compute_fitness(genome, i, evaluator, precomputed, offset);
         if score > highest {
             highest = score.clone();
         }
@@ -303,6 +323,26 @@ where
     (fitness, highest, lowest)
 }
 
+fn compute_fitness<G, F, E>(
+    genome: &G,
+    index: usize,
+    evaluator: &E,
+    precomputed: Option<&HashMap<usize, F>>,
+    offset: usize,
+) -> F
+where
+    G: Genotype + Sync,
+    F: Fitness + Send + Sync,
+    E: FitnessFunction<G, F> + Sync,
+{
+    if let Some(map) = precomputed {
+        if let Some(f) = map.get(&(offset + index)) {
+            return f.clone();
+        }
+    }
+    evaluator.fitness_of(genome)
+}
+
 /// Calculates the `genetic::Fitness` value of each `genetic::Genotype` and
 /// records the highest and lowest values.
 ///
@@ -310,20 +350,25 @@ where
 ///
 /// Panics if `population` is empty.
 #[cfg(all(not(target_arch = "wasm32"), feature = "parallel"))]
-fn par_evaluate_fitness<G, F, E>(population: &[G], evaluator: &E) -> TimedResult<(Vec<F>, F, F)>
+fn par_evaluate_fitness<G, F, E>(
+    population: &[G],
+    evaluator: &E,
+    precomputed: Option<&HashMap<usize, F>>,
+    offset: usize,
+) -> TimedResult<(Vec<F>, F, F)>
 where
     G: Genotype + Sync,
     F: Fitness + Send + Sync,
     E: FitnessFunction<G, F> + Sync,
 {
     if population.len() < 50 {
-        timed(|| serial_evaluate_fitness(population, evaluator)).run()
+        timed(|| serial_evaluate_fitness(population, evaluator, precomputed, offset)).run()
     } else {
         let mid_point = population.len() / 2;
         let (l_slice, r_slice) = population.split_at(mid_point);
         let (mut left, mut right) = rayon::join(
-            || par_evaluate_fitness(l_slice, evaluator),
-            || par_evaluate_fitness(r_slice, evaluator),
+            || par_evaluate_fitness(l_slice, evaluator, precomputed, offset),
+            || par_evaluate_fitness(r_slice, evaluator, precomputed, offset + mid_point),
         );
         let mut fitness = Vec::with_capacity(population.len());
         fitness.append(&mut left.result.0);
@@ -349,13 +394,18 @@ where
 ///
 /// Panics if `population` is empty.
 #[cfg(any(target_arch = "wasm32", not(feature = "parallel")))]
-fn par_evaluate_fitness<G, F, E>(population: &[G], evaluator: &E) -> TimedResult<(Vec<F>, F, F)>
+fn par_evaluate_fitness<G, F, E>(
+    population: &[G],
+    evaluator: &E,
+    precomputed: Option<&HashMap<usize, F>>,
+    offset: usize,
+) -> TimedResult<(Vec<F>, F, F)>
 where
     G: Genotype + Sync,
     F: Fitness + Send + Sync,
     E: FitnessFunction<G, F> + Sync,
 {
-    timed(|| serial_evaluate_fitness(population, evaluator)).run()
+    timed(|| serial_evaluate_fitness(population, evaluator, precomputed, offset)).run()
 }
 
 /// Determines the best solution of the current population

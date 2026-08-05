@@ -54,6 +54,7 @@ where
             population: self.initial_population.individuals().to_vec(),
             initial_population: self.initial_population,
             processing_time: ProcessingTime::zero(),
+            precomputed_fitness: None,
         }
     }
 
