@@ -1,4 +1,4 @@
-use std::ops::ControlFlow;
+use std::ops::{ControlFlow, RangeInclusive};
 
 use allele::{operator::prelude::*, prelude::*, random::RngExt};
 use proptest::prelude::ProptestConfig;
@@ -28,12 +28,8 @@ impl FitnessFunction<Vec<i8>, i32> for SumFitnessEvaluator {
         fitness_values.iter().sum::<i32>() / fitness_values.len() as i32
     }
 
-    fn highest_possible_fitness(&self) -> i32 {
-        50
-    }
-
-    fn lowest_possible_fitness(&self) -> i32 {
-        -50
+    fn fitness_bounds(&self) -> RangeInclusive<i32> {
+        -50..=50
     }
 }
 

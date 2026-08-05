@@ -32,12 +32,8 @@ impl FitnessFunction<Genome, usize> for FitnessCalc {
         fitness_values.iter().sum::<usize>() / fitness_values.len()
     }
 
-    fn highest_possible_fitness(&self) -> usize {
-        TARGET.len()
-    }
-
-    fn lowest_possible_fitness(&self) -> usize {
-        0
+    fn fitness_bounds(&self) -> RangeInclusive<usize> {
+        0..=TARGET.len()
     }
 }
 
@@ -58,7 +54,7 @@ fn main() {
             .build(),
     )
     .until(or(
-        FitnessLimit::new(FitnessCalc.highest_possible_fitness()),
+        FitnessLimit::new(*FitnessCalc.fitness_bounds().end()),
         GenerationLimit::new(1000),
     ))
     .build();

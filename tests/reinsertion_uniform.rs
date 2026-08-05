@@ -1,3 +1,4 @@
+use std::ops::RangeInclusive;
 use std::sync::Arc;
 
 use proptest::prelude::ProptestConfig;
@@ -26,12 +27,8 @@ impl FitnessFunction<Vec<i8>, i32> for DummyEvaluator {
         }
     }
 
-    fn highest_possible_fitness(&self) -> i32 {
-        100
-    }
-
-    fn lowest_possible_fitness(&self) -> i32 {
-        -100
+    fn fitness_bounds(&self) -> RangeInclusive<i32> {
+        -100..=100
     }
 }
 

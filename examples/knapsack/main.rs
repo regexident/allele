@@ -4,7 +4,7 @@
 //!
 //! [knapsack problem](https://en.wikipedia.org/wiki/Knapsack_problem)
 
-use std::ops::ControlFlow;
+use std::ops::{ControlFlow, RangeInclusive};
 
 use humantime::format_duration;
 use smallvec::SmallVec;
@@ -74,12 +74,12 @@ impl AsPhenotype for Selection {
 struct Problem {
     given_items: GivenItems,
     allowed_weight: u64,
-    highest_possible_fitness: i64,
+    best_fitness: i64,
 }
 
 impl Problem {
     pub fn new(allowed_weight: u64, given_items: GivenItems) -> Self {
-        let highest_possible_fitness = given_items
+        let best_fitness = given_items
             .list
             .iter()
             .map(|item| i64::from(item.value))
@@ -87,7 +87,7 @@ impl Problem {
         Self {
             given_items,
             allowed_weight,
-            highest_possible_fitness,
+            best_fitness,
         }
     }
 }
@@ -120,12 +120,8 @@ impl FitnessFunction<Selection, i64> for &Problem {
         (values.iter().sum::<i64>() as f32 / values.len() as f32 + 0.5).floor() as i64
     }
 
-    fn highest_possible_fitness(&self) -> i64 {
-        self.highest_possible_fitness
-    }
-
-    fn lowest_possible_fitness(&self) -> i64 {
-        0
+    fn fitness_bounds(&self) -> RangeInclusive<i64> {
+        0..=self.best_fitness
     }
 }
 

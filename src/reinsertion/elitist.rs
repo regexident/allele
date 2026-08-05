@@ -248,6 +248,7 @@ mod tests {
     use crate::operator::ReinsertionOp;
     use crate::random::Prng;
     use rand::SeedableRng;
+    use std::ops::RangeInclusive;
     use std::sync::Arc;
 
     #[derive(Clone, Debug, PartialEq)]
@@ -266,12 +267,8 @@ mod tests {
             }
         }
 
-        fn highest_possible_fitness(&self) -> i32 {
-            100
-        }
-
-        fn lowest_possible_fitness(&self) -> i32 {
-            -100
+        fn fitness_bounds(&self) -> RangeInclusive<i32> {
+            -100..=100
         }
     }
 

@@ -1,3 +1,5 @@
+use std::ops::RangeInclusive;
+
 use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
 
 #[test]
@@ -17,12 +19,8 @@ fn create_new_genetic_algorithm_application() {
                 as u32
         }
 
-        fn highest_possible_fitness(&self) -> u32 {
-            10000
-        }
-
-        fn lowest_possible_fitness(&self) -> u32 {
-            0
+        fn fitness_bounds(&self) -> RangeInclusive<u32> {
+            0..=10000
         }
     }
 
