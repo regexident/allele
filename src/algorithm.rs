@@ -2,7 +2,7 @@
 //! concrete algorithms such as the `ga::GeneticAlgorithm` and various
 //! operators as defined in the `operator` module.
 
-use std::{error::Error, fmt::Debug, sync::Arc};
+use std::{error::Error, fmt::Debug};
 
 use crate::{
     genetic::{Fitness, Genotype},
@@ -83,7 +83,7 @@ where
     G: Genotype,
     F: Fitness,
 {
-    individuals: Arc<Vec<G>>,
+    individuals: Vec<G>,
     fitness_values: Vec<F>,
     highest_fitness: F,
     lowest_fitness: F,
@@ -97,7 +97,7 @@ where
 {
     /// Construct a new instance of the `EvaluatedPopulation` struct.
     pub fn new(
-        individuals: Arc<Vec<G>>,
+        individuals: Vec<G>,
         fitness_values: Vec<F>,
         highest_fitness: F,
         lowest_fitness: F,
