@@ -200,8 +200,12 @@ impl MultiPointCrossBreeder {
     }
 
     /// Sets the number of cut points used by this operator to the given value.
-    pub fn set_num_cut_points(&mut self, value: usize) {
+    pub fn set_num_cut_points(&mut self, value: usize) -> Result<(), crate::error::Error> {
+        if value < 1 {
+            return Err(crate::error::Error::InvalidNumCutPoints { value });
+        }
         self.num_cut_points = value;
+        Ok(())
     }
 }
 
