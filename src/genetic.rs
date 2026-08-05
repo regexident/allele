@@ -4,6 +4,7 @@
 //! genetic biology.
 
 use std::fmt::Debug;
+use std::ops::RangeInclusive;
 
 /// A `Phenotype` is a candidate solution of the optimization or search problem.
 /// Phenotypes are also called individuals or creatures. A `Phenotype` is the
@@ -119,10 +120,6 @@ where
     /// Calculates the average `Fitness` value of the given `Fitness` values.
     fn average(&self, a: &[F]) -> F;
 
-    /// Returns the very best of all theoretically possible `Fitness` values.
-    fn highest_possible_fitness(&self) -> F;
-
-    /// Returns the worst of all theoretically possible `Fitness` values.
-    /// This is usually a value equivalent to zero.
-    fn lowest_possible_fitness(&self) -> F;
+    /// Returns the possible range of `Fitness` values, from worst to best.
+    fn fitness_bounds(&self) -> RangeInclusive<F>;
 }

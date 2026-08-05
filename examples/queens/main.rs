@@ -1,7 +1,7 @@
 //! The `queens` example searches for solutions of the
 //! [N Queens Problem](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
 
-use std::ops::ControlFlow;
+use std::ops::{ControlFlow, RangeInclusive};
 
 use humantime::format_duration;
 
@@ -84,12 +84,8 @@ impl FitnessFunction<Positions, usize> for FitnessCalc {
         (values.iter().sum::<usize>() as f32 / values.len() as f32 + 0.5).floor() as usize
     }
 
-    fn highest_possible_fitness(&self) -> usize {
-        100
-    }
-
-    fn lowest_possible_fitness(&self) -> usize {
-        0
+    fn fitness_bounds(&self) -> RangeInclusive<usize> {
+        0..=NUMBER_OF_QUEENS as usize
     }
 }
 
@@ -161,7 +157,7 @@ fn main() {
             .build(),
     )
     .until(or(
-        FitnessLimit::new(FitnessCalc.highest_possible_fitness()),
+        FitnessLimit::new(*FitnessCalc.fitness_bounds().end()),
         GenerationLimit::new(GENERATION_LIMIT),
     ))
     .build();

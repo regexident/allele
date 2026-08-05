@@ -2,7 +2,7 @@
 //! known as the
 //! [infinite monkey theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem).
 
-use std::ops::ControlFlow;
+use std::ops::{ControlFlow, RangeInclusive};
 
 use humantime::format_duration;
 
@@ -78,12 +78,8 @@ impl FitnessFunction<TextGenome, usize> for FitnessCalc {
         fitness_values.iter().sum::<usize>() / fitness_values.len()
     }
 
-    fn highest_possible_fitness(&self) -> usize {
-        10_000
-    }
-
-    fn lowest_possible_fitness(&self) -> usize {
-        0
+    fn fitness_bounds(&self) -> RangeInclusive<usize> {
+        0..=TARGET_TEXT.len()
     }
 }
 
@@ -114,7 +110,7 @@ fn main() {
             .build(),
     )
     .until(or(
-        FitnessLimit::new(FitnessCalc.highest_possible_fitness()),
+        FitnessLimit::new(*FitnessCalc.fitness_bounds().end()),
         GenerationLimit::new(params.generation_limit),
     ))
     .build();
