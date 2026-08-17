@@ -100,16 +100,18 @@ where
     /// Set the `replace_ratio` of this `ElitistReinserter` to the given
     /// value. The value must be between 0 and 1.0 (inclusive).
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `value` is not in [0.0, 1.0].
-    pub fn set_replace_ratio(&mut self, value: f64) {
-        assert!(
-            (0.0..=1.0).contains(&value),
-            "replace_ratio must be in [0.0, 1.0], got {}",
-            value
-        );
+    /// Returns [`InvalidArgumentError`] if `value` is not in [0.0, 1.0].
+    pub fn set_replace_ratio(&mut self, value: f64) -> Result<(), crate::InvalidArgumentError> {
+        if !(0.0..=1.0).contains(&value) {
+            return Err(crate::InvalidArgumentError::new(
+                "replace_ratio",
+                format!("must be in [0.0, 1.0], got {}", value),
+            ));
+        }
         self.replace_ratio = value;
+        Ok(())
     }
 }
 
