@@ -34,6 +34,7 @@ Please make sure to add your changes to the appropriate categories:
 - Replaced the `chrono` dependency with `std::time`; `State::started_at` is now an `Instant`, and `State::duration`, `SimResult::Final`'s duration, `ProcessingTime`, and `TimeLimit` now use `std::time::Duration`
 - Renamed `GeneticAlgorithm` intermediate builder structs to use full operator words for readability in compiler errors
 - Made mutation operator constructors and setters return `Result`
+- Made reinsertion `set_replace_ratio` return `Result`
 
 ### Deprecated
 
