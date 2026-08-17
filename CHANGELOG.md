@@ -52,6 +52,7 @@ Please make sure to add your changes to the appropriate categories:
 - Fixed `BreederValueMutation` on unsigned types producing asymmetric boundary behavior when the intermediate arithmetic result is negative; both bounds now clamp symmetrically via `i128` intermediate
 - Fixed `random_n_cut_points` end-accumulation bug where the sampling range could exceed `length` for n > 2
 - `FitnessLimit` now works with any `Algorithm` whose output implements `OptimizationResult`, not just the concrete 7-parameter `GeneticAlgorithm`; implemented `OptimizationResult` on `ga::State`
+- Made `Simulator::run` respect `stop` and report both `Or` reasons
 
 ### Performance
 
