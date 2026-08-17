@@ -37,6 +37,8 @@ pub enum Error {
     ZeroParentsSelected,
     #[error("number of cut points must be at least 1, got {value}")]
     InvalidNumCutPoints { value: usize },
+    #[error("mutation rate must be in [0.0, 1.0], got {value}")]
+    InvalidMutationRate { value: f64 },
 }
 
 impl PartialEq for Error {
@@ -59,6 +61,10 @@ impl PartialEq for Error {
             (Error::InvalidProbability { value: a }, Error::InvalidProbability { value: b }) => {
                 a.to_bits() == b.to_bits()
             }
+            (
+                Error::InvalidMutationRate { value: a },
+                Error::InvalidMutationRate { value: b },
+            ) => a.to_bits() == b.to_bits(),
             (
                 Error::InvalidNumIndividualsPerParents { value: a },
                 Error::InvalidNumIndividualsPerParents { value: b },
@@ -83,6 +89,7 @@ impl std::hash::Hash for Error {
             Error::SelectionIterationLimitExceeded { limit } => limit.hash(state),
             Error::InvalidSelectionRatio { value } => value.to_bits().hash(state),
             Error::InvalidProbability { value } => value.to_bits().hash(state),
+            Error::InvalidMutationRate { value } => value.to_bits().hash(state),
             Error::InvalidNumIndividualsPerParents { value } => value.hash(state),
             Error::InvalidNumCutPoints { value } => value.hash(state),
         }
