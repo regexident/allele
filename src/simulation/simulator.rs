@@ -201,6 +201,16 @@ where
                             }));
                         }
                     }
+                    if self.run_mode == RunMode::NotRunning {
+                        let processing_time = self.processing_time;
+                        let duration = started_at.elapsed();
+                        break Ok(ControlFlow::Break(SimulationResult {
+                            state,
+                            processing_time,
+                            duration,
+                            stop_reason: "Simulation stopped by user.".to_string(),
+                        }));
+                    }
                 }
                 Err(error) => {
                     break Err(error);

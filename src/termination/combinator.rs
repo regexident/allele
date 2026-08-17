@@ -161,7 +161,7 @@ where
         }
         match reasons.len() {
             0 => StopFlag::Continue,
-            _ => StopFlag::StopNow(reasons[0].clone()),
+            _ => StopFlag::StopNow(reasons.join(" OR ")),
         }
     }
 }
