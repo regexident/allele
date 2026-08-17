@@ -61,10 +61,9 @@ impl PartialEq for Error {
             (Error::InvalidProbability { value: a }, Error::InvalidProbability { value: b }) => {
                 a.to_bits() == b.to_bits()
             }
-            (
-                Error::InvalidMutationRate { value: a },
-                Error::InvalidMutationRate { value: b },
-            ) => a.to_bits() == b.to_bits(),
+            (Error::InvalidMutationRate { value: a }, Error::InvalidMutationRate { value: b }) => {
+                a.to_bits() == b.to_bits()
+            }
             (
                 Error::InvalidNumIndividualsPerParents { value: a },
                 Error::InvalidNumIndividualsPerParents { value: b },

@@ -1,4 +1,5 @@
 use proptest::prelude::ProptestConfig;
+use std::ops::RangeInclusive;
 use test_strategy::proptest;
 
 use allele::{
