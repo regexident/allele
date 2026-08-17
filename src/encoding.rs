@@ -11,7 +11,6 @@ use std::fmt::Debug;
 
 use crate::genetic::Genotype;
 
-
 /// Implementation of a genotype using `Vec`.
 impl<V> Genotype for Vec<V>
 where
@@ -19,7 +18,6 @@ where
 {
     type Dna = V;
 }
-
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_genotype {

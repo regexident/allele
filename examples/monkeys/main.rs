@@ -8,9 +8,9 @@ use humantime::format_duration;
 
 use allele::{operator::prelude::*, population::ValueEncodedGenomeBuilder, prelude::*};
 
-// const TARGET_TEXT: &str = "See how a genius creates a legend";
-const TARGET_TEXT: &str = "Be not afraid of greatness! Some are great, some achieve greatness, \
-                           and some have greatness thrust upon 'em.";
+const TARGET_TEXT: &str = "See how a genius creates a legend";
+// const TARGET_TEXT: &str = "Be not afraid of greatness! Some are great, some achieve greatness, \
+//                            and some have greatness thrust upon 'em.";
 // const TARGET_TEXT: &str = "All the world's a stage, and all the men and women merely players: \
 //                           they have their exits and their entrances; and one man in his time \
 //                           plays many parts, his acts being seven ages.";
