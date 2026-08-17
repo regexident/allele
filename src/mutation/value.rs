@@ -30,17 +30,29 @@ where
         mutation_rate: f64,
         min_value: <G as Genotype>::Dna,
         max_value: <G as Genotype>::Dna,
-    ) -> Self {
-        assert!(
-            (0.0..=1.0).contains(&mutation_rate),
-            "mutation_rate must be in [0.0, 1.0], got {}",
-            mutation_rate
-        );
-        RandomValueMutator {
+    ) -> Result<Self, crate::error::Error> {
+        if !(0.0..=1.0).contains(&mutation_rate) {
+            return Err(crate::error::Error::InvalidMutationRate {
+                value: mutation_rate,
+            });
+        }
+        Ok(RandomValueMutator {
             mutation_rate,
             min_value,
             max_value,
+        })
+    }
+
+    pub fn mutation_rate(&self) -> f64 {
+        self.mutation_rate
+    }
+
+    pub fn set_mutation_rate(&mut self, value: f64) -> Result<(), crate::error::Error> {
+        if !(0.0..=1.0).contains(&value) {
+            return Err(crate::error::Error::InvalidMutationRate { value });
         }
+        self.mutation_rate = value;
+        Ok(())
     }
 }
 
@@ -365,19 +377,31 @@ where
         mutation_precision: u8,
         min_value: <G as Genotype>::Dna,
         max_value: <G as Genotype>::Dna,
-    ) -> Self {
-        assert!(
-            (0.0..=1.0).contains(&mutation_rate),
-            "mutation_rate must be in [0.0, 1.0], got {}",
-            mutation_rate
-        );
-        BreederValueMutator {
+    ) -> Result<Self, crate::error::Error> {
+        if !(0.0..=1.0).contains(&mutation_rate) {
+            return Err(crate::error::Error::InvalidMutationRate {
+                value: mutation_rate,
+            });
+        }
+        Ok(BreederValueMutator {
             mutation_rate,
             mutation_range,
             mutation_precision,
             min_value,
             max_value,
+        })
+    }
+
+    pub fn mutation_rate(&self) -> f64 {
+        self.mutation_rate
+    }
+
+    pub fn set_mutation_rate(&mut self, value: f64) -> Result<(), crate::error::Error> {
+        if !(0.0..=1.0).contains(&value) {
+            return Err(crate::error::Error::InvalidMutationRate { value });
         }
+        self.mutation_rate = value;
+        Ok(())
     }
 }
 
