@@ -8,7 +8,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-#[derive(Clone, Copy, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct ProcessingTime {
     duration: Duration,
 }
@@ -28,12 +28,6 @@ impl ProcessingTime {
 impl From<Duration> for ProcessingTime {
     fn from(duration: Duration) -> Self {
         ProcessingTime { duration }
-    }
-}
-
-impl fmt::Debug for ProcessingTime {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Debug::fmt(&self.duration, f)
     }
 }
 
