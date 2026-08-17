@@ -47,7 +47,7 @@ fn ga_run_preserves_population_size_and_improves_best_fitness() {
         .with_evaluation(SumFitnessEvaluator)
         .with_selection(TournamentSelector::new(0.5, 2, 3, 0.8, false).unwrap())
         .with_crossover(SinglePointCrossBreeder::new())
-        .with_mutation(SwapOrderMutator::new(0.1))
+        .with_mutation(SwapOrderMutator::new(0.1).unwrap())
         .with_reinsertion(UniformReinserter::new(SumFitnessEvaluator, 1.0).unwrap())
         .with_initial_population(initial_population)
         .build();
@@ -101,7 +101,7 @@ fn parallel_serial_parity() {
             .with_evaluation(SumFitnessEvaluator)
             .with_selection(TournamentSelector::new(0.7, 2, 3, 0.9, false).unwrap())
             .with_crossover(SinglePointCrossBreeder::new())
-            .with_mutation(SwapOrderMutator::new(0.1))
+            .with_mutation(SwapOrderMutator::new(0.1).unwrap())
             .with_reinsertion(ElitistReinserter::new(SumFitnessEvaluator, false, 1.0).unwrap())
             .with_initial_population(initial_population.clone())
             .build();
@@ -163,7 +163,7 @@ fn population_size_preserved_across_generations(
         .with_evaluation(SumFitnessEvaluator)
         .with_selection(TournamentSelector::new(0.6, 2, 3, 0.7, false).unwrap())
         .with_crossover(SinglePointCrossBreeder::new())
-        .with_mutation(SwapOrderMutator::new(0.1))
+        .with_mutation(SwapOrderMutator::new(0.1).unwrap())
         .with_reinsertion(UniformReinserter::new(SumFitnessEvaluator, 0.9).unwrap())
         .with_initial_population(initial_population)
         .build();

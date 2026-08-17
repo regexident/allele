@@ -102,7 +102,7 @@ fn main() {
                 MultiPointCrossBreeder::new(params.num_crossover_points)
                     .expect("invalid num_cut_points"),
             )
-            .with_mutation(RandomValueMutator::new(params.mutation_rate, 32, 126))
+            .with_mutation(RandomValueMutator::new(params.mutation_rate, 32, 126).unwrap())
             .with_reinsertion(
                 ElitistReinserter::new(FitnessCalc, true, params.reinsertion_ratio).unwrap(),
             )

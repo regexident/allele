@@ -17,7 +17,7 @@ fn random_value_mutator_preserves_genome_length(
     let genome: Vec<i32> = (0..genome_length)
         .map(|_| rng.random_range(-1000i32..1000i32))
         .collect();
-    let mutator = RandomValueMutator::new(mutation_rate, -1000i32, 1000i32);
+    let mutator = RandomValueMutator::new(mutation_rate, -1000i32, 1000i32).unwrap();
     let mutated = mutator.mutate(genome, &mut rng);
     assert_eq!(mutated.len(), genome_length);
 }
@@ -31,7 +31,7 @@ fn random_value_mutator_with_zero_rate_is_identity(
     let genome: Vec<i32> = (0..genome_length)
         .map(|_| rng.random_range(-1000i32..1000i32))
         .collect();
-    let mutator = RandomValueMutator::new(0.0, -1000i32, 1000i32);
+    let mutator = RandomValueMutator::new(0.0, -1000i32, 1000i32).unwrap();
     let mutated = mutator.mutate(genome.clone(), &mut rng);
     assert_eq!(mutated, genome);
 }
@@ -48,7 +48,7 @@ fn random_value_mutator_genes_stay_within_bounds(
     let genome: Vec<i32> = (0..genome_length)
         .map(|_| rng.random_range(min_value..max_value))
         .collect();
-    let mutator = RandomValueMutator::new(mutation_rate, min_value, max_value);
+    let mutator = RandomValueMutator::new(mutation_rate, min_value, max_value).unwrap();
     let mutated = mutator.mutate(genome, &mut rng);
     for gene in mutated {
         assert!(

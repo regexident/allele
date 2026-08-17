@@ -140,16 +140,19 @@ fn main() {
                 RouletteWheelSelector::new(SELECTION_RATIO, NUM_INDIVIDUALS_PER_PARENTS).unwrap(),
             )
             .with_crossover(UniformCrossBreeder::new())
-            .with_mutation(BreederValueMutator::new(
-                MUTATION_RATE,
-                Pos { x: 0, y: 1 },
-                3,
-                Pos { x: 0, y: 0 },
-                Pos {
-                    x: NUM_ROWS,
-                    y: NUM_COLS,
-                },
-            ))
+            .with_mutation(
+                BreederValueMutator::new(
+                    MUTATION_RATE,
+                    Pos { x: 0, y: 1 },
+                    3,
+                    Pos { x: 0, y: 0 },
+                    Pos {
+                        x: NUM_ROWS,
+                        y: NUM_COLS,
+                    },
+                )
+                .unwrap(),
+            )
             .with_reinsertion(
                 ElitistReinserter::new(FitnessCalc, false, REINSERTION_RATIO).unwrap(),
             )

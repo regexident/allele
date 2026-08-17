@@ -17,7 +17,7 @@ fn insert_order_mutator_preserves_permutation(
     let mut genome: Vec<usize> = (0..genome_length).collect();
     genome.shuffle(&mut rng);
 
-    let mutator = InsertOrderMutator::new(mutation_rate);
+    let mutator = InsertOrderMutator::new(mutation_rate).unwrap();
     let mutated = mutator.mutate(genome.clone(), &mut rng);
 
     let mut original_sorted = genome;
@@ -37,7 +37,7 @@ fn swap_order_mutator_preserves_permutation(
     let mut genome: Vec<usize> = (0..genome_length).collect();
     genome.shuffle(&mut rng);
 
-    let mutator = SwapOrderMutator::new(mutation_rate);
+    let mutator = SwapOrderMutator::new(mutation_rate).unwrap();
     let mutated = mutator.mutate(genome.clone(), &mut rng);
 
     let mut original_sorted = genome;
