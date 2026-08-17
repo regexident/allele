@@ -21,6 +21,7 @@ Please make sure to add your changes to the appropriate categories:
 ### Added
 
 - Added `InvalidArgumentError` type (re-exported from crate root) returned by constructors with out-of-range parameter values
+- Added `InvalidMutationRate` variant to `Error`
 
 ### Changed
 
