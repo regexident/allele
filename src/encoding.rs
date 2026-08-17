@@ -1,41 +1,16 @@
-//! The `encoding` module provides basic scheme of encoding
-//! `genetic::Genotype`s.
+//! The `encoding` module provides genotype implementations for common
+//! standard-library and third-party collection types.
 //!
-//! Most important encoding schemes are:
-//! * binary encoding
-//! * value encoding
-//! * permutation encoding
+//! Supported encoding schemes include:
+//! * binary encoding (e.g. `Vec<bool>`, `FixedBitSet`)
+//! * value encoding (e.g. `Vec<T>`, `SmallVec<A>`)
+//! * permutation encoding (e.g. `Vec<usize>`, `SmallVec` of `usize`)
 //! * tree encoding
-//!
-//! To express which encoding scheme is used for a specific `genetic::Genotype`
-//! a set of marker traits are defined:
-//! * `BinaryEncoded`
-//! * `ValueEncoded`
-//! * `PermutationEncoded`
-//! * `TreeEncoded`
-//!
-//! These marker traits are important for providing default implementations
-//! for the `operator::CrossoverOp` and the `operator::MutationOp`. In order
-//! to use any of the default operator implementation the `genetic::Genotype`
-//! used for a genetic algorithm application must be marked with the
-//! appropriate encoding trait. If an application is defining its own crossover
-//! and mutation operators then using these marker traits is optional.
 
 use std::fmt::Debug;
 
 use crate::genetic::Genotype;
 
-/// Marker trait for declaring a `genetic::Genotype` as binary encoded.
-pub trait BinaryEncoded {}
-
-/// Marker trait for declaring a `genetic::Genotype` as value encoded.
-pub trait ValueEncoded {}
-
-/// Marker trait for declaring a permutation encoded `genetic::Genotype`.
-pub trait PermutationEncoded {}
-
-/// Marker trait for declaring a tree encoded `genetic::Genotype`.
-pub trait TreeEncoded: Genotype {}
 
 /// Implementation of a genotype using `Vec`.
 impl<V> Genotype for Vec<V>
@@ -45,32 +20,17 @@ where
     type Dna = V;
 }
 
-/// Implementation of binary encoded `genetic::Genotype`
-/// using `Vec<bool>`.
-impl BinaryEncoded for Vec<bool> {}
-
-/// Implementation of a value encoded `genetic::Genotype`.
-/// using `Vec`.
-impl<V> ValueEncoded for Vec<V> where V: Clone + Debug + PartialEq + Send + Sync {}
-
-/// Implementation of a permutation encoded `genetic::Genotype`
-/// using `Vec`.
-impl PermutationEncoded for Vec<usize> {}
 
 #[cfg(feature = "fixedbitset")]
 mod fixedbitset_genotype {
     use fixedbitset::FixedBitSet;
 
-    use super::{BinaryEncoded, Genotype};
+    use super::Genotype;
 
     /// Implementation of genotype using `fixedbistset::FixedBitSet`.
     impl Genotype for FixedBitSet {
         type Dna = bool;
     }
-
-    /// Implementation of binary encoded `genetic::Genotype`
-    /// using `fixedbistset::FixedBitSet`.
-    impl BinaryEncoded for FixedBitSet {}
 }
 
 #[cfg(feature = "smallvec")]
@@ -79,10 +39,9 @@ mod smallvec_genotype {
 
     use smallvec::{Array, SmallVec};
 
-    use super::{BinaryEncoded, Genotype, PermutationEncoded, ValueEncoded};
+    use super::Genotype;
 
-    /// Implementation of binary encoded `genetic::Genotype`
-    /// using `smallvec::SmallVec`.
+    /// Implementation of genotype using `smallvec::SmallVec`.
     impl<A, V> Genotype for SmallVec<A>
     where
         A: Array<Item = V> + Sync,
@@ -90,16 +49,4 @@ mod smallvec_genotype {
     {
         type Dna = V;
     }
-
-    /// Implementation of binary encoded `genetic::Genotype`
-    /// using `smallvec::SmallVec<Item = bool>`.
-    impl<A> BinaryEncoded for SmallVec<A> where A: Array<Item = bool> {}
-
-    /// Implementation of a value encoded `genetic::Genotype`.
-    /// using `smallvec::SmallVec`.
-    impl<A> ValueEncoded for SmallVec<A> where A: Array {}
-
-    /// Implementation of a permutation encoded `genetic::Genotype`
-    /// using `smallvec::SmallVec`.
-    impl<A> PermutationEncoded for SmallVec<A> where A: Array<Item = usize> {}
 }
