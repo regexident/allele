@@ -138,6 +138,8 @@ mod fixedbitset_random_genome_mutation {
 
     use super::{RandomGenomeMutation, number_of_mutations, random_index};
 
+    /// Randomly flips bits. The `min_value` and `max_value` parameters are ignored
+    /// for `FixedBitSet` — each mutated bit is set to a random boolean value.
     impl RandomGenomeMutation for FixedBitSet {
         type Dna = bool;
 

@@ -47,7 +47,7 @@ use self::builder::EmptyGeneticAlgorithmBuilder;
 /// The `State` struct holds the results of one pass of the genetic algorithm
 /// loop, i.e. the processing of the evolution from one generation to the next
 /// generation.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct State<G, F>
 where
     G: Genotype,

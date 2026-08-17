@@ -35,6 +35,7 @@ Please make sure to add your changes to the appropriate categories:
 - Renamed `GeneticAlgorithm` intermediate builder structs to use full operator words for readability in compiler errors
 - Made mutation operator constructors and setters return `Result`
 - Made reinsertion `set_replace_ratio` return `Result`
+- Derived `Eq` on `State` and `Hash` on `ProcessingTime`
 
 ### Deprecated
 
