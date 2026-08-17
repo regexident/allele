@@ -40,6 +40,8 @@ Please make sure to add your changes to the appropriate categories:
 ### Removed
 
 - Removed `BestSolution::found_at` field; timestamp-of-discovery is not part of the optimality result
+- Removed unused encoding marker traits `BinaryEncoded`, `ValueEncoded`, `PermutationEncoded`, and `TreeEncoded`
+
 
 ### Fixed
 
