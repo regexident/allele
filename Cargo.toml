@@ -28,7 +28,7 @@ getrandom = { version = "0.4", features = ["wasm_js"] }
 
 [dev-dependencies]
 criterion = "=0.8.2"
-proptest = "=1.11.0"
+proptest = "=1.12.0"
 test-strategy = "=0.4.5"
 version-sync = "=0.9.5"
 
